@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Spotify Wrapped{% endblock %}</title>
+    {% load static %}
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+
+  <!-- Navigation bar -->
+  <nav class="navbar">
+    <a href="{% url 'home' %}" class="logo">
+        <h1>Spotify Wrapped</h1>
+    </a>
+    <div class="auth-links">
+        {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="btn">Dashboard</a>
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn">Log Out</button>
+            </form>
+        {% else %}
+            <a href="{% url 'register' %}" class="btn">Sign Up</a>
+            <a href="{% url 'login' %}" class="btn">Log In</a>
+        {% endif %}
+    </div>
+</nav>
+
+
+  <!-- Main content area for other templates -->
+  <main>
+      {% block content %}{% endblock %}
+  </main>
+
+</body>
+</html>
