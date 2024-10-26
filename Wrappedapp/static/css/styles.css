@@ -22,7 +22,7 @@ h1 {
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 1000;
+  z-index: 5;
 }
 
 .navbar h1 {
@@ -176,5 +176,20 @@ input[type="submit"]:hover, button:hover {
 .logout-container a.btn:hover {
   background-color: #1ed760; /* Lighter green on hover */
 }
+
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-container:hover {
+            box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
+        }
+
 
 }
