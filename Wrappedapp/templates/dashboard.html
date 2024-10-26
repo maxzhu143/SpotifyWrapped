@@ -3,6 +3,9 @@
 {% block content %}
   <h2>Welcome, {{ user.first_name }}!</h2>
   <p>This is your dashboard.</p>
+
+    <a href="{% url 'spotify_connect' %}" class="btn">Link Spotify Account</a>
+
+
 {% endblock %}
 
-<a href="{% url 'spotify_connect' %}" class="btn">Link Spotify Account</a>
