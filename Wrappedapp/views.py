@@ -1,5 +1,8 @@
+from pyexpat.errors import messages
+
+from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from .forms import SignUpForm
 from django.contrib.auth.decorators import login_required
 from decouple import config
@@ -89,3 +92,22 @@ def spotify_callback(request):
         return redirect("home")  # Change 'home' to your target URL
     else:
         return redirect("error")  # Handle errors gracefully
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')  # Change 'home' to the page you want to redirect to
+            else:
+                messages.error(request, "Please enter a correct username and password.")
+        else:
+            messages.error(request, "Please enter a correct username and password.")
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'login.html', {'form': form})
