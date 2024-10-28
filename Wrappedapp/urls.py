@@ -13,5 +13,6 @@ urlpatterns = [
     path("your-django-endpoint/", views.my_data_view, name="my_data_view"),
     path('spotify-authorize/', views.spotify_authorize, name='spotify_authorize'),
     path('spotify-callback/', views.spotify_callback, name='spotify_callback'),
+    path('contact/', views.contact_developers, name='contact_developers'),
 
 ]

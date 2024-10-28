@@ -40,6 +40,9 @@ def register(request):
 def dashboard(request):
     return render(request, 'dashboard.html')
 
+def contact_developers(request):
+    return render(request, 'contact_developers.html')
+
 def spotify_connect(request):
     spotify_auth_url = "https://accounts.spotify.com/authorize"
     client_id =  config('SPOTIFY_CLIENT_ID')
