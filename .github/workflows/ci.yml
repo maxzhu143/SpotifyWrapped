@@ -1,0 +1,33 @@
+name: CI Pipeline
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pylint pytest coverage
+
+    - name: Lint with pylint
+      run: |
+        pylint your_module/  # Replace 'your_module' with the name of your project folder
+
+    - name: Run tests
+      run: |
+        pytest --cov=your_module tests/  # Replace 'your_module' and 'tests/' with your project and test folder names
+        
+    - name: Check code coverage
+      run: |
+        coverage run -m pytest
+        coverage report --fail-under=80
+
