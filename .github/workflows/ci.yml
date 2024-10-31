@@ -7,6 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
@@ -20,16 +21,13 @@ jobs:
 
     - name: Lint with pylint
       run: |
-        pylint SpotifyWrapped/  # Replace 'SpotifyWrapped' with the name of your project folder
+        pylint Wrappedapp/  # Linting within the Wrappedapp application
 
     - name: Run tests
       run: |
-        pytest --cov=Wrappedapp Wrappedapp/tests/  # Adjust path to point to your app and tests
+        pytest --cov=Wrappedapp Wrappedapp/tests/  # Running tests with coverage for Wrappedapp
 
-        
     - name: Check code coverage
       run: |
         coverage run -m pytest Wrappedapp/tests/
-        coverage report --fail-under=80
-
-
+        coverage report --fail-under=80  # Enforce 80% coverage threshold
