@@ -20,14 +20,16 @@ jobs:
 
     - name: Lint with pylint
       run: |
-        pylint your_module/  # Replace 'your_module' with the name of your project folder
+        pylint SpotifyWrapped/  # Replace 'SpotifyWrapped' with the name of your project folder
 
     - name: Run tests
       run: |
-        pytest --cov=your_module tests/  # Replace 'your_module' and 'tests/' with your project and test folder names
+        pytest --cov=Wrappedapp Wrappedapp/tests/  # Adjust path to point to your app and tests
+
         
     - name: Check code coverage
       run: |
-        coverage run -m pytest
+        coverage run -m pytest Wrappedapp/tests/
         coverage report --fail-under=80
+
 
