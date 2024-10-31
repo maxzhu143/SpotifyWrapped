@@ -1,0 +1,25 @@
+# Core Django dependencies
+Django==4.2  # Use your specific Django version
+djangorestframework==3.14.0  # Optional, for building APIs if needed
+
+# Authentication-related dependencies (optional)
+django-allauth==0.52.0  # For social authentication like Spotify, if applicable
+
+# Testing and coverage
+pytest==7.4.0
+pytest-django==4.5.2
+coverage==7.3.1  # For code coverage reports
+pytest-cov==4.1.0  # Integrates coverage with pytest
+
+# Linting and code style
+pylint==2.17.5  # For code linting
+black==23.7.0  # Optional, for automatic code formatting
+
+# Database
+psycopg2==2.9.7  # Only if using PostgreSQL; omit if using SQLite
+
+# Environment management
+python-dotenv==1.0.0  # For managing environment variables, useful in development
+
+# HTTP requests (for APIs, if needed)
+requests==2.31.0  # If making external requests, such as to the Spotify API
