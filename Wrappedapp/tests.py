@@ -1,20 +1,24 @@
+"""Tests for Wrappedapp."""
+
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth.models import User
+
 
 class UserRegistrationTest(TestCase):
+    """Test case for user registration."""
     def setUp(self):
-        # No need to initialize a client; Django TestCase automatically sets up self.client
+        """Set up necessary variables for registration test."""
         self.register_url = reverse('register')
 
     def test_register_user(self):
-        # User data for registration
+        """Test successful user registration."""
         data = {
             'username': 'testuser',
             'email': 'testuser@example.com',
             'first_name': 'Test',
             'last_name': 'User',
-            'password1': 'pokPyw-xyxquf-gozdo0',  # Ensure it meets password criteria
+            'password1': 'pokPyw-xyxquf-gozdo0',
             'password2': 'pokPyw-xyxquf-gozdo0'
         }
 
@@ -38,12 +42,14 @@ class UserRegistrationTest(TestCase):
 
 
 class UserLoginTest(TestCase):
+    """Test case for user login functionality."""
     def setUp(self):
-        # Create a user to log in with
+        """Create a test user."""
         self.user = User.objects.create_user(username='testuser', password='pokPyw-xyxquf-gozdo0')
         self.login_url = reverse('login')
 
     def test_user_login(self):
+        """Test login with valid credentials."""
         # Login with the test user credentials
         response = self.client.post(self.login_url, {'username': 'testuser', 'password': 'pokPyw-xyxquf-gozdo0'})
 
@@ -52,7 +58,7 @@ class UserLoginTest(TestCase):
         self.assertRedirects(response, reverse('dashboard'))
 
     def test_login_failed(self):
-        # Attempt login with incorrect password
+        """Test login with invalid credentials."""
         response = self.client.post(self.login_url, {'username': 'testuser', 'password': 'wrongpassword'})
 
         # Check that the login fails and user remains on the login page
@@ -61,14 +67,15 @@ class UserLoginTest(TestCase):
 
 
 class UserLogoutTest(TestCase):
+    """Test case for user logout functionality."""
     def setUp(self):
-        # Create and log in a user
+        """Log in a user for testing logout."""
         self.user = User.objects.create_user(username='testuser', password='pokPyw-xyxquf-gozdo0')
         self.client.login(username='testuser', password='pokPyw-xyxquf-gozdo0')
         self.logout_url = reverse('logout')
 
     def test_user_logout(self):
-        # Perform logout
+        """Test successful logout."""
         response = self.client.post(self.logout_url)
 
         # Check that the logout page renders successfully (status code 200)
