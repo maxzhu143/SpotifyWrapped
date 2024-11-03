@@ -1,19 +1,17 @@
 """Views for Wrappedapp."""
 import urllib.parse
-from django.contrib.auth import login, logout
+from django.contrib.auth import login
 
-from django.http import JsonResponse
-import requests
 from .forms import SignUpForm
 
-
-from django.shortcuts import render, redirect
-from django.conf import settings
 from .models import SpotifyAccount  # Adjust as per your model for SpotifyAccount
-import spotipy
-from spotipy.oauth2 import SpotifyOAuth
+import requests
+from django.conf import settings
+from django.shortcuts import redirect, render
+from django.http import JsonResponse
 
-
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import redirect
 
 
 
@@ -43,7 +41,13 @@ def register(request):
 
     return render(request, 'register.html', {'form': form})
 
-
+@csrf_exempt  # CSRF protection is already handled in the form
+def unlink(request):
+    print("UNLINK")
+    if request.method == 'POST':
+        # Clear the session to log the user out of Spotify
+        request.session.pop('access_token', None)
+        return redirect('spot_login')  # Redirect to login page or homepage
 
 def dashboard(request):
     # Get the Spotify account info if connected
@@ -56,17 +60,67 @@ def dashboard(request):
 
     return render(request, 'dashboard.html', {'spotify_account': spotify_account})
 
-def spotify_connect(request):
-    sp_oauth = SpotifyOAuth(
-        client_id=settings.SPOTIFY_CLIENT_ID,
-        client_secret=settings.SPOTIFY_CLIENT_SECRET,
-        redirect_uri=settings.SPOTIFY_REDIRECT_URI,
-        scope="user-read-private user-read-email",
+def spot_login(request):
+    # Step 1: Redirect the user to Spotify's authorization page
+    auth_url = (
+        'https://accounts.spotify.com/authorize'
+        '?response_type=code'
+        f'&client_id={settings.SPOTIFY_CLIENT_ID}'
+        f'&redirect_uri={settings.SPOTIFY_REDIRECT_URI}'
+        '&scope=user-top-read'
     )
-
-    auth_url = sp_oauth.get_authorize_url()
-    print(auth_url)
     return redirect(auth_url)
+
+
+def callback(request):
+    # Step 2: Get the authorization code from the redirect URL
+    code = request.GET.get('code')
+
+    # Step 3: Exchange the authorization code for an access token
+    token_url = 'https://accounts.spotify.com/api/token'
+    token_data = {
+        'grant_type': 'authorization_code',
+        'code': code,
+        'redirect_uri': settings.SPOTIFY_REDIRECT_URI,
+        'client_id': settings.SPOTIFY_CLIENT_ID,
+        'client_secret': settings.SPOTIFY_CLIENT_SECRET,
+    }
+
+    response = requests.post(token_url, data=token_data)
+    token_info = response.json()
+    request.session['access_token'] = token_info.get('access_token')
+
+    return redirect('top_songs')
+
+
+def top_songs(request):
+    access_token = request.session.get('access_token')
+    if not access_token:
+        return redirect('spot_login')
+
+    # Get user profile information for the display name
+    headers = {'Authorization': f'Bearer {access_token}'}
+    profile_url = 'https://api.spotify.com/v1/me'
+    profile_response = requests.get(profile_url, headers=headers)
+    profile_data = profile_response.json()
+    user_name = profile_data.get('display_name', 'Spotify User')
+
+    # Fetch top tracks
+    top_tracks_url = 'https://api.spotify.com/v1/me/top/tracks?limit=10'
+    tracks_response = requests.get(top_tracks_url, headers=headers)
+    tracks_data = tracks_response.json()
+
+    # Extract song details
+    songs = [{
+        'name': track['name'],
+        'artist': track['artists'][0]['name'],
+        'album': track['album']['name'],
+        'cover': track['album']['images'][0]['url']
+    } for track in tracks_data['items']]
+
+    return render(request, 'top_songs.html', {'songs': songs, 'user_name': user_name})
+
+
 def spotify_disconnect(request):
     if request.user.is_authenticated:
         try:

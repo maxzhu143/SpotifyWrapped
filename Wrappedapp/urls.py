@@ -15,7 +15,10 @@ urlpatterns = [
     path('spotify-authorize/', views.spotify_authorize, name='spotify_authorize'),
     path('spotify-callback/', views.spotify_callback, name='spotify_callback'),
     path('dashboard/', views. dashboard, name='dashboard'),
-    path('spotify/connect/', views.spotify_connect, name='spotify_connect'),
     path('spotify/disconnect/', views.spotify_disconnect, name='spotify_disconnect'),
+    path('spot_login/', views.spot_login, name='spot_login'),
+    path('callback/', views.callback, name='callback'),
+    path('top_songs/', views.top_songs, name='top_songs'),
+    path('unlink/', views.unlink, name='unlink'),  # New unlink URL
 
 ]
