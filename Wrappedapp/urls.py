@@ -16,4 +16,8 @@ urlpatterns = [
     path('spotify-authorize/', views.spotify_authorize, name='spotify_authorize'),
     path('spotify-callback/', views.spotify_callback, name='spotify_callback'),
 
+    path('spotify/login/', views.spotify_login, name='spotify_login'),
+    path('spotify/connect/', views.spotify_connect, name='spotify_connect'),
+    path('spotify/callback/', views.spotify_callback, name='spotify_callback'),
+
 ]

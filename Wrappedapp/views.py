@@ -1,22 +1,14 @@
 """Views for Wrappedapp."""
 import urllib.parse
-from urllib.parse import urlencode
-from django.conf import settings
 from django.contrib.auth import login, logout
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
 import requests
 from .forms import SignUpForm
 from decouple import config
 
-
-
-
-
-
-
+import spotipy
+from django.conf import settings
 
 client_id = settings.SPOTIFY_CLIENT_ID
 client_secret = settings.SPOTIFY_CLIENT_SECRET
@@ -25,6 +17,55 @@ redirect_uri = settings.SPOTIFY_REDIRECT_URI
 
 # Create your views here.
 # Wrappedapp/views.py
+from django.shortcuts import render, redirect
+from django.conf import settings
+from spotipy.oauth2 import SpotifyOAuth
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
+
+def get_spotify_oauth():
+    return SpotifyOAuth(
+        client_id=settings.SPOTIFY_CLIENT_ID,
+        client_secret=settings.SPOTIFY_CLIENT_SECRET,
+        redirect_uri=settings.SPOTIFY_REDIRECT_URI,
+        scope='user-read-recently-played user-top-read user-library-read'
+    )
+
+
+@login_required
+def spotify_connect(request):
+    """View to handle Spotify connection button and initiate OAuth flow"""
+    try:
+        sp_oauth = get_spotify_oauth()
+        auth_url = sp_oauth.get_authorize_url()
+        return render(request, 'spotify_connect.html', {'auth_url': auth_url})
+    except Exception as e:
+        messages.error(request, f"Failed to connect to Spotify: {str(e)}")
+        return redirect('home')  # Replace with your home view name
+
+
+@login_required
+def spotify_callback(request):
+    """Handle the callback from Spotify OAuth"""
+    try:
+        sp_oauth = get_spotify_oauth()
+        code = request.GET.get('code')
+
+        if code:
+            # Get tokens from Spotify
+            token_info = sp_oauth.get_access_token(code)
+
+            # Store token info in session for now (you might want to store in DB instead)
+            request.session['spotify_token_info'] = token_info
+
+            messages.success(request, "Successfully connected to Spotify!")
+            return redirect('home')  # Replace with your success page
+
+    except Exception as e:
+        messages.error(request, f"Failed to connect to Spotify: {str(e)}")
+
+    return redirect('home')  # Replace with your error page
 
 def home(request):
     access_token = request.session.get("access_token", "")
@@ -49,15 +90,6 @@ def dashboard(request):
     """Display user dashboard."""
     return render(request, 'dashboard.html')
 
-def spotify_connect(request):
-    """Connect to Spotify API and handle authorization."""
-    spotify_auth_url = "https://accounts.spotify.com/authorize"
-    client_id =  config('SPOTIFY_CLIENT_ID')
-    redirect_uri = config('SPOTIFY_REDIRECT_URI')
-    scope = "user-top-read"  # Adjust based on your needs
-
-    auth_url = f"{spotify_auth_url}?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}"
-    return redirect(auth_url)
 
 def my_data_view(request):
     data = {"message": "Hello from Django!"}
@@ -74,28 +106,8 @@ def spotify_authorize(request):
     auth_url = f"{spotify_auth_url}?{urllib.parse.urlencode(params)}"
     return redirect(auth_url)
 
-def spotify_callback(request):
-    code = request.GET.get("code")
-    token_url = "https://accounts.spotify.com/api/token"
-
-    response = requests.post(token_url, data={
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": settings.SPOTIFY_REDIRECT_URI,
-        "client_id": settings.SPOTIFY_CLIENT_ID,
-        "client_secret": settings.SPOTIFY_CLIENT_SECRET,
-    })
-
-    if response.status_code == 200:
-        tokens = response.json()
-        access_token = tokens["access_token"]
-        refresh_token = tokens["refresh_token"]
-
-        # Save tokens in the session (or database) for later use
-        request.session["access_token"] = access_token
-        request.session["refresh_token"] = refresh_token
-
-        # Redirect to another view, or render a template
-        return redirect("home")  # Change 'home' to your target URL
-    else:
-        return redirect("error")  # Handle errors gracefully
+@login_required
+def spotify_login(request):
+    sp_oauth = get_spotify_oauth()
+    auth_url = sp_oauth.get_authorize_url()
+    return redirect(auth_url)
