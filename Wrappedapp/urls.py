@@ -19,6 +19,5 @@ urlpatterns = [
     path('spot_login/', views.spot_login, name='spot_login'),
     path('callback/', views.callback, name='callback'),
     path('top_songs/', views.top_songs, name='top_songs'),
-    path('unlink/', views.unlink, name='unlink'),  # New unlink URL
-
+    path('unlink/', views.unlink, name='unlink'),
 ]

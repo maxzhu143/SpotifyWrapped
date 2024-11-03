@@ -10,9 +10,12 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 from django.http import JsonResponse
 
-from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import redirect
+from django.views.decorators.csrf import csrf_protect
+import logging
 
+# Initialize logger
+logger = logging.getLogger(__name__)
 
 
 client_id = settings.SPOTIFY_CLIENT_ID
@@ -41,13 +44,16 @@ def register(request):
 
     return render(request, 'register.html', {'form': form})
 
-@csrf_exempt  # CSRF protection is already handled in the form
+@csrf_protect
 def unlink(request):
-    print("UNLINK")
     if request.method == 'POST':
-        # Clear the session to log the user out of Spotify
-        request.session.pop('access_token', None)
-        return redirect('spot_login')  # Redirect to login page or homepage
+        request.session.flush()
+        return redirect('spot_login')  # Redirect to spot_login without triggering re-auth
+    return redirect('top_songs')
+
+#ONLY FOR TESTING
+def session_status(request):
+    return JsonResponse({"session": dict(request.session.items())})
 
 def dashboard(request):
     # Get the Spotify account info if connected
@@ -60,16 +66,32 @@ def dashboard(request):
 
     return render(request, 'dashboard.html', {'spotify_account': spotify_account})
 
+
+# PLEASE DON'T TOUCH OR I'LL KILL MYSELF
 def spot_login(request):
-    # Step 1: Redirect the user to Spotify's authorization page
-    auth_url = (
-        'https://accounts.spotify.com/authorize'
-        '?response_type=code'
-        f'&client_id={settings.SPOTIFY_CLIENT_ID}'
-        f'&redirect_uri={settings.SPOTIFY_REDIRECT_URI}'
-        '&scope=user-top-read'
-    )
-    return redirect(auth_url)
+    # Redirect to top_songs if already authenticated
+    print("Login START")
+
+    if request.session.get('access_token'):
+        print("SIGNED IN")
+        return redirect('top_songs')
+
+    print(request.GET.get('login'))
+
+    # Only proceed to Spotify authorization if 'login=true' is explicitly requested
+    if request.GET.get('login') == 'true':
+        auth_url = (
+            'https://accounts.spotify.com/authorize'
+            '?response_type=code'
+            f'&client_id={settings.SPOTIFY_CLIENT_ID}'
+            f'&redirect_uri={settings.SPOTIFY_REDIRECT_URI}'
+            '&scope=user-top-read'
+        )
+        return redirect(auth_url)
+
+    # If no login parameter is set, redirect to top_songs or another page as needed
+    return redirect('top_songs')
+
 
 
 def callback(request):
@@ -96,9 +118,9 @@ def callback(request):
 def top_songs(request):
     access_token = request.session.get('access_token')
     if not access_token:
-        return redirect('spot_login')
+        return render(request, 'top_songs.html')  # No user_name passed when not connected
 
-    # Get user profile information for the display name
+    # Fetch user profile information
     headers = {'Authorization': f'Bearer {access_token}'}
     profile_url = 'https://api.spotify.com/v1/me'
     profile_response = requests.get(profile_url, headers=headers)
