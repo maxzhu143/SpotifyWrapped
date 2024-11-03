@@ -1,18 +1,22 @@
-from pyexpat.errors import messages
-
-from django.contrib.auth.forms import AuthenticationForm
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
-from .forms import SignUpForm
-from django.contrib.auth.decorators import login_required
-from decouple import config
-from django.http import JsonResponse
-from django.conf import settings
+"""Views for Wrappedapp."""
 import urllib.parse
-
-import requests
-from django.shortcuts import redirect
+from urllib.parse import urlencode
 from django.conf import settings
+from django.contrib.auth import login, logout
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+import requests
+from .forms import SignUpForm
+from decouple import config
+
+
+
+
+
+
+
 
 client_id = settings.SPOTIFY_CLIENT_ID
 client_secret = settings.SPOTIFY_CLIENT_SECRET
@@ -28,6 +32,7 @@ def home(request):
 
 
 def register(request):
+    """Handle user registration."""
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -41,9 +46,11 @@ def register(request):
 
 @login_required
 def dashboard(request):
+    """Display user dashboard."""
     return render(request, 'dashboard.html')
 
 def spotify_connect(request):
+    """Connect to Spotify API and handle authorization."""
     spotify_auth_url = "https://accounts.spotify.com/authorize"
     client_id =  config('SPOTIFY_CLIENT_ID')
     redirect_uri = config('SPOTIFY_REDIRECT_URI')
@@ -92,22 +99,3 @@ def spotify_callback(request):
         return redirect("home")  # Change 'home' to your target URL
     else:
         return redirect("error")  # Handle errors gracefully
-
-def login_view(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('home')  # Change 'home' to the page you want to redirect to
-            else:
-                messages.error(request, "Please enter a correct username and password.")
-        else:
-            messages.error(request, "Please enter a correct username and password.")
-    else:
-        form = AuthenticationForm()
-
-    return render(request, 'login.html', {'form': form})
