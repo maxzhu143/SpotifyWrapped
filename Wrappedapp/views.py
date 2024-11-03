@@ -1,18 +1,17 @@
 """Views for Wrappedapp."""
 import urllib.parse
-from urllib.parse import urlencode
-from django.conf import settings
 from django.contrib.auth import login, logout
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
 import requests
 from .forms import SignUpForm
-from decouple import config
 
 
-
+from django.shortcuts import render, redirect
+from django.conf import settings
+from .models import SpotifyAccount  # Adjust as per your model for SpotifyAccount
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
 
 
 
@@ -44,20 +43,38 @@ def register(request):
 
     return render(request, 'register.html', {'form': form})
 
-@login_required
+
+
 def dashboard(request):
-    """Display user dashboard."""
-    return render(request, 'dashboard.html')
+    # Get the Spotify account info if connected
+    spotify_account = None
+    if request.user.is_authenticated:
+        try:
+            spotify_account = SpotifyAccount.objects.get(user=request.user)
+        except SpotifyAccount.DoesNotExist:
+            spotify_account = None
+
+    return render(request, 'dashboard.html', {'spotify_account': spotify_account})
 
 def spotify_connect(request):
-    """Connect to Spotify API and handle authorization."""
-    spotify_auth_url = "https://accounts.spotify.com/authorize"
-    client_id =  config('SPOTIFY_CLIENT_ID')
-    redirect_uri = config('SPOTIFY_REDIRECT_URI')
-    scope = "user-top-read"  # Adjust based on your needs
+    sp_oauth = SpotifyOAuth(
+        client_id=settings.SPOTIFY_CLIENT_ID,
+        client_secret=settings.SPOTIFY_CLIENT_SECRET,
+        redirect_uri=settings.SPOTIFY_REDIRECT_URI,
+        scope="user-read-private user-read-email",
+    )
 
-    auth_url = f"{spotify_auth_url}?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}"
+    auth_url = sp_oauth.get_authorize_url()
+    print(auth_url)
     return redirect(auth_url)
+def spotify_disconnect(request):
+    if request.user.is_authenticated:
+        try:
+            spotify_account = SpotifyAccount.objects.get(user=request.user)
+            spotify_account.delete()  # Remove the account info
+        except SpotifyAccount.DoesNotExist:
+            pass
+    return redirect('dashboard')
 
 def my_data_view(request):
     data = {"message": "Hello from Django!"}
