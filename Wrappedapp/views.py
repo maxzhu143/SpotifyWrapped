@@ -59,6 +59,7 @@ def spotify_connect(request):
     auth_url = f"{spotify_auth_url}?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}"
     return redirect(auth_url)
 
+
 def my_data_view(request):
     data = {"message": "Hello from Django!"}
     return JsonResponse(data)
