@@ -26,3 +26,35 @@ document.addEventListener("DOMContentLoaded", async () => {
     )
   );
 });
+async function fetchTopTracksAndDescribe(token) {
+  try {
+    // Fetch the user's top tracks
+    const topTracks = await getTopTracks();
+
+    // Extract track names for the prompt
+    const trackNames = topTracks.map(track => track.name);
+
+    // Send the track names to the Django backend
+    const response = await fetch('/describe-user-tracks/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCsrfToken(),  // CSRF protection if needed
+      },
+      body: JSON.stringify({ trackNames })
+    });
+
+    const data = await response.json();
+    if (data.description) {
+      // Display the description
+      document.getElementById('userDescription').innerText = data.description;
+    }
+  } catch (error) {
+    console.error("Error fetching or sending top tracks:", error);
+  }
+}
+
+// Helper function for CSRF token
+function getCsrfToken() {
+  return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
