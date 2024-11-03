@@ -1,3 +1,7 @@
-from django.contrib import admin
+"""Admin configuration for Wrappedapp."""
 
-# Register your models here.
+from django.contrib import admin
+from django.contrib.auth.models import User
+
+# Register your models here if needed
+# Example: admin.site.register(YourModel)
