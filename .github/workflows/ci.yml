@@ -25,7 +25,7 @@ jobs:
 
     - name: Run tests
       run: |
-        pytest --cov=Wrappedapp Wrappedapp/tests/  # Running tests with coverage for Wrappedapp
+        pytest --cov=Wrappedapp Wrappedapp/tests.py  # Pointing directly to tests.py
 
     - name: Check code coverage
       run: |
