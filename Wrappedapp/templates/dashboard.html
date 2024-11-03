@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Welcome, {{ user.first_name }}!</h2>
-  <p>This is your dashboard.</p>
+    <h1>a </h1>
 
-    <a href="{% url 'spotify_connect' %}" class="btn">Link Spotify Account</a>
+    <h2>Welcome, {{  user.first_name }}!</h2>
+    <p>This is your dashboard.</p>
 
-
+    {% if spotify_account %}
+        <p>Connected to Spotify as: {{ spotify_account.user.username }}</p>
+        <a href="{% url 'spotify_disconnect' %}" class="btn">Unlink Spotify Account</a>
+    {% else %}
+        <a href="{% url 'spotify_connect' %}" class="btn">Link Spotify Account</a>
+    {% endif %}
 {% endblock %}
+
 
