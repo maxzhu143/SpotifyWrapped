@@ -19,6 +19,14 @@ jobs:
       with:
         python-version: '3.x'
 
+    - name: Print environment variable checks (debugging)
+      run: |
+        echo "Checking if SECRET_KEY is set: ${#SECRET_KEY}"
+        echo "Checking if SPOTIFY_CLIENT_ID is set: ${#SPOTIFY_CLIENT_ID}"
+        echo "Checking if SPOTIFY_CLIENT_SECRET is set: ${#SPOTIFY_CLIENT_SECRET}"
+        echo "Checking if SPOTIFY_REDIRECT_URI is set: ${#SPOTIFY_REDIRECT_URI}"
+      shell: bash
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
