@@ -16,7 +16,7 @@ jobs:
 
     - name: Print environment variable checks (debugging)
       run: |
-        echo "Checking if SECRET_KEY is set: ${#SECRET_KEY}"
+        echo "Checking if SECRET_KEY is set: ${#DJANGO_SECRET_KEY}"
         echo "Checking if SPOTIFY_CLIENT_ID is set: ${#SPOTIFY_CLIENT_ID}"
         echo "Checking if SPOTIFY_CLIENT_SECRET is set: ${#SPOTIFY_CLIENT_SECRET}"
         echo "Checking if SPOTIFY_REDIRECT_URI is set: ${#SPOTIFY_REDIRECT_URI}"
@@ -34,7 +34,7 @@ jobs:
 
     - name: Run tests
       env:
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
         SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
         SPOTIFY_REDIRECT_URI: ${{ secrets.SPOTIFY_REDIRECT_URI }}
