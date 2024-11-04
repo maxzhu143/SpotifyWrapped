@@ -34,6 +34,7 @@ jobs:
 
     - name: Run tests
       env:
+        DJANGO_SETTINGS_MODULE: SpotifyWrapped.settings
         SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
         SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
