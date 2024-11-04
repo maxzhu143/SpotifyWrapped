@@ -5,12 +5,7 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      DJANGO_SETTINGS_MODULE: SpotifyWrapped.settings
-      SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-      SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
-      SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-      SPOTIFY_REDIRECT_URI: ${{ secrets.SPOTIFY_REDIRECT_URI }}
+    
     steps:
     - uses: actions/checkout@v2
 
@@ -38,9 +33,14 @@ jobs:
         pylint Wrappedapp/ --exit-zero  # This will prevent the workflow from failing based on the score alone
 
     - name: Run tests
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+        SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+        SPOTIFY_REDIRECT_URI: ${{ secrets.SPOTIFY_REDIRECT_URI }}
       run: |
         pytest --cov=Wrappedapp Wrappedapp/tests.py  # Pointing directly to tests.py
-
+  
     - name: Check code coverage
       run: |
         coverage run -m pytest Wrappedapp/tests/
