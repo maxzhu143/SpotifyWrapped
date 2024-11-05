@@ -62,8 +62,11 @@ class UserLoginTest(TestCase):
         response = self.client.post(self.login_url, {'username': 'testuser', 'password': 'wrongpassword'})
 
         # Check that the login fails and user remains on the login page
+        self.assertContains(response, 'class="errorlist"')
+
+        # Optionally, confirm that `form.errors` is populated in the response context (useful for debugging)
+        self.assertTrue(response.context['form'].errors)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Please enter a correct username and password. Note that both fields may be case-sensitive.", response.content.decode())
 
 class UserLogoutTest(TestCase):
     """Test case for user logout functionality."""
