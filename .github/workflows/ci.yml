@@ -32,7 +32,7 @@ jobs:
       run: |
         pylint Wrappedapp/ --exit-zero  # This will prevent the workflow from failing based on the score alone
 
-    - name: Run tests
+    - name: Run tests and Confirm Code Coverage
       env:
         DJANGO_SETTINGS_MODULE: SpotifyWrapped.settings
         DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
@@ -41,8 +41,4 @@ jobs:
         SPOTIFY_REDIRECT_URI: ${{ secrets.SPOTIFY_REDIRECT_URI }}
       run: |
         pytest --cov=Wrappedapp Wrappedapp/tests.py  # Pointing directly to tests.py
-  
-    - name: Check code coverage
-      run: |
-        coverage run -m pytest Wrappedapp/tests.py
         coverage report --fail-under=80  # Enforce 80% coverage threshold
