@@ -44,5 +44,5 @@ jobs:
   
     - name: Check code coverage
       run: |
-        coverage run -m pytest Wrappedapp/tests/
+        coverage run -m pytest Wrappedapp/tests.py
         coverage report --fail-under=80  # Enforce 80% coverage threshold
