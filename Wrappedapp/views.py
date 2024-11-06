@@ -19,49 +19,16 @@ client_id = settings.SPOTIFY_CLIENT_ID
 client_secret = settings.SPOTIFY_CLIENT_SECRET
 redirect_uri = settings.SPOTIFY_REDIRECT_URI
 
+loggedIn = True
 
 # Create your views here.
 # Wrappedapp/views.py
 
-def home(request):
-    access_token = request.session.get("access_token", "")
-    return render(request, "home.html", {"access_token": access_token})
 
-
-def register(request):
-    """Handle user registration."""
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)  # Log the user in after registration
-            return redirect('dashboard')  # Redirect to dashboard after registering
-    else:
-        form = SignUpForm()
-
-    return render(request, 'register.html', {'form': form})
-
-@csrf_exempt  # CSRF protection is already handled in the form
-def unlink(request):
-    print("UNLINK")
-    if request.method == 'POST':
-        # Clear the session to log the user out of Spotify
-        request.session.pop('access_token', None)
-        return redirect('spot_login')  # Redirect to login page or homepage
-
-def dashboard(request):
-    # Get the Spotify account info if connected
-    spotify_account = None
-    if request.user.is_authenticated:
-        try:
-            spotify_account = SpotifyAccount.objects.get(user=request.user)
-        except SpotifyAccount.DoesNotExist:
-            spotify_account = None
-
-    return render(request, 'dashboard.html', {'spotify_account': spotify_account})
 
 def spot_login(request):
     # Step 1: Redirect the user to Spotify's authorization page
+    loggedIn = True
     auth_url = (
         'https://accounts.spotify.com/authorize'
         '?response_type=code'
@@ -73,25 +40,48 @@ def spot_login(request):
 
 
 def callback(request):
-    # Step 2: Get the authorization code from the redirect URL
-    code = request.GET.get('code')
+    print("spotify callback")
+    code = request.GET.get("code")
+    token_url = "https://accounts.spotify.com/api/token"
 
-    # Step 3: Exchange the authorization code for an access token
-    token_url = 'https://accounts.spotify.com/api/token'
-    token_data = {
-        'grant_type': 'authorization_code',
-        'code': code,
-        'redirect_uri': settings.SPOTIFY_REDIRECT_URI,
-        'client_id': settings.SPOTIFY_CLIENT_ID,
-        'client_secret': settings.SPOTIFY_CLIENT_SECRET,
-    }
+    response = requests.post(token_url, data={
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": settings.SPOTIFY_REDIRECT_URI,
+        "client_id": settings.SPOTIFY_CLIENT_ID,
+        "client_secret": settings.SPOTIFY_CLIENT_SECRET,
+    })
 
-    response = requests.post(token_url, data=token_data)
-    token_info = response.json()
-    request.session['access_token'] = token_info.get('access_token')
+    if response.status_code == 200:
+        tokens = response.json()
+        access_token = tokens["access_token"]
+        refresh_token = tokens["refresh_token"]
 
-    return redirect('top_songs')
+        # Save tokens in the session (or database) for later use
+        request.session["access_token"] = access_token
+        request.session["refresh_token"] = refresh_token
 
+        # Redirect to another view, or render a template
+        return redirect("top_songs")  # Change 'home' to your target URL
+    else:
+        return redirect("spot_login")  # Handle errors gracefully
+
+@csrf_exempt  # CSRF protection is already handled in the form
+def unlink(request):
+    loggedIn = False
+    print("UNLINK")
+    print(request)
+    if request.method == 'POST':
+        print("Currently Unlinking")
+        # Clear the session to log the user out of Spotify
+        request.session.pop('access_token', None)
+        request.session.flush()
+        return redirect('spot_login')  # Redirect to login page or homepage
+
+
+def my_data_view(request):
+    data = {"message": "Hello from Django!"}
+    return JsonResponse(data)
 
 def top_songs(request):
     access_token = request.session.get('access_token')
@@ -119,21 +109,33 @@ def top_songs(request):
     } for track in tracks_data['items']]
 
     return render(request, 'top_songs.html', {'songs': songs, 'user_name': user_name})
-
-
-def spotify_disconnect(request):
+def home(request):
+    access_token = request.session.get("access_token", "")
+    return render(request, "home.html", {"access_token": access_token})
+def dashboard(request):
+    # Get the Spotify account info if connected
+    spotify_account = None
     if request.user.is_authenticated:
         try:
             spotify_account = SpotifyAccount.objects.get(user=request.user)
-            spotify_account.delete()  # Remove the account info
         except SpotifyAccount.DoesNotExist:
-            pass
-    return redirect('dashboard')
+            spotify_account = None
 
-def my_data_view(request):
-    data = {"message": "Hello from Django!"}
-    return JsonResponse(data)
+    return render(request, 'dashboard.html', {'spotify_account': spotify_account})
+def register(request):
+    """Handle user registration."""
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Log the user in after registration
+            return redirect('dashboard')  # Redirect to dashboard after registering
+    else:
+        form = SignUpForm()
 
+    return render(request, 'register.html', {'form': form})
+
+#might be able to delete
 def spotify_authorize(request):
     spotify_auth_url = "https://accounts.spotify.com/authorize"
     params = {
@@ -144,29 +146,3 @@ def spotify_authorize(request):
     }
     auth_url = f"{spotify_auth_url}?{urllib.parse.urlencode(params)}"
     return redirect(auth_url)
-
-def spotify_callback(request):
-    code = request.GET.get("code")
-    token_url = "https://accounts.spotify.com/api/token"
-
-    response = requests.post(token_url, data={
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": settings.SPOTIFY_REDIRECT_URI,
-        "client_id": settings.SPOTIFY_CLIENT_ID,
-        "client_secret": settings.SPOTIFY_CLIENT_SECRET,
-    })
-
-    if response.status_code == 200:
-        tokens = response.json()
-        access_token = tokens["access_token"]
-        refresh_token = tokens["refresh_token"]
-
-        # Save tokens in the session (or database) for later use
-        request.session["access_token"] = access_token
-        request.session["refresh_token"] = refresh_token
-
-        # Redirect to another view, or render a template
-        return redirect("home")  # Change 'home' to your target URL
-    else:
-        return redirect("error")  # Handle errors gracefully

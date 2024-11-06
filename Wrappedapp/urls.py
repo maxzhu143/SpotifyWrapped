@@ -13,12 +13,10 @@ urlpatterns = [
     path('home/', views.home, name='home'),  # Home page route
     path("your-django-endpoint/", views.my_data_view, name="my_data_view"),
     path('spotify-authorize/', views.spotify_authorize, name='spotify_authorize'),
-    path('spotify-callback/', views.spotify_callback, name='spotify_callback'),
     path('dashboard/', views. dashboard, name='dashboard'),
-    path('spotify/disconnect/', views.spotify_disconnect, name='spotify_disconnect'),
     path('spot_login/', views.spot_login, name='spot_login'),
     path('callback/', views.callback, name='callback'),
     path('top_songs/', views.top_songs, name='top_songs'),
-    path('unlink/', views.unlink, name='unlink'),  # New unlink URL
+    path('unlink/', views.unlink, name='unlink'),
 
 ]
