@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spotify Dashboard</title>
+</head>
+<body>
+    {% if is_connected %}
+        <h1>Welcome, {{ user_name }}!</h1>
+        <p>Your favorite genre: {{ top_genre }}</p>
+        <p>Total listening time this year: {{ total_listening_time }} minutes</p>
+        <h2>Your Top 5 Songs This Year:</h2>
+        <ul>
+            {% for track in top_tracks %}
+                <li>{{ track.name }} by {{ track.artist }}</li>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'spotify_logout' %}">Log out of Spotify</a>
+    {% else %}
+        <h1>Welcome to the Spotify Dashboard</h1>
+        <p>To see your Spotify stats, please log in.</p>
+        <a href="{% url 'spotify_login' %}">Log in with Spotify</a>
+    {% endif %}
+</body>
+</html>

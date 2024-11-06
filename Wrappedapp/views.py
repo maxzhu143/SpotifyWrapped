@@ -10,9 +10,14 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 from django.http import JsonResponse
 
-from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_protect
 import logging
+
+import requests
+from django.conf import settings
+from django.shortcuts import redirect, render
+from django.http import HttpResponse
+from django.contrib.sessions.models import Session
 
 # Initialize logger
 logger = logging.getLogger(__name__)
@@ -26,6 +31,74 @@ redirect_uri = settings.SPOTIFY_REDIRECT_URI
 # Create your views here.
 # Wrappedapp/views.py
 
+# Step 1: Spotify Login
+def spotify_login(request):
+    scope = "user-top-read"
+    auth_url = (
+        "https://accounts.spotify.com/authorize"
+        f"?client_id={settings.SPOTIFY_CLIENT_ID}"
+        f"&response_type=code&redirect_uri={settings.SPOTIFY_REDIRECT_URI}"
+        f"&scope={scope}"
+    )
+    return redirect(auth_url)
+
+
+# Step 2: Spotify Callback
+def spotify_callback(request):
+    code = request.GET.get('code')
+    token_url = "https://accounts.spotify.com/api/token"
+    payload = {
+        'grant_type': 'authorization_code',
+        'code': code,
+        'redirect_uri': settings.SPOTIFY_REDIRECT_URI,
+        'client_id': settings.SPOTIFY_CLIENT_ID,
+        'client_secret': settings.SPOTIFY_CLIENT_SECRET,
+    }
+    response = requests.post(token_url, data=payload)
+    data = response.json()
+
+    access_token = data.get('access_token')
+    if access_token:
+        request.session['spotify_access_token'] = access_token
+    return redirect('homepage')
+
+
+# Step 3: Spotify Logout
+def spotify_logout(request):
+    request.session.pop('spotify_access_token', None)
+    return redirect('homepage')
+
+
+# Step 4: Homepage to Display Spotify Data
+def homepage(request):
+    access_token = request.session.get('spotify_access_token')
+    if not access_token:
+        return render(request, 'homepage.html', {'is_connected': False})
+
+    # Fetch Spotify user data
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    # Get the user's profile
+    user_profile = requests.get("https://api.spotify.com/v1/me", headers=headers).json()
+    user_name = user_profile.get('display_name', 'Spotify User')
+
+    # Get the top 5 tracks
+    top_tracks_url = "https://api.spotify.com/v1/me/top/tracks?limit=5&time_range=short_term"
+    top_tracks = requests.get(top_tracks_url, headers=headers).json().get('items', [])
+    top_tracks = [{'name': track['name'], 'artist': track['artists'][0]['name']} for track in top_tracks]
+
+    # Get the top genre and total listening time (approximation, as Spotify doesn't directly provide listening time)
+    top_genre = top_tracks[0]['artist'] if top_tracks else "Unknown Genre"
+    total_time = sum(track['duration_ms'] for track in top_tracks) // 60000  # in minutes
+
+    context = {
+        'is_connected': True,
+        'user_name': user_name,
+        'top_tracks': top_tracks,
+        'top_genre': top_genre,
+        'total_listening_time': total_time,
+    }
+    return render(request, 'homepage.html', context)
 def home(request):
     access_token = request.session.get("access_token", "")
     return render(request, "home.html", {"access_token": access_token})
@@ -46,6 +119,8 @@ def register(request):
 
 @csrf_protect
 def unlink(request):
+    print("This is so fucked")
+    print('spotify_token' in request.session)
     if request.method == 'POST':
         request.session.flush()
         return redirect('spot_login')  # Redirect to spot_login without triggering re-auth
@@ -70,24 +145,30 @@ def dashboard(request):
 # PLEASE DON'T TOUCH OR I'LL KILL MYSELF
 def spot_login(request):
     # Redirect to top_songs if already authenticated
+    print(request.session.get('access_token'))
+
     print("Login START")
 
     if request.session.get('access_token'):
         print("SIGNED IN")
         return redirect('top_songs')
 
-    print(request.GET.get('login'))
+    print(request.GET.get('spot_login'))
 
     # Only proceed to Spotify authorization if 'login=true' is explicitly requested
-    if request.GET.get('login') == 'true':
-        auth_url = (
-            'https://accounts.spotify.com/authorize'
-            '?response_type=code'
-            f'&client_id={settings.SPOTIFY_CLIENT_ID}'
-            f'&redirect_uri={settings.SPOTIFY_REDIRECT_URI}'
-            '&scope=user-top-read'
-        )
-        return redirect(auth_url)
+
+    auth_url = (
+        'https://accounts.spotify.com/authorize'
+        '?response_type=code'
+        f'&client_id={settings.SPOTIFY_CLIENT_ID}'
+        f'&redirect_uri={settings.SPOTIFY_REDIRECT_URI}'
+        '&scope=user-top-read'
+    )
+
+    request.session.flush()
+
+    return redirect(auth_url)
+
 
     # If no login parameter is set, redirect to top_songs or another page as needed
     return redirect('top_songs')
@@ -95,6 +176,7 @@ def spot_login(request):
 
 
 def callback(request):
+    print("CALLBACK")
     # Step 2: Get the authorization code from the redirect URL
     code = request.GET.get('code')
 
@@ -166,29 +248,3 @@ def spotify_authorize(request):
     }
     auth_url = f"{spotify_auth_url}?{urllib.parse.urlencode(params)}"
     return redirect(auth_url)
-
-def spotify_callback(request):
-    code = request.GET.get("code")
-    token_url = "https://accounts.spotify.com/api/token"
-
-    response = requests.post(token_url, data={
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": settings.SPOTIFY_REDIRECT_URI,
-        "client_id": settings.SPOTIFY_CLIENT_ID,
-        "client_secret": settings.SPOTIFY_CLIENT_SECRET,
-    })
-
-    if response.status_code == 200:
-        tokens = response.json()
-        access_token = tokens["access_token"]
-        refresh_token = tokens["refresh_token"]
-
-        # Save tokens in the session (or database) for later use
-        request.session["access_token"] = access_token
-        request.session["refresh_token"] = refresh_token
-
-        # Redirect to another view, or render a template
-        return redirect("home")  # Change 'home' to your target URL
-    else:
-        return redirect("error")  # Handle errors gracefully
