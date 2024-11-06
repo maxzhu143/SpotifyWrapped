@@ -19,6 +19,7 @@
             color: #1DB954; /* Spotify green */
             margin-top: 20px;
         }
+
         .user-info {
             margin-top: 20px;
             color: #B3B3B3;
@@ -73,29 +74,33 @@
     </style>
 </head>
 <body>
-
+    {% if user_name %}
     <!-- User information section -->
-    <div class="user-info">
-        <p>Connected as: {{ user_name }}</p>
-        <form action="{% url 'unlink' %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="unlink-button">Unlink Account</button>
-        </form>
-    </div>
+        <div class="user-info">
+            <p>Connected as: {{ user_name }}</p>
+            <form action="{% url 'unlink' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="unlink-button">Unlink Account</button>
+            </form>
+        </div>
 
-    <h1>Your Top 10 Songs</h1>
+        <h1>Your Top 10 Songs</h1>
 
-    <ul class="song-list">
-        {% for song in songs %}
-            <li class="song-item">
-                <img src="{{ song.cover }}" alt="{{ song.name }}">
-                <div class="song-details">
-                    <p class="song-name">{{ song.name }}</p>
-                    <p class="song-artist">{{ song.artist }} - {{ song.album }}</p>
-                </div>
-            </li>
-        {% endfor %}
-    </ul>
+        <ul class="song-list">
+            {% for song in songs %}
+                <li class="song-item">
+                    <img src="{{ song.cover }}" alt="{{ song.name }}">
+                    <div class="song-details">
+                        <p class="song-name">{{ song.name }}</p>
+                        <p class="song-artist">{{ song.artist }} - {{ song.album }}</p>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <h1>Connect Your Spotify Account</h1>
+        <a href="{% url 'spot_login' %}" class="unlink-button">Link Spotify Account</a>
+    {% endif %}
 
 </body>
 </html>

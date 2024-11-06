@@ -19,7 +19,6 @@ client_id = settings.SPOTIFY_CLIENT_ID
 client_secret = settings.SPOTIFY_CLIENT_SECRET
 redirect_uri = settings.SPOTIFY_REDIRECT_URI
 
-loggedIn = True
 
 # Create your views here.
 # Wrappedapp/views.py
@@ -28,7 +27,9 @@ loggedIn = True
 
 def spot_login(request):
     # Step 1: Redirect the user to Spotify's authorization page
-    loggedIn = True
+    print(request.session.keys())
+    #return redirect('top_songs')
+
     auth_url = (
         'https://accounts.spotify.com/authorize'
         '?response_type=code'
@@ -38,44 +39,43 @@ def spot_login(request):
     )
     return redirect(auth_url)
 
-
 def callback(request):
-    print("spotify callback")
-    code = request.GET.get("code")
-    token_url = "https://accounts.spotify.com/api/token"
+    print("CALLBACK")
+    # Step 2: Get the authorization code from the redirect URL
+    code = request.GET.get('code')
 
-    response = requests.post(token_url, data={
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": settings.SPOTIFY_REDIRECT_URI,
-        "client_id": settings.SPOTIFY_CLIENT_ID,
-        "client_secret": settings.SPOTIFY_CLIENT_SECRET,
-    })
+    # Step 3: Exchange the authorization code for an access token
+    token_url = 'https://accounts.spotify.com/api/token'
+    token_data = {
+        'grant_type': 'authorization_code',
+        'code': code,
+        'redirect_uri': settings.SPOTIFY_REDIRECT_URI,
+        'client_id': settings.SPOTIFY_CLIENT_ID,
+        'client_secret': settings.SPOTIFY_CLIENT_SECRET,
+    }
 
-    if response.status_code == 200:
-        tokens = response.json()
-        access_token = tokens["access_token"]
-        refresh_token = tokens["refresh_token"]
+    response = requests.post(token_url, data=token_data)
+    token_info = response.json()
+    request.session['access_token'] = token_info.get('access_token')
 
-        # Save tokens in the session (or database) for later use
-        request.session["access_token"] = access_token
-        request.session["refresh_token"] = refresh_token
-
-        # Redirect to another view, or render a template
-        return redirect("top_songs")  # Change 'home' to your target URL
-    else:
-        return redirect("spot_login")  # Handle errors gracefully
+    return redirect('top_songs')
 
 @csrf_exempt  # CSRF protection is already handled in the form
 def unlink(request):
-    loggedIn = False
     print("UNLINK")
     print(request)
     if request.method == 'POST':
+        print(request.session.keys())
         print("Currently Unlinking")
         # Clear the session to log the user out of Spotify
         request.session.pop('access_token', None)
+        print(request.session.keys())
+
         request.session.flush()
+        print(request.session.keys())
+
+        request.session.clear()
+
         return redirect('spot_login')  # Redirect to login page or homepage
 
 
@@ -86,6 +86,7 @@ def my_data_view(request):
 def top_songs(request):
     access_token = request.session.get('access_token')
     if not access_token:
+        print("access TOKEN NEEDED")
         return redirect('spot_login')
 
     # Get user profile information for the display name
