@@ -10,7 +10,7 @@
         <p>Connected to Spotify as: {{ spotify_account.user.username }}</p>
         <a href="{% url 'spotify_disconnect' %}" class="btn">Unlink Spotify Account</a>
     {% else %}
-        <a href="{% url 'spotify_connect' %}" class="btn">Link Spotify Account</a>
+        <a href="{% url 'spot_login' %}" class="btn">Link Spotify Account</a>
     {% endif %}
 {% endblock %}
 
