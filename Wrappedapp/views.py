@@ -76,12 +76,6 @@ def unlink(request):
         print("hey")
         return redirect('dashboard')  # Redirect to login page or homepage
 
-
-def my_data_view(request):
-    data = {"message": "Hello from Django!"}
-    return JsonResponse(data)
-
-
 def top_songs(request):
     access_token = request.session.get('access_token')
     if not access_token:
