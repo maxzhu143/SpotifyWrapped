@@ -12,6 +12,7 @@ from django.http import JsonResponse
 
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -69,13 +70,10 @@ def unlink(request):
         print("Currently Unlinking")
         # Clear the session to log the user out of Spotify
         request.session.pop('access_token', None)
-        print(request.session.keys())
-
-        request.session.flush()
-        print(request.session.keys())
-
-        request.session.clear()
-
+        request.session.pop('access_token', None)
+        request.session.pop('refresh_token', None)
+        request.session.pop('expires_at', None)
+        print("hey")
         return redirect('dashboard')  # Redirect to login page or homepage
 
 
@@ -124,6 +122,8 @@ def top_songs(request):
 def home(request):
     access_token = request.session.get("access_token", "")
     return render(request, "home.html", {"access_token": access_token})
+
+@login_required(login_url='login')
 def dashboard(request):
     # Get the Spotify account info if connected
     spotify_account = None
