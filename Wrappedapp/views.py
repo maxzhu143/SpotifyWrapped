@@ -76,40 +76,51 @@ def unlink(request):
 
         request.session.clear()
 
-        return redirect('spot_login')  # Redirect to login page or homepage
+        return redirect('dashboard')  # Redirect to login page or homepage
 
 
 def my_data_view(request):
     data = {"message": "Hello from Django!"}
     return JsonResponse(data)
 
+
 def top_songs(request):
     access_token = request.session.get('access_token')
     if not access_token:
-        print("access TOKEN NEEDED")
+        print("Access token is needed")
         return redirect('spot_login')
 
-    # Get user profile information for the display name
     headers = {'Authorization': f'Bearer {access_token}'}
+
+    # Get user profile information for the display name
     profile_url = 'https://api.spotify.com/v1/me'
     profile_response = requests.get(profile_url, headers=headers)
-    profile_data = profile_response.json()
-    user_name = profile_data.get('display_name', 'Spotify User')
+    if profile_response.status_code == 200:
+        profile_data = profile_response.json()
+        user_name = profile_data.get('display_name', 'Spotify User')
+    else:
+        print("Failed to fetch user profile:", profile_response.status_code, profile_response.text)
+        user_name = 'Spotify User'
 
     # Fetch top tracks
     top_tracks_url = 'https://api.spotify.com/v1/me/top/tracks?limit=10'
     tracks_response = requests.get(top_tracks_url, headers=headers)
-    tracks_data = tracks_response.json()
+    if tracks_response.status_code == 200:
+        tracks_data = tracks_response.json()
 
-    # Extract song details
-    songs = [{
-        'name': track['name'],
-        'artist': track['artists'][0]['name'],
-        'album': track['album']['name'],
-        'cover': track['album']['images'][0]['url']
-    } for track in tracks_data['items']]
+        # Extract song details if there are items in the response
+        songs = [{
+            'name': track['name'],
+            'artist': track['artists'][0]['name'],
+            'album': track['album']['name'],
+            'cover': track['album']['images'][0]['url']
+        } for track in tracks_data.get('items', [])]  # Safely handle missing 'items' key
+    else:
+        print("Failed to fetch top tracks:", tracks_response.status_code, tracks_response.text)
+        songs = []  # Provide an empty list as a fallback
 
     return render(request, 'top_songs.html', {'songs': songs, 'user_name': user_name})
+
 def home(request):
     access_token = request.session.get("access_token", "")
     return render(request, "home.html", {"access_token": access_token})
