@@ -111,3 +111,63 @@ def login_view(request):
         form = AuthenticationForm()
 
     return render(request, 'login.html', {'form': form})
+
+
+from googletrans import Translator
+
+translator = Translator()
+
+
+def translate_text(request):
+    if request.method == 'POST':
+        text = request.POST.get('text')
+        target_lang = request.POST.get('lang')
+
+        try:
+            translation = translator.translate(text, dest=target_lang)
+            return JsonResponse({'translated_text': translation.text})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+
+def translate_batch(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            texts = data.get('texts', [])
+            target_lang = data.get('lang')
+
+            # Initialize results dictionary
+            translations = {}
+
+            # Check cache first
+            for text in texts:
+                cache_key = f"trans_{target_lang}_{text}"
+                cached_translation = cache.get(cache_key)
+                if cached_translation:
+                    translations[text] = cached_translation
+
+            # Collect texts that need translation
+            texts_to_translate = [text for text in texts if text not in translations]
+
+            if texts_to_translate:
+                # Batch translate remaining texts
+                translated = translator.translate(texts_to_translate, dest=target_lang)
+
+                # If single translation, convert to list
+                if not isinstance(translated, list):
+                    translated = [translated]
+
+                # Add new translations to results and cache
+                for i, text in enumerate(texts_to_translate):
+                    translation = translated[i].text
+                    translations[text] = translation
+                    cache_key = f"trans_{target_lang}_{text}"
+                    cache.set(cache_key, translation, timeout=86400)  # Cache for 24 hours
+
+            return JsonResponse({'translations': translations})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)

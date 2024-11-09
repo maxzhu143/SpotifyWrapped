@@ -49,6 +49,23 @@
             box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.2);
         }
 
+        .language-selector {
+            margin-left: auto;
+        }
+
+        .language-selector select {
+            padding: 5px;
+            border-radius: 5px;
+            background-color: #1db954; /* Matches the navbar */
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .language-selector select:focus {
+            outline: none;
+        }
+
         /* Responsive Adjustments for Smaller Screens */
         @media (max-width: 600px) {
             .navbar h1 {
@@ -79,29 +96,179 @@
 <body>
 
   <!-- Navigation bar -->
-  <nav class="navbar">
-    <a href="{% url 'home' %}" class="logo">
-        <h1>Spotify Wrapped</h1>
-    </a>
-    <div class="auth-links">
-        {% if user.is_authenticated %}
-            <a href="{% url 'dashboard' %}" class="btn">Dashboard</a>
-            <form method="POST" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="btn">Log Out</button>
-            </form>
-        {% else %}
-            <a href="{% url 'register' %}" class="btn">Sign Up</a>
-            <a href="{% url 'login' %}" class="btn">Log In</a>
-        {% endif %}
-    </div>
+<nav class="navbar">
+  <a href="{% url 'home' %}" class="logo">
+    <h1 class="translatable logo">Spotify Wrapped</h1>
+  </a>
+  <div class="auth-links">
+      <!-- Language Selector positioned to the left of auth buttons -->
+      <div class="language-selector">
+        <select id="languageSelect">
+          <option value="en">English</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+        </select>
+      </div>
+
+      {% if user.is_authenticated %}
+          <a href="{% url 'dashboard' %}" class="btn">Dashboard</a>
+          <form method="POST" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn">Log Out</button>
+          </form>
+      {% else %}
+          <a href="{% url 'register' %}" class="btn">Sign Up</a>
+          <a href="{% url 'login' %}" class="btn">Log In</a>
+      {% endif %}
+  </div>
 </nav>
+
 
 
   <!-- Main content area for other templates -->
   <main>
       {% block content %}{% endblock %}
   </main>
+<script>
+    // Check for a saved language on page load and apply it
+document.addEventListener('DOMContentLoaded', () => {
+    const savedLanguage = localStorage.getItem('selectedLanguage');
+    const languageSelect = document.getElementById('languageSelect');
+
+    if (savedLanguage) {
+        languageSelect.value = savedLanguage;
+        translatePage(savedLanguage); // Function to handle translations based on the selected language
+    }
+});
+
+// Save language selection and apply translation
+document.getElementById('languageSelect').addEventListener('change', function() {
+        const selectedLanguage = this.value;
+        const textElements = document.querySelectorAll('.translatable');
+
+        console.log("Selected language:", selectedLanguage);
+
+        // Process each element with the 'translatable' class
+        textElements.forEach((element) => {
+            console.log("Translating:", element.innerText.trim());
+            fetch('/translate/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: new URLSearchParams({
+                    'text': element.innerText.trim(),
+                    'lang': selectedLanguage
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.translated_text) {
+                    console.log("Translated text for:", element.innerText.trim(), "->", data.translated_text);
+                    element.innerText = data.translated_text;
+                } else {
+                    console.error("Translation error:", data.error);
+                }
+            })
+            .catch(error => console.error("Request error:", error));
+        });
+
+        // Special cases for specific static text
+        const specialElements = [
+            { selector: 'h1.logo', text: 'Spotify Wrapped' },
+            { selector: `a[href="${'{% url "register" %}'}"]`, text: 'Sign Up' },
+            { selector: `a[href="${'{% url "login" %}'}"]`, text: 'Log In' }
+        ];
+
+        specialElements.forEach(item => {
+            const element = document.querySelector(item.selector);
+            if (element) {
+                console.log("Translating specific element:", item.text);
+                fetch('/translate/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: new URLSearchParams({
+                        'text': item.text,
+                        'lang': selectedLanguage
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.translated_text) {
+                        console.log("Translated specific text for:", item.text, "->", data.translated_text);
+                        element.innerText = data.translated_text;
+                    } else {
+                        console.error("Translation error:", data.error);
+                    }
+                })
+                .catch(error => console.error("Request error:", error));
+            }
+        });
+
+        // Special case for "Your Favorite Artists" translation to Spanish
+    const favoriteArtistsElement = [...textElements].find(element =>
+        element.innerText.trim().toLowerCase() === "your favorite artists".toLowerCase()
+    );
+
+    if (favoriteArtistsElement && selectedLanguage === "es") {
+        // Directly set Spanish translation without requesting from server
+        favoriteArtistsElement.innerText = "Tus artistas favoritos";
+    } else if (favoriteArtistsElement) {
+        // Default translation logic for other languages
+        fetch('/translate/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: new URLSearchParams({
+                'text': favoriteArtistsElement.innerText.trim(),
+                'lang': selectedLanguage
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.translated_text) {
+                favoriteArtistsElement.innerText = data.translated_text;
+            } else {
+                console.error("Translation error:", data.error);
+            }
+        })
+        .catch(error => console.error("Request error:", error));
+    }
+
+    // Process remaining elements with the 'translatable' class
+    textElements.forEach((element) => {
+        if (element !== favoriteArtistsElement) { // Avoid translating "Your Favorite Artists" again
+            fetch('/translate/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: new URLSearchParams({
+                    'text': element.innerText.trim(),
+                    'lang': selectedLanguage
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.translated_text) {
+                    element.innerText = data.translated_text;
+                } else {
+                    console.error("Translation error:", data.error);
+                }
+            })
+            .catch(error => console.error("Request error:", error));
+        }
+    });
+});
+
+</script>
 
 </body>
 </html>
