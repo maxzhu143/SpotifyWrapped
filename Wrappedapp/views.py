@@ -1,27 +1,18 @@
 """Views for Wrappedapp."""
 import urllib.parse
 from django.contrib.auth import login
-
-from .forms import SignUpForm
-
-from .models import SpotifyAccount  # Adjust as per your model for SpotifyAccount
-import requests
+from .models import SpotifyAccount
 from django.conf import settings
-from django.shortcuts import redirect, render
-from django.http import JsonResponse
-
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-import requests
 from .forms import SignUpForm
-from decouple import config
 import openai
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.contrib.auth.decorators import login_required
+import requests
 
+# THIS IS HOW YOU GET ACCESS TOKENS: access_token = request.session.get('access_token')
 
 
 
@@ -231,3 +222,36 @@ def describe_user_tracks(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@login_required
+def stats_view(request):
+    access_token = request.session.get('access_token')
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    # Fetch user’s top artists with cover images and Spotify URLs
+    top_artists_response = requests.get("https://api.spotify.com/v1/me/top/artists", headers=headers)
+    top_artists = top_artists_response.json().get('items', []) if top_artists_response.status_code == 200 else []
+
+    # Fetch user’s top tracks for covers, URLs, and duration calculation
+    top_tracks_response = requests.get("https://api.spotify.com/v1/me/top/tracks", headers=headers)
+    top_tracks = top_tracks_response.json().get('items', []) if top_tracks_response.status_code == 200 else []
+
+    # Calculate total listening time from top tracks' durations
+    total_listening_time_ms = sum(track['duration_ms'] for track in top_tracks)
+    total_listening_time_hours = total_listening_time_ms // (1000 * 60 * 60)
+    total_listening_time_minutes = (total_listening_time_ms // (1000 * 60)) % 60
+
+    # Include album art and Spotify URLs in top tracks and artists if available
+    for track in top_tracks:
+        track['album_cover'] = track['album']['images'][0]['url'] if track['album']['images'] else None
+        track['spotify_url'] = track['external_urls']['spotify']
+    for artist in top_artists:
+        artist['cover_image'] = artist['images'][0]['url'] if artist['images'] else None
+        artist['spotify_url'] = artist['external_urls']['spotify']
+
+    context = {
+        'top_artists': top_artists,
+        'top_tracks': top_tracks,
+        'total_listening_time': f"{total_listening_time_hours} hours, {total_listening_time_minutes} minutes",
+    }
+    return render(request, 'stats.html', context)

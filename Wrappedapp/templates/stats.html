@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <style>
+    .stats-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 800px;
+      margin: auto;
+    }
+    .stat-section {
+      margin: 20px 0;
+      text-align: center;
+      width: 100%;
+    }
+    .stat-section h2 {
+      font-size: 1.8em;
+      color: #1db954;
+    }
+    .cover-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+    .cover-item {
+      position: relative;
+      width: 150px;
+      overflow: hidden;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+    .cover-item img {
+      width: 100%;
+      border-radius: 10px;
+    }
+    .cover-item:hover {
+      transform: scale(1.1);
+    }
+    .track-info, .artist-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #333;
+    }
+    .stat-section p {
+      font-size: 1.2em;
+    }
+  </style>
+
+  <div class="stats-container">
+    <h1>Your Spotify Stats</h1>
+
+    <div class="stat-section">
+      <h2>Total Listening Time</h2>
+      <p>{{ total_listening_time }}</p>
+    </div>
+
+    <div class="stat-section">
+      <h2>Top Artists</h2>
+      <div class="cover-grid">
+        {% for artist in top_artists %}
+          <a href="{{ artist.spotify_url }}" target="_blank" class="cover-item artist-info">
+            <img src="{{ artist.cover_image }}" alt="{{ artist.name }} cover">
+            <span>{{ artist.name }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="stat-section">
+      <h2>Top Tracks</h2>
+      <div class="cover-grid">
+        {% for track in top_tracks %}
+          <a href="{{ track.spotify_url }}" target="_blank" class="cover-item track-info">
+            <img src="{{ track.album_cover }}" alt="{{ track.name }} cover">
+            <span>{{ track.name }}</span>
+            <small>{{ track.artists.0.name }}</small>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
