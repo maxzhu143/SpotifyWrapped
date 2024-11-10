@@ -205,7 +205,6 @@ def spotify_callback(request):
     else:
         return redirect("error")  # Handle errors gracefully
 
-
 @csrf_exempt
 def describe_user_tracks(request):
     if request.method == "POST":
