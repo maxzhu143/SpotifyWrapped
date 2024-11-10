@@ -10,6 +10,9 @@ from django.shortcuts import render, redirect
 import requests
 from .forms import SignUpForm
 from decouple import config
+import openai
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 
@@ -17,7 +20,7 @@ from decouple import config
 
 
 
-
+openai.api_key = settings.OPENAI_API_KEY
 client_id = settings.SPOTIFY_CLIENT_ID
 client_secret = settings.SPOTIFY_CLIENT_SECRET
 redirect_uri = settings.SPOTIFY_REDIRECT_URI
@@ -48,6 +51,9 @@ def register(request):
 def dashboard(request):
     """Display user dashboard."""
     return render(request, 'dashboard.html')
+
+def contact_developers(request):
+    return render(request, 'contact_developers.html')
 
 def spotify_connect(request):
     """Connect to Spotify API and handle authorization."""
@@ -100,3 +106,31 @@ def spotify_callback(request):
         return redirect("home")  # Change 'home' to your target URL
     else:
         return redirect("error")  # Handle errors gracefully
+
+
+@csrf_exempt
+def describe_user_tracks(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            track_names = data.get('trackNames', [])
+
+            # Create a prompt for the LLM using the track names
+            prompt = f"Based on the top tracks that include {', '.join(track_names)}, " \
+                     "describe how this user might act or think in terms of personality and music preferences."
+
+            # Call OpenAI API to generate the description
+            response = openai.Completion.create(
+                model="text-davinci-003",
+                prompt=prompt,
+                max_tokens=100
+            )
+            description = response.choices[0].text.strip()
+
+            # Return the description to the frontend
+            return JsonResponse({'description': description})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
