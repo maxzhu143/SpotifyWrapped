@@ -19,5 +19,6 @@ urlpatterns = [
     path('callback/', views.callback, name='callback'),
     path('top_songs/', views.top_songs, name='top_songs'),
     path('unlink/', views.unlink, name='unlink'),
+    path('stats/', views.stats_view, name='stats'),
 
 ]
