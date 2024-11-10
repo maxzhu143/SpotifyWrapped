@@ -86,6 +86,7 @@
       {% if user.is_authenticated %}
         <a href="{% url 'dashboard' %}" class="btn">Dashboard</a>
           <a href="{% url 'contact_developers' %}">Contact the Developers</a>
+          <a href="{% url 'wrapped_carousel' %}" class="btn btn-primary">Create Spotify Wrapped</a>
 
         <form method="POST" action="{% url 'logout' %}">
           {% csrf_token %}
@@ -94,6 +95,7 @@
       {% else %}
         <a href="{% url 'register' %}" class="btn">Sign Up</a>
         <a href="{% url 'login' %}" class="btn">Log In</a>
+          <a href="{% url 'wrapped_carousel' %}" class="btn btn-primary">Create Spotify Wrapped</a>
       {% endif %}
     </div>
   </nav>

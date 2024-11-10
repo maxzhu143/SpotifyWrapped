@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load bootstrap5 %}
+
+{% block title %}Spotify Wrapped{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- "Create Spotify Wrapped" Button -->
+    <div class="text-center mb-4">
+        <a href="{% url 'wrapped_carousel' %}" class="btn btn-primary">Create Spotify Wrapped</a>
+    </div>
+
+    <!-- Carousel -->
+    <div id="spotifyWrappedCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+
+            <!-- First Slide: Content from stats.html -->
+            <div class="carousel-item active">
+                {% include "stats.html" %}
+            </div>
+
+            <!-- Other Slides -->
+            <div class="carousel-item">
+                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
+                    <h3>Slide 2 Content</h3>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
+                    <h3>Slide 3 Content</h3>
+                </div>
+            </div>
+            <!-- Add more slides as needed for a total of 8 -->
+            <div class="carousel-item">
+                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
+                    <h3>Slide 4 Content</h3>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
+                    <h3>Slide 5 Content</h3>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
+                    <h3>Slide 6 Content</h3>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
+                    <h3>Slide 7 Content</h3>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
+                    <h3>Slide 8 Content</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carousel Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#spotifyWrappedCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#spotifyWrappedCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+{% endblock %}
