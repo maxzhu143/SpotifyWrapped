@@ -223,6 +223,9 @@ def describe_user_tracks(request):
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+def wrapped_carousel(request):
+    return render(request, 'wrapped_carousel.html')
+
 @login_required
 def stats_view(request):
     access_token = request.session.get('access_token')

@@ -65,6 +65,8 @@
                 text-align: center;
             }
         }
+                {% load bootstrap5 %}
+        {% bootstrap_css %}
     </style>
 </head>
 <!DOCTYPE html>
@@ -77,7 +79,7 @@
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-
+    {% bootstrap_javascript %}
   <!-- Navigation bar -->
   <nav class="navbar">
     <a href="{% url 'home' %}" class="logo">
