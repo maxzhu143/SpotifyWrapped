@@ -1,12 +1,56 @@
-<!-- contact_developers.html -->
-
 <!DOCTYPE html>
 <html>
 <head>
     <title>Contact the Developers</title>
+    <style>
+        body {
+            background-color: #191414; /* Spotify black */
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+            text-align: center;
+        }
+
+        .contact-container {
+            background-color: #282828; /* Dark gray for a card-like effect */
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+            max-width: 600px;
+            width: 80%;
+        }
+
+        .contact-container h1 {
+            color: #1DB954; /* Spotify green */
+            font-size: 2em;
+            margin-bottom: 1rem;
+        }
+
+        .contact-container p {
+            font-size: 1.2em;
+            margin: 0.5rem 0;
+        }
+
+        .contact-container a {
+            color: #1DB954; /* Spotify green */
+            text-decoration: none;
+        }
+
+        .contact-container a:hover {
+            color: #1ed760; /* Lighter green on hover */
+        }
+    </style>
 </head>
 <body>
-    <h1>Contact the Developers</h1>
-    <p>For inquiries, please reach out via email at developers@example.com</p>
+    <div class="contact-container">
+        <h1>Contact the Developers</h1>
+        <p>For inquiries, please reach out via email at <a href="mailto:developers@example.com">developers@example.com</a></p>
+    </div>
 </body>
 </html>
