@@ -11,7 +11,6 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth.decorators import login_required
 import requests
-from django.contrib.auth import logout
 
 # THIS IS HOW YOU GET ACCESS TOKENS: access_token = request.session.get('access_token')
 
@@ -224,7 +223,8 @@ def describe_user_tracks(request):
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
-
+def wrapped_carousel(request):
+    return render(request, 'wrapped_carousel.html')
 
 @login_required
 def stats_view(request):
@@ -258,8 +258,3 @@ def stats_view(request):
         'total_listening_time': f"{total_listening_time_hours} hours, {total_listening_time_minutes} minutes",
     }
     return render(request, 'stats.html', context)
-
-
-def custom_logout_view(request):
-    logout(request)
-    return render(request, 'logout.html')
