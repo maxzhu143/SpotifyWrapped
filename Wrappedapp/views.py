@@ -1,6 +1,6 @@
 """Views for Wrappedapp."""
 import urllib.parse
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from .models import SpotifyAccount
 from django.conf import settings
 from django.http import JsonResponse
@@ -258,3 +258,7 @@ def stats_view(request):
         'total_listening_time': f"{total_listening_time_hours} hours, {total_listening_time_minutes} minutes",
     }
     return render(request, 'stats.html', context)
+
+def custom_logout_view(request):
+    logout(request)
+    return render(request, 'logout.html')
