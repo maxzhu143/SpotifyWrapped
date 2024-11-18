@@ -10,7 +10,9 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('dashboard/', views.dashboard, name='dashboard'),  # Dashboard route
-    path('logout/', views.custom_logout_view, name='logout'),    # Custom logout page
+    path('logout/', views.custom_logout_view, name='logout'), # Custom logout page
+    path('top_song/', views.top_song_view, name='top_song'),
+
     path('home/', views.home, name='home'),  # Home page route
     path('spotify-authorize/', views.spotify_authorize, name='spotify_authorize'),
     path('spotify-callback/', views.spotify_callback, name='spotify_callback'),

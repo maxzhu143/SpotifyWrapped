@@ -269,3 +269,30 @@ def stats_view(request):
 def custom_logout_view(request):
     logout(request)
     return render(request, 'logout.html')
+@login_required
+def top_song_view(request):
+    access_token = request.session.get('access_token')
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    # Fetch user's top tracks
+    top_tracks_response = requests.get("https://api.spotify.com/v1/me/top/tracks", headers=headers)
+    top_tracks = top_tracks_response.json().get('items', []) if top_tracks_response.status_code == 200 else []
+
+    # Extract the top track
+    top_track = top_tracks[0] if top_tracks else None
+    if top_track:
+        total_minutes_listened = top_track['duration_ms'] // (1000 * 60)
+
+        # Prepare data for the template
+        track_data = {
+            'name': top_track['name'],
+            'artist': ', '.join(artist['name'] for artist in top_track['artists']),
+            'album_cover': top_track['album']['images'][0]['url'] if top_track['album']['images'] else None,
+            'spotify_url': top_track['external_urls']['spotify'],
+            'total_minutes_listened': total_minutes_listened,
+        }
+    else:
+        track_data = None
+
+    context = {'track_data': track_data}
+    return render(request, 'top_song.html', context)
