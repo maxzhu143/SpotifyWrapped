@@ -1,3 +1,73 @@
+<head>
+    <style>
+        /* Navbar Styling */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 20px; /* Increase top and bottom padding to make it taller */
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #1db954; /* Spotify green */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar h1 {
+            color: #ffffff;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        /* Auth Links Styling */
+        .auth-links {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* Button Styles */
+        .auth-links .btn {
+            background-color: #1db954;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Hover Effect for Buttons */
+        .auth-links .btn:hover {
+            background-color: #1ed760;
+            transform: scale(1.05);
+            box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive Adjustments for Smaller Screens */
+        @media (max-width: 600px) {
+            .navbar h1 {
+                font-size: 18px;
+            }
+            .auth-links {
+                flex-direction: column;
+                gap: 8px;
+                width: 100%;
+                align-items: flex-start;
+            }
+            .auth-links .btn {
+                width: 100%; /* Full width for smaller screens */
+                text-align: center;
+            }
+        }
+
+    </style>
+</head>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,6 +85,9 @@
     <div class="auth-links">
       {% if user.is_authenticated %}
         <a href="{% url 'dashboard' %}" class="btn">Dashboard</a>
+          <a href="{% url 'contact_developers' %}">Contact the Developers</a>
+          <a href="{% url 'wrapped_carousel' %}" class="btn btn-primary">Create Spotify Wrapped</a>
+
         <form method="POST" action="{% url 'logout' %}">
           {% csrf_token %}
           <button type="submit" class="btn">Log Out</button>
@@ -22,6 +95,7 @@
       {% else %}
         <a href="{% url 'register' %}" class="btn">Sign Up</a>
         <a href="{% url 'login' %}" class="btn">Log In</a>
+          <a href="{% url 'wrapped_carousel' %}" class="btn btn-primary">Create Spotify Wrapped</a>
       {% endif %}
     </div>
   </nav>
