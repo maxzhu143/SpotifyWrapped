@@ -126,14 +126,18 @@ def home(request):
 
 @login_required(login_url='login')
 def dashboard(request):
-    # Get the Spotify account info if connected
     spotify_account = None
-    if request.user.is_authenticated:
-        try:
-            spotify_account = SpotifyAccount.objects.get(user=request.user)
-        except SpotifyAccount.DoesNotExist:
-            spotify_account = None
-    return render(request, 'dashboard.html', {'spotify_account': spotify_account})
+    if "access_token" in request.session:
+        access_token = request.session.get('access_token')
+        response = requests.get(
+            "https://api.spotify.com/v1/me",
+            headers={"Authorization": f"Bearer {access_token}"}
+        )
+        if response.status_code == 200:
+            spotify_account = response.json()
+
+    return render(request, "dashboard.html", {"spotify_account": spotify_account})
+
 
 def register(request):
     """Handle user registration."""
