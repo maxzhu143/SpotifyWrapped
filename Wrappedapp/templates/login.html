@@ -131,33 +131,34 @@
 </head>
 
 <div class="login-container">
-    <h2>Login</h2>
+    <h2 class="translatable" data-original-text="Login">Login</h2>
     <form method="POST" action="{% url 'login' %}" autocomplete="off">
         {% csrf_token %}
 
         {% if form.errors %}
         <div class="errorlist">
-            <p>Please enter a correct username and password.</p>
-            <p>Note that both fields may be case-sensitive.</p>
+            <p class="translatable" data-original-text="Please enter a correct username and password.">Please enter a correct username and password.</p>
+            <p class="translatable" data-original-text="Note that both fields may be case-sensitive.">Note that both fields may be case-sensitive.</p>
         </div>
         {% endif %}
 
         <!-- Username Input Field -->
-        <label for="id_username">Username</label>
+        <label for="id_username" class="translatable" data-original-text="Username">Username</label>
         {{ form.username }}
-        <div class="help-text">Enter your username.</div>
+        <div class="help-text translatable" data-original-text="Enter your username.">Enter your username.</div>
 
         <!-- Password Input Field -->
-        <label for="id_password">Password</label>
+        <label for="id_password" class="translatable" data-original-text="Password">Password</label>
         {{ form.password }}
-        <div class="help-text">Enter your password.</div>
+        <div class="help-text translatable" data-original-text="Enter your password.">Enter your password.</div>
 
-        <button type="submit">Log in</button>
+        <button type="submit" class="translatable" data-original-text="Log in">Log in</button>
     </form>
 
     <div class="redirect-text">
-        <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+        <p><span class="translatable">Don't have an account? </span> <a href="{% url 'register' %}" class="translatable">Register here</a></p>
     </div>
+
 </div>
 {% endblock %}
 

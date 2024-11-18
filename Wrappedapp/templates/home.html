@@ -82,56 +82,46 @@
 
   <!-- Navigation Bar with Sign-In and Log-In -->
   <nav class="navbar">
-    <h1>Spotify Wrapped</h1>
+    <h1 class="translatable" data-original-text="Spotify Wrapped">Spotify Wrapped</h1>
     <div class="auth-links">
-      {% if user.is_authenticated %}
-        <a href="{% url 'dashboard' %}" class="btn translatable">Dashboard</a>
-        <form method="POST" action="{% url 'logout' %}">
-          {% csrf_token %}
-          <button type="submit" class="btn translatable">Log Out</button>
-        </form>
-      {% else %}
-        <a href="{% url 'register' %}" class="btn translatable">Sign Up</a>
-        <a href="{% url 'login' %}" class="btn translatable">Log In</a>
-      {% endif %}
+      <a href="#" class="btn translatable" data-original-text="Sign In">Sign In</a>
+      <a href="#" class="btn translatable" data-original-text="Log In">Log In</a>
     </div>
   </nav>
 
-  {% block content %}
   <!-- Main Content Section -->
   <main class="main-content">
     <section class="features">
-      <h2 class="translatable">Discover Your Listening Habits</h2>
+      <h2 class="translatable" data-original-text="Discover Your Listening Habits">Discover Your Listening Habits</h2>
 
       <!-- Feature 1 -->
       <div class="feature">
-        <img src="{% static 'images/feature1.jpg' %}" alt="Feature 1 Image">
+        <img src="feature1.jpg" alt="Feature 1 Image">
         <div class="feature-text">
-          <h3 class="translatable">Top Songs of the Year</h3>
-          <p class="translatable">See the tracks you've played the most in 2024!</p>
+          <h3 class="translatable" data-original-text="Top Songs of the Year">Top Songs of the Year</h3>
+          <p class="translatable" data-original-text="See the tracks you've played the most in 2024!">See the tracks you've played the most in 2024!</p>
         </div>
       </div>
 
       <!-- Feature 2 -->
       <div class="feature">
-        <img src="{% static 'images/feature2.jpg' %}" alt="Feature 2 Image">
+        <img src="feature2.jpg" alt="Feature 2 Image">
         <div class="feature-text">
-          <h3 class="translatable">Your favorite artists</h3>
-          <p class="translatable">Discover the artists who defined your 2024 listening experience.</p>
+          <h3 class="translatable" data-original-text="Your Favorite Artists">Your Favorite Artists</h3>
+          <p class="translatable" data-original-text="Discover the artists who defined your 2024 listening experience.">Discover the artists who defined your 2024 listening experience.</p>
         </div>
       </div>
 
       <!-- Feature 3 -->
       <div class="feature">
-        <img src="{% static 'images/feature3.jpg' %}" alt="Feature 3 Image">
+        <img src="feature3.jpg" alt="Feature 3 Image">
         <div class="feature-text">
-          <h3 class="translatable">Year in Review</h3>
-          <p class="translatable">Get a detailed look at your most listened-to genres and podcasts.</p>
+          <h3 class="translatable" data-original-text="Year in Review">Year in Review</h3>
+          <p class="translatable" data-original-text="Get a detailed look at your most listened-to genres and podcasts.">Get a detailed look at your most listened-to genres and podcasts.</p>
         </div>
       </div>
     </section>
   </main>
-{% endblock %}
 
 </body>
 </html>
