@@ -11,24 +11,17 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth.decorators import login_required
 import requests
-
-# THIS IS HOW YOU GET ACCESS TOKENS: access_token = request.session.get('access_token')
-
-
-
-
-
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from .spotify_api_functions import (
+    get_top_songs, get_top_artists, get_top_genres, determine_listening_personality,
+    get_sound_town, get_total_minutes_listened, get_top_podcasts, get_artist_thank_you
+)
 
 openai.api_key = settings.OPENAI_API_KEY
 client_id = settings.SPOTIFY_CLIENT_ID
 client_secret = settings.SPOTIFY_CLIENT_SECRET
 redirect_uri = settings.SPOTIFY_REDIRECT_URI
-
-
-# Create your views here.
-# Wrappedapp/views.py
-
-
 
 def spot_login(request):
     # Step 1: Redirect the user to Spotify's authorization page
@@ -145,19 +138,9 @@ def register(request):
 
     return render(request, 'register.html', {'form': form})
 
-#might cause issues becuase we have two
-@login_required
-def dashboard(request):
-    """Display user dashboard."""
-    return render(request, 'dashboard.html')
-
 def contact_developers(request):
     return render(request, 'contact_developers.html')
 
-#might not need
-def my_data_view(request):
-    data = {"message": "Hello from Django!"}
-    return JsonResponse(data)
 
 def spotify_authorize(request):
     spotify_auth_url = "https://accounts.spotify.com/authorize"
@@ -226,38 +209,42 @@ def describe_user_tracks(request):
 def wrapped_carousel(request):
     return render(request, 'wrapped_carousel.html')
 
-@login_required
-def stats_view(request):
+
+
+def stats_page(request):
     access_token = request.session.get('access_token')
-    headers = {"Authorization": f"Bearer {access_token}"}
+    if not access_token:
+        return redirect('spotify_login')
 
-    # Fetch user’s top artists with cover images and Spotify URLs
-    top_artists_response = requests.get("https://api.spotify.com/v1/me/top/artists", headers=headers)
-    top_artists = top_artists_response.json().get('items', []) if top_artists_response.status_code == 200 else []
-
-    # Fetch user’s top tracks for covers, URLs, and duration calculation
-    top_tracks_response = requests.get("https://api.spotify.com/v1/me/top/tracks", headers=headers)
-    top_tracks = top_tracks_response.json().get('items', []) if top_tracks_response.status_code == 200 else []
-
-    # Calculate total listening time from top tracks' durations
-    total_listening_time_ms = sum(track['duration_ms'] for track in top_tracks)
-    total_listening_time_hours = total_listening_time_ms // (1000 * 60 * 60)
-    total_listening_time_minutes = (total_listening_time_ms // (1000 * 60)) % 60
-
-    # Include album art and Spotify URLs in top tracks and artists if available
-    for track in top_tracks:
-        track['album_cover'] = track['album']['images'][0]['url'] if track['album']['images'] else None
-        track['spotify_url'] = track['external_urls']['spotify']
-    for artist in top_artists:
-        artist['cover_image'] = artist['images'][0]['url'] if artist['images'] else None
-        artist['spotify_url'] = artist['external_urls']['spotify']
+    # Collect data with error handling
+    top_songs = get_top_songs(access_token)
+    top_artists = get_top_artists(access_token)
+    top_genres = get_top_genres(access_token)
+    personality = determine_listening_personality(access_token)
+    sound_town = get_sound_town([genre[0] for genre in top_genres])
+    total_minutes_listened = get_total_minutes_listened(access_token)
+    top_podcasts = get_top_podcasts(access_token)  # This might be empty if 404 occurs
+    artist_messages = get_artist_thank_you(access_token)
 
     context = {
+        'top_songs': top_songs,
         'top_artists': top_artists,
-        'top_tracks': top_tracks,
-        'total_listening_time': f"{total_listening_time_hours} hours, {total_listening_time_minutes} minutes",
+        'top_genres': top_genres,
+        'personality': personality,
+        'sound_town': sound_town,
+        'total_minutes_listened': total_minutes_listened,
+        'top_podcasts': top_podcasts,
+        'artist_messages': artist_messages,
     }
-    return render(request, 'stats.html', context)
+    return render(request, 'stats_page.html', context)
+
+
+
+
+
+
+@login_required
+
 
 def custom_logout_view(request):
     logout(request)
