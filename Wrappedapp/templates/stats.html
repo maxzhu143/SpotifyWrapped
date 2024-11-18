@@ -1,5 +1,3 @@
-{% extends "base.html" %}
-
 {% block content %}
   <style>
     .stats-container {
@@ -48,7 +46,13 @@
       font-size: 1.2em;
     }
   </style>
-
+    <div style="position: absolute; top: 10px; left: 10px; display: flex; align-items: center; gap: 10px;">
+        <a href="{% url 'dashboard' %}" style="display: flex; align-items: center; text-decoration: none; color: #333;">
+            <img src="https://static.vecteezy.com/system/resources/previews/033/504/263/non_2x/home-with-ai-generated-free-png.png"
+                 alt="Home Logo"
+                 style="width: 30px; height: 30px; object-fit: cover; margin-right: 8px;">
+        </a>
+    </div>
   <div class="stats-container">
     <h1>Your Spotify Stats</h1>
 
@@ -60,11 +64,11 @@
     <div class="stat-section">
       <h2>Top Artists</h2>
       <div class="cover-grid">
-        {% for artist in top_artists %}
-          <a href="{{ artist.spotify_url }}" target="_blank" class="cover-item artist-info">
-            <img src="{{ artist.cover_image }}" alt="{{ artist.name }} cover">
-            <span>{{ artist.name }}</span>
-          </a>
+        {% for artist in top_artists|slice:":8" %}
+            <a href="{{ artist.spotify_url }}" target="_blank" class="cover-item artist-info">
+                <img src="{{ artist.cover_image }}" alt="{{ artist.name }} cover">
+                <span>{{ artist.name }}</span>
+            </a>
         {% endfor %}
       </div>
     </div>
@@ -72,7 +76,7 @@
     <div class="stat-section">
       <h2>Top Tracks</h2>
       <div class="cover-grid">
-        {% for track in top_tracks %}
+        {% for track in top_tracks|slice:":8"  %}
           <a href="{{ track.spotify_url }}" target="_blank" class="cover-item track-info">
             <img src="{{ track.album_cover }}" alt="{{ track.name }} cover">
             <span>{{ track.name }}</span>

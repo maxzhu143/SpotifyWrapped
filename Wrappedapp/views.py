@@ -248,8 +248,9 @@ def stats_view(request):
 
     # Calculate total listening time from top tracks' durations
     total_listening_time_ms = sum(track['duration_ms'] for track in top_tracks)
-    total_listening_time_hours = total_listening_time_ms // (1000 * 60 * 60)
-    total_listening_time_minutes = (total_listening_time_ms // (1000 * 60)) % 60
+
+    total_listening_time_hours = total_listening_time_ms // (10 * 60 * 60)
+    total_listening_time_minutes = (total_listening_time_ms // (10 * 60)) % 60
 
     # Include album art and Spotify URLs in top tracks and artists if available
     for track in top_tracks:
