@@ -10,46 +10,60 @@
     <div id="spotifyWrappedCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
 
-            <!-- First Slide: Content from stats.html -->
-            <div class="carousel-item active">
-                {% include "stats.html" %}
+            <!-- Welcome Slide -->
+            <div class="carousel-item active" style="background: radial-gradient(circle, #1DB954, #191414); color: white;">
+                <div class="d-flex flex-column align-items-center justify-content-center" style="height: 500px;">
+                    <h1 class="welcome-title" style="animation: zoomIn 1.5s;">Welcome to Your Spotify Wrapped</h1>
+                    <h2 class="welcome-name" style="animation: fadeInUp 2s;">Lauren's 2024 Music Journey</h2>
+                    <p style="animation: fadeIn 3s; font-size: 1.2rem;">Dive into your personalized music stats!</p>
+                </div>
             </div>
 
-            <!-- Other Slides -->
-            <div class="carousel-item">
+            <!-- Total Listening Time Slide -->
+            <div class="carousel-item" style="background: linear-gradient(135deg, #FF007F, #590FB7); color: white;">
                 <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <h3>Slide 2 Content</h3>
+                    <div class="text-center">
+                        <h3 style="animation: slideIn 1.5s;">Total Listening Time</h3>
+                        <p style="animation: fadeIn 2s; animation-delay: 1s;">You spent 150 hours listening this year!</p>
+                    </div>
                 </div>
             </div>
-            <div class="carousel-item">
+
+            <!-- Top Artists Slide -->
+            <div class="carousel-item" style="background: linear-gradient(45deg, #191414, #1DB954, #FF7F50); color: white;">
                 <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <h3>Slide 3 Content</h3>
+                    <div class="text-center">
+                        <h3 style="animation: fadeInUp 1.5s;">Your Top Artists</h3>
+                        <ul style="animation: fadeIn 2s; animation-delay: 1s; list-style: none; padding: 0;">
+                            <li>1. Artist A</li>
+                            <li>2. Artist B</li>
+                            <li>3. Artist C</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <!-- Add more slides as needed for a total of 8 -->
-            <div class="carousel-item">
+
+            <!-- Music Trends Slide -->
+            <div class="carousel-item" style="background: linear-gradient(135deg, #FFC312, #EE5A24); color: white;">
                 <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <h3>Slide 4 Content</h3>
+                    <div class="text-center">
+                        <h3 style="animation: zoomIn 1.5s;">Music Trends</h3>
+                        <p style="animation: fadeIn 2s; animation-delay: 1s;">You listened to more Pop and Hip-Hop than ever before!</p>
+                    </div>
                 </div>
             </div>
-            <div class="carousel-item">
+
+            <!-- Top Genres Slide -->
+            <div class="carousel-item" style="background: radial-gradient(circle, #16A085, #27AE60); color: white;">
                 <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <h3>Slide 5 Content</h3>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <h3>Slide 6 Content</h3>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <h3>Slide 7 Content</h3>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <h3>Slide 8 Content</h3>
+                    <div class="text-center">
+                        <h3 style="animation: fadeIn 1.5s;">Top Genres</h3>
+                        <ul style="animation: fadeIn 2s; animation-delay: 1s; list-style: none; padding: 0;">
+                            <li>1. Pop</li>
+                            <li>2. Rock</li>
+                            <li>3. Electronic</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -65,4 +79,80 @@
         </button>
     </div>
 </div>
+
+<style>
+    /* General Animation Styles */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes zoomIn {
+        from {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* Slide-Specific Styling */
+    .welcome-title {
+        font-size: 3.5rem;
+        font-family: 'Arial Black', sans-serif;
+        margin-bottom: 10px;
+    }
+
+    .welcome-name {
+        font-size: 2rem;
+        font-family: 'Arial', sans-serif;
+        margin-bottom: 20px;
+    }
+
+    .carousel-item h3 {
+        font-size: 2.5rem;
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+    }
+
+    .carousel-item p, .carousel-item ul {
+        font-size: 1.2rem;
+        font-family: 'Arial', sans-serif;
+        margin-top: 10px;
+    }
+
+    .carousel-item ul li {
+        margin-bottom: 5px;
+    }
+</style>
 {% endblock %}
