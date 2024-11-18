@@ -196,7 +196,7 @@ input:checked + .slider:before {
         <a href="{% url 'stats' %}" class="btn">Stats</a>
 
         {% if user_name %}
-            <p>Connected to Spotify as:{{ user_name }}</p>
+            <p>Connected to Spotify ais:{{ user_name }}</p>
             <a href="{% url 'spot_login' %}" class="btn">Unlink Spotify Account</a>
         {% else %}
             <p>Get Started By Logging In</p>
