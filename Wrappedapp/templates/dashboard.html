@@ -1,11 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2 class="translatable">Welcome, {{ user.first_name }}!</h2>
-    <p class="translatable">This is your dashboard.</p>
+  <h2 class="translatable" data-original-text="Welcome, {{ user.first_name }}!">Welcome, {{ user.first_name }}!</h2>
+  <p class="translatable" data-original-text="This is your dashboard.">This is your dashboard.</p>
 
-    <a href="{% url 'spotify_connect' %}" class="btn">Link Spotify Account</a>
-
-
+  <a href="{% url 'spotify_connect' %}" class="btn translatable" data-original-text="Link Spotify Account">Link Spotify Account</a>
 {% endblock %}
+
 

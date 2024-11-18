@@ -27,6 +27,10 @@
             align-items: center;
         }
 
+        .logo {
+            text-transform: capitalize;
+        }
+
         /* Button Styles */
         .auth-links .btn {
             background-color: #1db954;
@@ -98,27 +102,27 @@
   <!-- Navigation bar -->
 <nav class="navbar">
   <a href="{% url 'home' %}" class="logo">
-    <h1 class="translatable logo">Spotify Wrapped</h1>
+    <h1 class="translatable logo" data-original-text="Spotify Wrapped">Spotify Wrapped</h1>
   </a>
   <div class="auth-links">
       <!-- Language Selector positioned to the left of auth buttons -->
       <div class="language-selector">
         <select id="languageSelect">
-          <option value="en">English</option>
-          <option value="es">Spanish</option>
-          <option value="fr">French</option>
+          <option value="en" data-translate="English">English</option>
+          <option value="es" data-translate="Spanish">Spanish</option>
+          <option value="fr" data-translate="French">French</option>
         </select>
       </div>
 
       {% if user.is_authenticated %}
-          <a href="{% url 'dashboard' %}" class="btn">Dashboard</a>
-          <form method="POST" action="{% url 'logout' %}">
-              {% csrf_token %}
-              <button type="submit" class="btn">Log Out</button>
-          </form>
+      <a href="{% url 'dashboard' %}" class="btn translatable" data-original-text="Dashboard">Dashboard</a>
+      <form method="POST" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn translatable" data-original-text="Log Out">Log Out</button>
+      </form>
       {% else %}
-          <a href="{% url 'register' %}" class="btn">Sign Up</a>
-          <a href="{% url 'login' %}" class="btn">Log In</a>
+          <a href="{% url 'register' %}" class="btn translatable" data-original-text="Sign Up">Sign Up</a>
+          <a href="{% url 'login' %}" class="btn translatable" data-original-text="Log In">Log In</a>
       {% endif %}
   </div>
 </nav>
@@ -130,49 +134,103 @@
       {% block content %}{% endblock %}
   </main>
 <script>
+
+// Function to update language dropdown text
+function updateLanguageDropdown(selectedLanguage) {
+    const languageSelect = document.getElementById('languageSelect');
+    const languageOptions = languageSelect.querySelectorAll('option');
+
+    const translationPromises = Array.from(languageOptions).map(option =>
+        fetch('/translate_text/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: new URLSearchParams({
+                'text': option.getAttribute('data-translate'),
+                'lang': selectedLanguage
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.translated_text) {
+                option.textContent = data.translated_text;
+            } else {
+                console.error("Translation error:", data.error);
+            }
+        })
+        .catch(error => console.error("Request error:", error))
+    );
+
+    // After all translations complete, set the displayed text to the selected language
+    Promise.all(translationPromises).then(() => {
+        // Force the dropdown to show the translated selected option
+        languageSelect.value = selectedLanguage;
+        const selectedOption = languageSelect.querySelector(`option[value="${selectedLanguage}"]`);
+        if (selectedOption) {
+            languageSelect.setAttribute("data-display-text", selectedOption.textContent);
+        }
+    });
+}
+
+
     // Check for a saved language on page load and apply it
 document.addEventListener('DOMContentLoaded', () => {
     const savedLanguage = localStorage.getItem('selectedLanguage');
     const languageSelect = document.getElementById('languageSelect');
 
     if (savedLanguage) {
+        // Set the language selection to the saved language
         languageSelect.value = savedLanguage;
-        translatePage(savedLanguage); // Function to handle translations based on the selected language
+        updateLanguageDropdown(savedLanguage);  // Update dropdown options to show translated text
+        translatePage(savedLanguage);  // Translate page based on saved language
+    } else {
+        // If no saved language, use the default selected language in the dropdown
+        const defaultLanguage = languageSelect.value;
+        updateLanguageDropdown(defaultLanguage);
+        translatePage(defaultLanguage);  // Translate page based on default language
     }
 });
 
 // Save language selection and apply translation
 document.getElementById('languageSelect').addEventListener('change', function() {
-        const selectedLanguage = this.value;
+    const selectedLanguage = this.value;
+    localStorage.setItem('selectedLanguage', selectedLanguage); // Save the selected language
+    updateLanguageDropdown(selectedLanguage); // Translate the dropdown options
+
+    // Translate other elements with the 'translatable' class
+    translatePage(selectedLanguage);
+});
+
+function translatePage(selectedLanguage) {
         const textElements = document.querySelectorAll('.translatable');
 
-        console.log("Selected language:", selectedLanguage);
+    textElements.forEach((element) => {
+        const originalText = element.getAttribute('data-original-text');
+        if (!originalText) return; // Skip if no original text is found
 
-        // Process each element with the 'translatable' class
-        textElements.forEach((element) => {
-            console.log("Translating:", element.innerText.trim());
-            fetch('/translate/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: new URLSearchParams({
-                    'text': element.innerText.trim(),
-                    'lang': selectedLanguage
-                })
+        fetch('/translate_text/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: new URLSearchParams({
+                'text': originalText,
+                'lang': selectedLanguage
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.translated_text) {
-                    console.log("Translated text for:", element.innerText.trim(), "->", data.translated_text);
-                    element.innerText = data.translated_text;
-                } else {
-                    console.error("Translation error:", data.error);
-                }
-            })
-            .catch(error => console.error("Request error:", error));
-        });
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.translated_text) {
+                element.innerText = data.translated_text;
+            } else {
+                console.error("Translation error:", data.error);
+            }
+        })
+        .catch(error => console.error("Request error:", error));
+    });
 
         // Special cases for specific static text
         const specialElements = [
@@ -266,9 +324,18 @@ document.getElementById('languageSelect').addEventListener('change', function() 
             .catch(error => console.error("Request error:", error));
         }
     });
+}
+
+// Trigger translations when language changes
+document.getElementById('languageSelect').addEventListener('change', function() {
+    const selectedLanguage = this.value;
+    localStorage.setItem('selectedLanguage', selectedLanguage);
+    updateLanguageDropdown(selectedLanguage);
+    translatePage(selectedLanguage);
 });
 
 </script>
 
 </body>
 </html>
+
