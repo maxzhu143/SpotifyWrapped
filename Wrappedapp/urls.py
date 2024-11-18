@@ -19,7 +19,7 @@ urlpatterns = [
     path('callback/', views.callback, name='callback'),
     path('top_songs/', views.top_songs, name='top_songs'),
     path('unlink/', views.unlink, name='unlink'),
-    path('stats/', views.stats_view, name='stats'),
+    path('stats/', views.stats_page, name='stats_page'),
     path('wrapped_carousel/', views.wrapped_carousel, name='wrapped_carousel')
 
 ]
