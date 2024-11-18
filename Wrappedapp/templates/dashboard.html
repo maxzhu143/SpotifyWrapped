@@ -1,0 +1,243 @@
+
+{% block content %}
+<head>
+    <style>
+        /* Define theme colors using CSS variables */
+        :root {
+            --background-color: #ffffff;
+            --text-color: #000000;
+            --button-bg-color: #1DB954;
+            --button-text-color: #ffffff;
+        }
+
+        /* Dark theme */
+        .dark-theme {
+            --background-color: #191414;
+            --text-color: #ffffff;
+            --button-bg-color: #1ed760;
+            --button-text-color: #ffffff;
+        }
+
+        /* Blue theme */
+        .blue-theme {
+            --background-color: #282c34;
+            --text-color: #ffffff;
+            --button-bg-color: #4a90e2;
+            --button-text-color: #ffffff;
+        }
+        /* Basic styles for the toggle switch */
+        /* Toggle switch styles */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 2px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Apply the theme variables */
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--button-bg-color);
+            font-size: 2.5em;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        button, .btn {
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1em;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            margin: 5px;
+        }
+
+        button:hover, .btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Theme toggle button container */
+        .theme-toggle {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        /* Position the theme toggle in the upper left */
+.theme-toggle {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+}
+
+.theme-toggle span {
+    user-select: none; /* Prevent text selection */
+    color: #333;
+    font-size: 14px;
+}
+
+/* Toggle switch styles */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 2px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+    </style>
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <div>
+        <h1>Welcome, {{ user.first_name }}!</h1>
+        <p>This is your dashboard.</p>
+
+
+        {% if spotify_account %}
+            <p>Connected to Spotify as: <strong>{{ spotify_account.display_name }}</strong></p>
+            <a href="{% url 'spotify_disconnect' %}" class="btn">Unlink Spotify Account</a>
+        {% else %}
+            <a href="{% url 'spot_login' %}" class="btn">Link Spotify Account</a>
+        {% endif %}
+
+        <!-- Theme toggle buttons -->
+         <div class="theme-toggle">
+            <label class="switch">
+                <input type="checkbox" id="themeSwitch" onchange="toggleTheme()">
+                <span class="slider"></span>
+            </label>
+            <span id="themeLabel" onclick="setTheme('blue')">Light Mode</span>
+        </div>
+
+    </div>
+
+    <script>
+function setTheme(theme) {
+    document.body.classList.remove('dark-theme', 'blue-theme');
+
+    if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+    } else if (theme === 'blue') {
+        document.body.classList.add('blue-theme');
+    }
+
+    localStorage.setItem('theme', theme);
+
+    // Update toggle and label dynamically
+    const themeSwitch = document.getElementById('themeSwitch');
+    const themeLabel = document.getElementById('themeLabel');
+    themeSwitch.checked = theme === 'dark';
+    themeLabel.textContent = theme === 'dark' ? 'Dark Mode' : theme === 'blue' ? 'Blue Theme' : 'Light Mode';
+}
+
+function toggleTheme() {
+    const isDarkMode = document.getElementById('themeSwitch').checked;
+    setTheme(isDarkMode ? 'dark' : 'light');
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+});
+
+    </script>
+</body>
+{% endblock %}

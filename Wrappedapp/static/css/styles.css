@@ -191,5 +191,95 @@ input[type="submit"]:hover, button:hover {
             transform: translateY(-5px);
         }
 
+        .centered-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Full height of the viewport */
+    text-align: center;
+    margin: 0; /* Ensure no margin on the container */
+    padding: 0; /* Ensure no padding on the container */
+}
+
+        /* Base theme (light mode) */
+:root {
+    --background-color: #ffffff;
+    --text-color: #000000;
+    --button-bg-color: #1DB954; /* Spotify green */
+    --button-text-color: #ffffff;
+}
+
+/* Dark theme */
+.dark-theme {
+    --background-color: #191414; /* Spotify black */
+    --text-color: #ffffff;
+    --button-bg-color: #1ed760; /* Lighter green */
+    --button-text-color: #ffffff;
+}
+
+/* Secondary theme (e.g., a blue theme) */
+.blue-theme {
+    --background-color: #282c34;
+    --text-color: #ffffff;
+    --button-bg-color: #4a90e2; /* Blue */
+    --button-text-color: #ffffff;
+}
+
+/* Apply theme variables */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+button {
+    background-color: var(--button-bg-color);
+    color: var(--button-text-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+/* Base theme (light mode) */
+:root {
+    --background-color: #ffffff;
+    --text-color: #000000;
+    --button-bg-color: #1DB954; /* Spotify green */
+    --button-text-color: #ffffff;
+}
+
+/* Dark theme */
+.dark-theme {
+    --background-color: #191414; /* Spotify black */
+    --text-color: #ffffff;
+    --button-bg-color: #1ed760; /* Lighter green */
+    --button-text-color: #ffffff;
+}
+
+/* Secondary theme (e.g., a blue theme) */
+.blue-theme {
+    --background-color: #282c34;
+    --text-color: #ffffff;
+    --button-bg-color: #4a90e2; /* Blue */
+    --button-text-color: #ffffff;
+}
+
+/* Apply theme variables */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+button {
+    background-color: var(--button-bg-color);
+    color: var(--button-text-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+
 
 }
