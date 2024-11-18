@@ -188,17 +188,26 @@ input:checked + .slider:before {
 <body>
     <div>
         <h1>Welcome, {{ user.first_name }}!</h1>
-        <p>This is your dashboard.</p>
 
+        <!--
+        can drag this part and put it into the if user_name when we get it working
+        -->
+        <a href="{% url 'top_songs' %}" class="btn">Top Songs</a>
+        <a href="{% url 'stats' %}" class="btn">Stats</a>
 
-        {% if spotify_account %}
-            <p>Connected to Spotify as: <strong>{{ spotify_account.display_name }}</strong></p>
-            <a href="{% url 'spotify_disconnect' %}" class="btn">Unlink Spotify Account</a>
+        {% if user_name %}
+            <p>Connected to Spotify as:{{ user_name }}</p>
+            <a href="{% url 'spot_login' %}" class="btn">Unlink Spotify Account</a>
         {% else %}
+            <p>Get Started By Logging In</p>
             <a href="{% url 'spot_login' %}" class="btn">Link Spotify Account</a>
         {% endif %}
+    </div>
+    <div style="position: absolute; top: 10px; left: 10px; display: flex; align-items: center; gap: 10px;">
+    </div>
 
-        <!-- Theme toggle buttons -->
+
+
          <div class="theme-toggle">
             <label class="switch">
                 <input type="checkbox" id="themeSwitch" onchange="toggleTheme()">
@@ -206,8 +215,6 @@ input:checked + .slider:before {
             </label>
             <span id="themeLabel" onclick="setTheme('blue')">Light Mode</span>
         </div>
-
-    </div>
 
     <script>
 function setTheme(theme) {
