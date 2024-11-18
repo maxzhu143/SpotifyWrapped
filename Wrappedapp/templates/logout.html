@@ -64,7 +64,9 @@
 
 <div class="logout-container">
     <h1>Successfully Logged Out</h1>
-    <p>You have been logged out. Click below to log in again.</p>
-    <a href="{% url 'login' %}" class="btn">Go to Login Page</a>
+    <p>You have been logged out</p>
+    <a href="{% url 'login' %}" class="btn">Log Back In</a>
+    <a href="{% url 'welcome' %}" class="btn">Home Page</a>
+
 </div>
 {% endblock %}

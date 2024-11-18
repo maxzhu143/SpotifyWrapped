@@ -5,7 +5,8 @@ from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
-    path('', views.home, name='home'),  # Home page
+    #path('', views.home, name='home'),  # Home page
+    path('', views.welcome, name='welcome'),  # Home page
     path('register/', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('dashboard/', views.dashboard, name='dashboard'),  # Dashboard route
@@ -21,5 +22,4 @@ urlpatterns = [
     path('unlink/', views.unlink, name='unlink'),
     path('stats/', views.stats_view, name='stats'),
     path('wrapped_carousel/', views.wrapped_carousel, name='wrapped_carousel')
-
 ]

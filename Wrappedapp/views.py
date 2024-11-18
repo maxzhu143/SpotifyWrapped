@@ -30,6 +30,8 @@ redirect_uri = settings.SPOTIFY_REDIRECT_URI
 
 
 
+def welcome(request):
+    return render(request, 'welcome.html')
 def spot_login(request):
     # Step 1: Redirect the user to Spotify's authorization page
     print(request.session.keys())
@@ -120,6 +122,7 @@ def top_songs(request):
 def home(request):
     access_token = request.session.get("access_token", "")
     return render(request, "home.html", {"access_token": access_token})
+
 
 @login_required(login_url='login')
 def dashboard(request):
