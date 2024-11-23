@@ -4,155 +4,284 @@
 {% block title %}Spotify Wrapped{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-
+<div class="container-fluid p-0" style="height: 100vh; width: 100vw;">
     <!-- Carousel -->
-    <div id="spotifyWrappedCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
+    <div id="spotifyWrappedCarousel" class="carousel slide" data-bs-ride="carousel" style="height: 100%; width: 100%;">
+        <div class="carousel-inner" style="height: 100%; width: 100%;">
 
-            <!-- Welcome Slide -->
-            <div class="carousel-item active" style="background: radial-gradient(circle, #1DB954, #191414); color: white;">
-                <div class="d-flex flex-column align-items-center justify-content-center" style="height: 500px;">
-                    <h1 class="welcome-title" style="animation: zoomIn 1.5s;">Welcome to Your Spotify Wrapped</h1>
-                    <h2 class="welcome-name" style="animation: fadeInUp 2s;">Lauren's 2024 Music Journey</h2>
-                    <p style="animation: fadeIn 3s; font-size: 1.2rem;">Dive into your personalized music stats!</p>
+            <!-- Slide 1: Welcome -->
+            <div class="carousel-item active animated-background">
+                <div class="dynamic-shapes">
+                    <div class="circle large"></div>
+                    <div class="circle medium"></div>
+                    <div class="circle small"></div>
+                    <div class="circle tiny"></div>
+                    <div class="flower"></div>
+                    <div class="flower small"></div>
+                    <div class="star floating"></div>
+                    <div class="star shooting"></div>
+                    <div class="star shooting alternate"></div>
+                </div>
+                <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
+                    <h1 class="welcome-title text-animate-fade">Welcome to Your Spotify Wrapped</h1>
+                    <h2 class="welcome-name text-animate-slide">Lauren's 2024 Music Journey</h2>
+                    <p class="welcome-subtext text-animate-zoom">Dive into your personalized music stats!</p>
                 </div>
             </div>
 
-            <!-- Total Listening Time Slide -->
-            <div class="carousel-item" style="background: linear-gradient(135deg, #FF007F, #590FB7); color: white;">
-                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <div class="text-center">
-                        <h3 style="animation: slideIn 1.5s;">Total Listening Time</h3>
-                        <p style="animation: fadeIn 2s; animation-delay: 1s;">You spent 150 hours listening this year!</p>
-                    </div>
+            <!-- Slide 2: Total Listening Time -->
+            <div class="carousel-item animated-background">
+                <div class="dynamic-shapes">
+                    <div class="circle large"></div>
+                    <div class="circle medium"></div>
+                    <div class="circle small"></div>
+                    <div class="circle tiny"></div>
+                    <div class="flower"></div>
+                    <div class="flower small"></div>
+                    <div class="star floating"></div>
+                    <div class="star shooting"></div>
+                    <div class="star shooting alternate"></div>
+                </div>
+                <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
+                    <h1 class="listening-title text-animate-fade">Total Listening Time</h1>
+                    <p class="listening-subtext text-animate-hover">
+                        You spent <span class="highlight">150 hours</span> listening this year!
+                    </p>
                 </div>
             </div>
 
-            <!-- Top Artists Slide -->
-            <div class="carousel-item" style="background: linear-gradient(45deg, #191414, #1DB954, #FF7F50); color: white;">
-                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <div class="text-center">
-                        <h3 style="animation: fadeInUp 1.5s;">Your Top Artists</h3>
-                        <ul style="animation: fadeIn 2s; animation-delay: 1s; list-style: none; padding: 0;">
-                            <li>1. Artist A</li>
-                            <li>2. Artist B</li>
-                            <li>3. Artist C</li>
-                        </ul>
-                    </div>
+            <!-- Slide 3: Your Top Artists -->
+            <div class="carousel-item animated-background">
+                <div class="dynamic-shapes">
+                    <div class="circle large"></div>
+                    <div class="circle medium"></div>
+                    <div class="circle small"></div>
+                    <div class="circle tiny"></div>
+                    <div class="flower"></div>
+                    <div class="flower small"></div>
+                    <div class="star floating"></div>
+                    <div class="star shooting"></div>
+                    <div class="star shooting alternate"></div>
+                </div>
+                <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
+                    <h1 class="artists-title text-animate-zoom">Your Top Artists</h1>
+                    <ul class="artists-list">
+                        <li class="text-animate-hover"><span class="highlight">1.</span> Artist A</li>
+                        <li class="text-animate-hover"><span class="highlight">2.</span> Artist B</li>
+                        <li class="text-animate-hover"><span class="highlight">3.</span> Artist C</li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- Music Trends Slide -->
-            <div class="carousel-item" style="background: linear-gradient(135deg, #FFC312, #EE5A24); color: white;">
-                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <div class="text-center">
-                        <h3 style="animation: zoomIn 1.5s;">Music Trends</h3>
-                        <p style="animation: fadeIn 2s; animation-delay: 1s;">You listened to more Pop and Hip-Hop than ever before!</p>
-                    </div>
+            <!-- Slide 4: Music Trends -->
+            <div class="carousel-item animated-background">
+                <div class="dynamic-shapes">
+                    <div class="circle large"></div>
+                    <div class="circle medium"></div>
+                    <div class="circle small"></div>
+                    <div class="circle tiny"></div>
+                    <div class="flower"></div>
+                    <div class="flower small"></div>
+                    <div class="star floating"></div>
+                    <div class="star shooting"></div>
+                    <div class="star shooting alternate"></div>
                 </div>
-            </div>
-
-            <!-- Top Genres Slide -->
-            <div class="carousel-item" style="background: radial-gradient(circle, #16A085, #27AE60); color: white;">
-                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <div class="text-center">
-                        <h3 style="animation: fadeIn 1.5s;">Top Genres</h3>
-                        <ul style="animation: fadeIn 2s; animation-delay: 1s; list-style: none; padding: 0;">
-                            <li>1. Pop</li>
-                            <li>2. Rock</li>
-                            <li>3. Electronic</li>
-                        </ul>
-                    </div>
+                <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
+                    <h1 class="trends-title text-animate-slide">Music Trends</h1>
+                    <p class="trends-subtext text-animate-fade">You listened to <span class="highlight">more Pop</span> and <span class="highlight">Hip-Hop</span> than ever before!</p>
                 </div>
             </div>
         </div>
 
         <!-- Carousel Controls -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#spotifyWrappedCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <button class="carousel-control-prev static-arrow" type="button" data-bs-target="#spotifyWrappedCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon no-hover" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#spotifyWrappedCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <button class="carousel-control-next static-arrow" type="button" data-bs-target="#spotifyWrappedCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon no-hover" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
     </div>
 </div>
 
 <style>
-    /* General Animation Styles */
+    /* Text Animations */
+    .text-animate-fade {
+        animation: fadeIn 2s ease-in-out;
+    }
     @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        0% { opacity: 0; }
+        100% { opacity: 1; }
     }
 
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(50px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .text-animate-slide {
+        animation: slideIn 2s ease-in-out;
     }
-
     @keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateX(-50px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(0); }
     }
 
+    .text-animate-zoom {
+        animation: zoomIn 2s ease-in-out;
+    }
     @keyframes zoomIn {
-        from {
-            opacity: 0;
-            transform: scale(0.5);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
+        0% { transform: scale(0.5); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
     }
 
-    /* Slide-Specific Styling */
-    .welcome-title {
-        font-size: 3.5rem;
+    .text-animate-hover:hover {
+        transform: scale(1.1);
+        transition: transform 0.3s ease-in-out;
+    }
+    @keyframes colorShift {
+        0% { background: linear-gradient(45deg, #1DB954, #191414); }
+        25% { background: linear-gradient(45deg, #FF007F, #590FB7); }
+        50% { background: linear-gradient(45deg, #FFC312, #EE5A24); }
+        75% { background: linear-gradient(45deg, #16A085, #27AE60); }
+        100% { background: linear-gradient(45deg, #1DB954, #191414); }
+    }
+
+    .animated-background {
+        animation: colorShift 12s infinite;
+        background-size: 300% 300%;
+        height: 100%;
+    }
+
+    /* Dynamic Shapes */
+    .dynamic-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 0;
+    }
+
+    .circle {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        animation: float 10s infinite ease-in-out;
+    }
+
+    .circle.small { width: 100px; height: 100px; top: 25%; left: 15%; }
+    .circle.medium { width: 150px; height: 150px; top: 50%; left: 50%; }
+    .circle.large { width: 200px; height: 200px; top: 10%; left: 60%; }
+    .circle.tiny { width: 80px; height: 80px; top: 75%; left: 80%; }
+
+    .flower {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, #16A085, #27AE60);
+        clip-path: polygon(50% 0%, 61% 35%, 100% 35%, 68% 57%, 80% 91%, 50% 70%, 21% 91%, 32% 57%, 0 35%, 39% 35%);
+        top: 70%;
+        left: 20%;
+        animation: float 12s infinite ease-in-out;
+    }
+
+    .flower.small { width: 80px; height: 80px; top: 40%; left: 75%; }
+
+    .star {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #FF007F, #FFC312);
+        clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    }
+
+    .star.floating {
+        animation: float 8s infinite ease-in-out;
+        top: 20%;
+        left: 10%;
+    }
+
+    .star.shooting {
+        animation: shootDiagonal 8s infinite linear;
+        top: 10%;
+        left: -20%;
+    }
+
+    .star.shooting.alternate {
+        animation: shootDiagonalAlternate 10s infinite linear;
+        top: 30%;
+        left: -30%;
+    }
+
+    @keyframes shootDiagonal {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(120vw, 100vh); }
+    }
+
+    @keyframes shootDiagonalAlternate {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(120vw, -100vh); }
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    /* Arrows */
+    .static-arrow {
+        width: 50px;
+        height: 50px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+    }
+
+    .no-hover {
+        transition: none !important;
+    }
+
+    /* Text Styling */
+    .text-container {
+        position: relative;
+        z-index: 1;
+        color: white;
+        text-align: center;
+    }
+
+    .welcome-title,
+    .listening-title,
+    .artists-title,
+    .trends-title {
         font-family: 'Arial Black', sans-serif;
-        margin-bottom: 10px;
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
     }
 
     .welcome-name {
         font-size: 2rem;
         font-family: 'Arial', sans-serif;
-        margin-bottom: 20px;
+        margin-bottom: 1rem;
     }
 
-    .carousel-item h3 {
-        font-size: 2.5rem;
+    .welcome-subtext,
+    .listening-subtext,
+    .trends-subtext {
+        font-size: 1.25rem;
         font-family: 'Arial', sans-serif;
-        margin: 0;
     }
 
-    .carousel-item p, .carousel-item ul {
-        font-size: 1.2rem;
-        font-family: 'Arial', sans-serif;
-        margin-top: 10px;
+    .artists-list li {
+        font-size: 1.5rem;
+        line-height: 2rem;
     }
 
-    .carousel-item ul li {
-        margin-bottom: 5px;
+    .highlight {
+        color: #FFC312;
+        font-weight: bold;
     }
 </style>
 {% endblock %}
