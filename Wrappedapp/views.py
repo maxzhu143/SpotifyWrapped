@@ -126,8 +126,12 @@ def home(request):
 @login_required(login_url='login')
 def dashboard(request):
     spotify_account = None
+    user_name = "Guest"
     if "access_token" in request.session:
         access_token = request.session.get('access_token')
+
+        profile_response = requests.get('https://api.spotify.com/v1/me', headers={'Authorization': f'Bearer {access_token}'})
+        user_name = profile_response.json().get('display_name', 'Spotify User')
         response = requests.get(
             "https://api.spotify.com/v1/me",
             headers={"Authorization": f"Bearer {access_token}"}
@@ -135,7 +139,7 @@ def dashboard(request):
         if response.status_code == 200:
             spotify_account = response.json()
 
-    return render(request, "dashboard.html", {"spotify_account": spotify_account})
+    return render(request, "dashboard.html", {"spotify_account": spotify_account, "user_name" : user_name})
 
 
 def register(request):

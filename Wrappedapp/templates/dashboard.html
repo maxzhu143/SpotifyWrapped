@@ -190,9 +190,13 @@ input:checked + .slider:before {
         <h1>Welcome, {{ user.first_name }}!</h1>
 
         {% if spotify_account != None %}
-            <p>Connected to Spotify as: {{ user_name }}</p>
+            <p>Currently Connected as: {{ user_name }}</p>
             <a href="{% url 'top_songs' %}" class="btn">Top Songs</a>
-            <a href="{% url 'stats' %}" class="btn">Stats</a>
+
+            <a href="{% url 'stats' %}" class="btn">Show Me My Stats</a>
+            <a href="{% url 'wrapped_carousel' %}" class="btn">Create Another Carousel</a>
+
+
             <form action="{% url 'unlink' %}" method="post">
                 {% csrf_token %}
                 <button type="submit" class="unlink-button">Unlink Account</button>
