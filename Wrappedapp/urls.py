@@ -22,5 +22,6 @@ urlpatterns = [
     path('stats/', views.stats_view, name='stats'),
     path('wrapped_carousel/', views.wrapped_carousel, name='wrapped_carousel'),
     path('track_click/', views.track_click, name='track_click'),
+    path('wrapped/', views.wrapped, name='wrapped'),
 
 ]
