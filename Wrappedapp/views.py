@@ -45,6 +45,9 @@ def spot_login(request):
         '&scope=user-top-read'
     )
     return redirect(auth_url)
+def wrapped(request):
+    return render(request, 'wrapped.html')
+
 
 def callback(request):
     print("CALLBACK")
