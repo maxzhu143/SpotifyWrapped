@@ -53,13 +53,20 @@
                  style="width: 30px; height: 30px; object-fit: cover; margin-right: 8px;">
         </a>
     </div>
+
+
   <div class="stats-container">
+      {% if total_listening_time == "0 hours, 0 minutes" %}
+        <h1>Please Log In Before Displaying Stats</h1>
+
+        {% else %}
     <h1>Your Spotify Stats</h1>
 
     <div class="stat-section">
       <h2>Total Listening Time</h2>
       <p>{{ total_listening_time }}</p>
     </div>
+
 
     <div class="stat-section">
       <h2>Top Artists</h2>
@@ -85,5 +92,7 @@
         {% endfor %}
       </div>
     </div>
+      {% endif %}
+
   </div>
 {% endblock %}
