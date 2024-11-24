@@ -129,11 +129,11 @@
             text-decoration: underline;
         }
     </style>
-    <title>Registration</title>
+    <title class="translatable" data-original-text="Registration">Registration</title>
 </head>
 
 <div class="register-container">
-    <h1>Register</h1>
+    <h1 class="translatable" data-original-text="Register">Register</h1>
     <form method="POST" action="{% url 'register' %}" autocomplete="off">
         {% csrf_token %}
 
@@ -142,10 +142,10 @@
             <ul>
                 {% for field in form %}
                     {% if field.errors %}
-                        <li><strong>{{ field.label }}:</strong>
+                        <li><strong class="translatable" data-original-text="{{ field.label }}">{{ field.label }}</strong>:
                             <ul>
                                 {% for error in field.errors %}
-                                    <li>{{ error }}</li>
+                                    <li class="translatable" data-original-text="{{ error }}">{{ error }}</li>
                                 {% endfor %}
                             </ul>
                         </li>
@@ -156,43 +156,46 @@
         {% endif %}
 
         <!-- First Name Field -->
-        <label for="id_first_name">First Name</label>
+        <label for="id_first_name" class="translatable" data-original-text="First Name">First Name</label>
         {{ form.first_name }}
-        <div class="help-text">Enter your first name.</div>
+        <div class="help-text translatable" data-original-text="Enter your first name.">Enter your first name.</div>
 
         <!-- Last Name Field -->
-        <label for="id_last_name">Last Name</label>
+        <label for="id_last_name" class="translatable" data-original-text="Last Name">Last Name</label>
         {{ form.last_name }}
-        <div class="help-text">Enter your last name.</div>
+        <div class="help-text translatable" data-original-text="Enter your last name.">Enter your last name.</div>
 
         <!-- Username Field -->
-        <label for="id_username">Username</label>
+        <label for="id_username" class="translatable" data-original-text="Username">Username</label>
         {{ form.username }}
-        <div class="help-text">Enter your username (4-16 characters, letters, numbers, and underscores only).</div>
+        <div class="help-text translatable" data-original-text="Enter your username (4-16 characters, letters, numbers, and underscores only).">Enter your username (4-16 characters, letters, numbers, and underscores only).</div>
 
         <!-- Email Field -->
-        <label for="id_email">Email</label>
+        <label for="id_email" class="translatable" data-original-text="Email">Email</label>
         {{ form.email }}
-        <div class="help-text">Enter a valid email address.</div>
+        <div class="help-text translatable" data-original-text="Enter a valid email address.">Enter a valid email address.</div>
 
         <!-- Password Field -->
-        <label for="id_password1">Password</label>
+        <label for="id_password1" class="translatable" data-original-text="Password">Password</label>
         {{ form.password1 }}
-        <div class="help-text">
+        <div class="help-text translatable" data-original-text="• Must be at least 8 characters.<br>• Cannot be entirely numeric or too similar to personal info.">
             • Must be at least 8 characters.<br>
             • Cannot be entirely numeric or too similar to personal info.
         </div>
 
         <!-- Confirm Password Field -->
-        <label for="id_password2">Confirm Password</label>
+        <label for="id_password2" class="translatable" data-original-text="Confirm Password">Confirm Password</label>
         {{ form.password2 }}
-        <div class="help-text">Please confirm your password.</div>
+        <div class="help-text translatable" data-original-text="Please confirm your password.">Please confirm your password.</div>
 
-        <button type="submit">Register</button>
+        <button type="submit" class="translatable" data-original-text="Register">Register</button>
     </form>
 
     <div class="redirect-text">
-        <p>Already have an account? <a href="{% url 'login' %}">Log in here</a></p>
+        <p>
+            <span class="translatable" data-original-text="Already have an account?">Already have an account?</span>
+            <a href="{% url 'login' %}" class="translatable" data-original-text="Log in here">Log in here</a>
+        </p>
     </div>
 </div>
 {% endblock %}

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify Wrapped</title>
+    <title class="translatable" data-original-text="Spotify Wrapped">Spotify Wrapped</title>
     <style>
         /* Reset some default styles */
         * {
@@ -100,22 +100,102 @@
             background-color: #014000; /* Change color on hover */
             color: white;
         }
+
+        /* Translate dropdown and button styling */
+        .translate-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            background-color: white;
+            color: #333;
+        }
+
+        .translate-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .translate-btn:hover {
+            background-color: #014000;
+            transform: translateY(-3px);
+        }
     </style>
 </head>
 
 <body>
     <div class="overlay"></div>
     <div class="container">
-        <h1>Welcome to Spotify Wrapped</h1>
-        <h3>Login To View Your Wrapped All Year Long</h3>
+        <h1 class="translatable" data-original-text="Welcome to Spotify Wrapped">Welcome to Spotify Wrapped</h1>
+        <h3 class="translatable" data-original-text="Login To View Your Wrapped All Year Long">Login To View Your Wrapped All Year Long</h3>
 
         <!-- Register Button -->
-        <a href="{% url 'register' %}" class="button">Register</a>
+        <a href="{% url 'register' %}" class="button translatable" data-original-text="Register">Register</a>
 
         <!-- Login Button -->
         <br><br>
-        <a href="{% url 'login' %}" class="miniButton">Log in here</a>
+        <a href="{% url 'login' %}" class="miniButton translatable" data-original-text="Log in here">Log in here</a>
     </div>
-</body>
 
+    <!-- Translate Dropdown and Button -->
+    <div class="translate-container">
+        <select id="language-select">
+            <option value="en" selected>English</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+        </select>
+        <button id="translate-btn" class="translate-btn">Translate</button>
+    </div>
+
+    <script>
+        document.getElementById('translate-btn').addEventListener('click', async () => {
+        const lang = document.getElementById('language-select').value;
+        const elements = document.querySelectorAll('.translatable');
+
+        for (const el of elements) {
+            const text = el.getAttribute('data-original-text');
+            if (text) {
+                try {
+                    console.log(`Translating "${text}" to ${lang}`); // Debug: Log the text and language
+                    const response = await fetch('/translate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}' // CSRF protection for POST
+                        },
+                        body: JSON.stringify({ text, lang })
+                    });
+
+                    const data = await response.json();
+                    console.log('Response:', data); // Debug: Log the server response
+
+                    if (data.translated_text) {
+                        el.textContent = data.translated_text;
+                    }
+                } catch (error) {
+                    console.error('Translation error:', error);
+                }
+            }
+        }
+    });
+    </script>
+</body>
 </html>

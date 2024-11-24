@@ -76,7 +76,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spotify Wrapped</title>
+  <title>{% block title %}Spotify Wrapped{% endblock %}</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
@@ -84,23 +84,22 @@
 
   <!-- Navigation Bar with Sign-In and Log-In -->
   <nav class="navbar">
-    <h1>Spotify Wrapped</h1>
+    <a href="{% url 'home' %}" class="logo">
+            <h1 class="translatable" data-original-text="Spotify Wrapped">Spotify Wrapped</h1>
+    </a>
     <div class="auth-links">
-      {% if user.is_authenticated %}
-        <a href="{% url 'dashboard' %}" class="btn">Dashboard</a>
-          <a href="{% url 'contact_developers' %}">Contact the Developers</a>
-          <a href="{% url 'wrapped_carousel' %}" class="btn btn-primary">Create Spotify Wrapped</a>
-
-        <form method="POST" action="{% url 'logout' %}">
-          {% csrf_token %}
-          <button type="submit" class="btn">Log Out</button>
-        </form>
-      {% else %}
-        <a href="{% url 'register' %}" class="btn">Sign Up</a>
-        <a href="{% url 'login' %}" class="btn">Log In</a>
-          <a href="{% url 'wrapped_carousel' %}" class="btn btn-primary">Create Spotify Wrapped</a>
-      {% endif %}
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="btn translatable" data-original-text="Dashboard">Dashboard</a>
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn translatable" data-original-text="Log Out">Log Out</button>
+                </form>
+            {% else %}
+                <a href="{% url 'register' %}" class="btn translatable" data-original-text="Sign Up">Sign Up</a>
+                <a href="{% url 'login' %}" class="btn translatable" data-original-text="Log In">Log In</a>
+            {% endif %}
     </div>
+    <button id="translate-btn" class="translate-btn" data-lang="es">Translate</button>
   </nav>
 
   <!-- Main Content Section -->

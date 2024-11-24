@@ -83,20 +83,21 @@
   <!-- Navigation bar -->
   <nav class="navbar">
     <a href="{% url 'home' %}" class="logo">
-        <h1>Spotify Wrapped</h1>
+        <h1 class="translatable" data-original-text="Spotify Wrapped">Spotify Wrapped</h1>
     </a>
     <div class="auth-links">
         {% if user.is_authenticated %}
-            <a href="{% url 'dashboard' %}" class="btn">Dashboard</a>
+            <a href="{% url 'dashboard' %}" class="btn translatable" data-original-text="Dashboard">Dashboard</a>
             <form method="POST" action="{% url 'logout' %}">
                 {% csrf_token %}
-                <button type="submit" class="btn">Log Out</button>
+                <button type="submit" class="btn translatable" data-original-text="Log Out">Log Out</button>
             </form>
         {% else %}
-            <a href="{% url 'register' %}" class="btn">Sign Up</a>
-            <a href="{% url 'login' %}" class="btn">Log In</a>
+            <a href="{% url 'register' %}" class="btn translatable" data-original-text="Sign Up">Sign Up</a>
+            <a href="{% url 'login' %}" class="btn translatable" data-original-text="Log In">Log In</a>
         {% endif %}
     </div>
+    <button id="translate-btn" class="translate-btn" data-lang="es">Translate</button>
   </nav>
 
 
@@ -104,6 +105,22 @@
   <main>
       {% block content %}{% endblock %}
   </main>
-
+  <script>
+    document.getElementById('translate-btn').addEventListener('click', () => {
+        const lang = document.getElementById('translate-btn').getAttribute('data-lang') || 'es'; // Default to Spanish
+        const elements = document.querySelectorAll('.translatable');
+        elements.forEach((el) => {
+            const text = el.getAttribute('data-original-text');
+            fetch(`/translate?text=${encodeURIComponent(text)}&lang=${lang}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.translatedText) {
+                        el.textContent = data.translatedText;
+                    }
+                })
+                .catch((error) => console.error('Translation error:', error));
+        });
+    });
+  </script>
 </body>
 </html>

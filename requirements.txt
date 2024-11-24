@@ -39,3 +39,6 @@ sqlparse==0.5.1
 tomlkit==0.13.2
 urllib3==2.2.3
 wrapt==1.16.0
+
+openai~=1.54.3
+googletrans~=4.0.0rc1

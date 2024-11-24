@@ -1,5 +1,7 @@
 """Views for Wrappedapp."""
 import urllib.parse
+from linecache import cache
+
 from django.contrib.auth import login, logout
 from .models import SpotifyAccount
 from django.conf import settings
@@ -270,3 +272,55 @@ def stats_view(request):
 def custom_logout_view(request):
     logout(request)
     return render(request, 'logout.html')
+
+from deep_translator import GoogleTranslator
+from django.http import JsonResponse
+import json
+
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+def translate_text(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            text = data.get('text', '')
+            target_lang = data.get('lang', 'en')
+
+            logger.info(f"Received translation request: text='{text}', lang='{target_lang}'")  # Debug log
+
+            # Use deep-translator to translate
+            translated_text = GoogleTranslator(source='auto', target=target_lang).translate(text)
+
+            logger.info(f"Translated text: {translated_text}")  # Debug log
+
+            return JsonResponse({'translated_text': translated_text})
+        except Exception as e:
+            logger.error(f"Error during translation: {e}")  # Debug log
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+def translate_batch(request):
+    """
+    Translate multiple texts to the specified target language.
+    """
+    if request.method == 'POST':
+        try:
+            # Parse the JSON body
+            data = json.loads(request.body)
+            texts = data.get('texts', [])
+            target_lang = data.get('lang', 'en')  # Default to English if no language is provided
+
+            # Translate each text and store results in a dictionary
+            translations = {}
+            for text in texts:
+                translations[text] = GoogleTranslator(source='auto', target=target_lang).translate(text)
+
+            return JsonResponse({'translations': translations})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
