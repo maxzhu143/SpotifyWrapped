@@ -294,5 +294,6 @@ def top_song_view(request):
     else:
         track_data = None
 
+    # Pass the context to the carousel template
     context = {'track_data': track_data}
-    return render(request, 'top_song.html', context)
+    return render(request, 'wrapped_carousel.html', context)

@@ -17,8 +17,25 @@
 
             <!-- Other Slides -->
             <div class="carousel-item">
-                {% include "top_song.html" %}
+                <div class="container py-5">
+                    <h1 class="text-center">Your Top Song</h1>
+
+                    {% if track_data %}
+                        <div class="card my-5 mx-auto" style="max-width: 600px;">
+                            <img src="{{ track_data.album_cover }}" class="card-img-top" alt="Album cover">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ track_data.name }}</h5>
+                                <p class="card-text">Artist: {{ track_data.artist }}</p>
+                                <p class="card-text">Total Minutes Listened: {{ track_data.total_minutes_listened }}</p>
+                                <a href="{{ track_data.spotify_url }}" class="btn btn-primary" target="_blank">Listen on Spotify</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-center">No top song data available.</p>
+                    {% endif %}
+                </div>
             </div>
+
             <div class="carousel-item">
                 <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
                     <h3>Slide 3 Content</h3>
