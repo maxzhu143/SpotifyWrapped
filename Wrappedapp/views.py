@@ -11,11 +11,11 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth.decorators import login_required
 import requests
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import ButtonClick
 
 # THIS IS HOW YOU GET ACCESS TOKENS: access_token = request.session.get('access_token')
-
-
-
 
 
 
@@ -270,3 +270,35 @@ def stats_view(request):
 def custom_logout_view(request):
     logout(request)
     return render(request, 'logout.html')
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import ButtonClick
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import ButtonClick
+
+@login_required
+def track_click(request):
+    # Get or create the ButtonClick object for the logged-in user
+    button_click, created = ButtonClick.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        # Toggle the clicked status
+        button_click.clicked = not button_click.clicked
+        button_click.save()
+        return redirect('track_click')  # Redirect to avoid form resubmission
+
+    # Determine background color, button position, and styles
+    background_color = 'blue' if button_click.clicked else 'red'
+    button_color = 'green' if button_click.clicked else 'orange'
+    button_position = 'top-right' if button_click.clicked else 'bottom-right'
+    message = "The button has been clicked!" if button_click.clicked else "The button needs to be clicked."
+
+    return render(request, 'track_click.html', {
+        'background_color': background_color,
+        'button_color': button_color,
+        'button_position': button_position,
+        'message': message,
+    })
