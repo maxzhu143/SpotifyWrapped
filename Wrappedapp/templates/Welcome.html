@@ -157,38 +157,44 @@
 
     <!-- Translate Dropdown and Button -->
     <div class="translate-container">
-        <select id="language-select">
-            <option value="en" selected>English</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
+        <select id="language-select" class="translatable">
+            <option value="en" class="translatable" data-original-text="English">English</option>
+            <option value="es" class="translatable" data-original-text="Spanish">Spanish</option>
+            <option value="fr" class="translatable" data-original-text="French">French</option>
         </select>
-        <button id="translate-btn" class="translate-btn">Translate</button>
+        <button id="translate-btn" class="translate-btn translatable" data-original-text="Translate">Translate</button>
     </div>
 
     <script>
         document.getElementById('translate-btn').addEventListener('click', async () => {
-        const lang = document.getElementById('language-select').value;
+        const lang = document.getElementById('language-select').value; // Get selected language
         const elements = document.querySelectorAll('.translatable');
 
         for (const el of elements) {
-            const text = el.getAttribute('data-original-text');
+            const text = el.getAttribute('data-original-text'); // Get original text
             if (text) {
                 try {
-                    console.log(`Translating "${text}" to ${lang}`); // Debug: Log the text and language
+                    console.log(`Translating "${text}" to ${lang}`); // Debug log
                     const response = await fetch('/translate', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}' // CSRF protection for POST
+                            'X-CSRFToken': '{{ csrf_token }}'
                         },
-                        body: JSON.stringify({ text, lang })
+                        body: JSON.stringify({ text, lang }) // Send text and target language
                     });
 
                     const data = await response.json();
-                    console.log('Response:', data); // Debug: Log the server response
+                    console.log('Response:', data); // Debug log
 
                     if (data.translated_text) {
-                        el.textContent = data.translated_text;
+                        if (el.tagName === 'OPTION') {
+                            el.textContent = data.translated_text; // Update dropdown option text
+                        } else if (el.tagName === 'BUTTON') {
+                            el.textContent = data.translated_text; // Update button text
+                        } else {
+                            el.textContent = data.translated_text; // Update regular text
+                        }
                     }
                 } catch (error) {
                     console.error('Translation error:', error);
