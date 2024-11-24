@@ -45,9 +45,6 @@ def spot_login(request):
         '&scope=user-top-read'
     )
     return redirect(auth_url)
-def wrapped(request):
-    return render(request, 'wrapped.html')
-
 
 def callback(request):
     print("CALLBACK")
@@ -68,8 +65,7 @@ def callback(request):
     token_info = response.json()
     request.session['access_token'] = token_info.get('access_token')
 
-    #REPLACE WITH CARASOUL
-    return redirect('top_songs')
+    return redirect('dashboard')
 
 @csrf_exempt  # CSRF protection is already handled in the form
 def unlink(request):
@@ -130,7 +126,6 @@ def home(request):
 @login_required(login_url='login')
 def dashboard(request):
     spotify_account = None
-
     if "access_token" in request.session:
         access_token = request.session.get('access_token')
         response = requests.get(
@@ -140,28 +135,7 @@ def dashboard(request):
         if response.status_code == 200:
             spotify_account = response.json()
 
-    access_token = request.session.get('access_token')
-    if not access_token:
-        print("Access token is needed")
-        return redirect('spot_login')
-
-    headers = {'Authorization': f'Bearer {access_token}'}
-
-    # Get user profile information for the display name
-    profile_url = 'https://api.spotify.com/v1/me'
-    profile_response = requests.get(profile_url, headers=headers)
-    if profile_response.status_code == 200:
-        profile_data = profile_response.json()
-        user_name = profile_data.get('display_name', 'Spotify User')
-    else:
-        print("Failed to fetch user profile:", profile_response.status_code, profile_response.text)
-        user_name = 'Spotify User'
-
-
-
-
-    print(spotify_account)
-    return render(request, "dashboard.html", {"spotify_account": spotify_account, 'user_name': user_name})
+    return render(request, "dashboard.html", {"spotify_account": spotify_account})
 
 
 def register(request):
@@ -176,9 +150,6 @@ def register(request):
         form = SignUpForm()
 
     return render(request, 'register.html', {'form': form})
-
-#might cause issues becuase we have two
-
 
 def contact_developers(request):
     return render(request, 'contact_developers.html')
@@ -198,32 +169,6 @@ def spotify_authorize(request):
     }
     auth_url = f"{spotify_auth_url}?{urllib.parse.urlencode(params)}"
     return redirect(auth_url)
-
-def spotify_callback(request):
-    code = request.GET.get("code")
-    token_url = "https://accounts.spotify.com/api/token"
-
-    response = requests.post(token_url, data={
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": settings.SPOTIFY_REDIRECT_URI,
-        "client_id": settings.SPOTIFY_CLIENT_ID,
-        "client_secret": settings.SPOTIFY_CLIENT_SECRET,
-    })
-
-    if response.status_code == 200:
-        tokens = response.json()
-        access_token = tokens["access_token"]
-        refresh_token = tokens["refresh_token"]
-
-        # Save tokens in the session (or database) for later use
-        request.session["access_token"] = access_token
-        request.session["refresh_token"] = refresh_token
-
-        # Redirect to another view, or render a template
-        return redirect("home")  # Change 'home' to your target URL
-    else:
-        return redirect("error")  # Handle errors gracefully
 
 @csrf_exempt
 def describe_user_tracks(request):
