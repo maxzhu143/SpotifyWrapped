@@ -65,6 +65,7 @@ def callback(request):
     token_info = response.json()
     request.session['access_token'] = token_info.get('access_token')
 
+    #REPLACE WITH CARASOUL
     return redirect('top_songs')
 
 @csrf_exempt  # CSRF protection is already handled in the form
@@ -79,7 +80,6 @@ def unlink(request):
         request.session.pop('access_token', None)
         request.session.pop('refresh_token', None)
         request.session.pop('expires_at', None)
-        print("hey")
         return redirect('dashboard')  # Redirect to login page or homepage
 
 def top_songs(request):
@@ -127,6 +127,7 @@ def home(request):
 @login_required(login_url='login')
 def dashboard(request):
     spotify_account = None
+
     if "access_token" in request.session:
         access_token = request.session.get('access_token')
         response = requests.get(
@@ -136,7 +137,28 @@ def dashboard(request):
         if response.status_code == 200:
             spotify_account = response.json()
 
-    return render(request, "dashboard.html", {"spotify_account": spotify_account})
+    access_token = request.session.get('access_token')
+    if not access_token:
+        print("Access token is needed")
+        return redirect('spot_login')
+
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    # Get user profile information for the display name
+    profile_url = 'https://api.spotify.com/v1/me'
+    profile_response = requests.get(profile_url, headers=headers)
+    if profile_response.status_code == 200:
+        profile_data = profile_response.json()
+        user_name = profile_data.get('display_name', 'Spotify User')
+    else:
+        print("Failed to fetch user profile:", profile_response.status_code, profile_response.text)
+        user_name = 'Spotify User'
+
+
+
+
+    print(spotify_account)
+    return render(request, "dashboard.html", {"spotify_account": spotify_account, 'user_name': user_name})
 
 
 def register(request):
@@ -153,10 +175,7 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 #might cause issues becuase we have two
-@login_required
-def dashboard(request):
-    """Display user dashboard."""
-    return render(request, 'dashboard.html')
+
 
 def contact_developers(request):
     return render(request, 'contact_developers.html')
