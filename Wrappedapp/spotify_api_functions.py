@@ -1,19 +1,72 @@
 import requests
 
-def get_access_token(code, redirect_uri, client_id, client_secret):
-    """Exchange authorization code for an access token."""
-    token_url = "https://accounts.spotify.com/api/token"
-    response = requests.post(token_url, data={
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": redirect_uri,
-        "client_id": client_id,
-        "client_secret": client_secret,
-    })
-    if response.status_code == 200:
-        return response.json()
-    else:
-        response.raise_for_status()
+from datetime import datetime, timedelta
+import requests
+from django.conf import settings
+from .models import SpotifyAccount
+from django.utils import timezone
+import urllib.parse
+from django.contrib.auth import login, logout
+from django.conf import settings
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from .forms import SignUpForm
+import openai
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.contrib.auth.decorators import login_required
+import requests
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+
+from datetime import datetime, timedelta
+from django.shortcuts import redirect
+from Wrappedapp.models import SpotifyWrapped, SpotifyAccount
+from django.utils import timezone
+
+openai.api_key = settings.OPENAI_API_KEY
+client_id = settings.SPOTIFY_CLIENT_ID
+client_secret = settings.SPOTIFY_CLIENT_SECRET
+redirect_uri = settings.SPOTIFY_REDIRECT_URI
+
+def get_valid_spotify_token(user):
+    """
+    Retrieves a valid Spotify access token for the given user.
+    Refreshes the token if it has expired.
+    """
+    try:
+        # Retrieve the SpotifyAccount object for the user
+        spotify_account = SpotifyAccount.objects.get(user=user)
+
+        # Check if the access token is still valid
+        if spotify_account.expires_at > timezone.now():
+            return spotify_account.access_token
+
+        # Token is expired; attempt to refresh it
+        refresh_url = "https://accounts.spotify.com/api/token"
+        response = requests.post(refresh_url, data={
+            "grant_type": "refresh_token",
+            "refresh_token": spotify_account.refresh_token,
+            "client_id": settings.SPOTIFY_CLIENT_ID,
+            "client_secret": settings.SPOTIFY_CLIENT_SECRET,
+        })
+
+        if response.status_code == 200:
+            tokens = response.json()
+            new_access_token = tokens.get("access_token")
+            expires_in = tokens.get("expires_in", 3600)  # Default to 3600 seconds
+
+            # Update SpotifyAccount with the new token and expiry
+            spotify_account.access_token = new_access_token
+            spotify_account.expires_at = timezone.now() + timedelta(seconds=expires_in)
+            spotify_account.save()
+
+            return new_access_token
+        else:
+            raise Exception(f"Failed to refresh token: {response.status_code} {response.text}")
+
+    except SpotifyAccount.DoesNotExist:
+        raise Exception("Spotify account not linked to this user.")
 
 def get_user_profile(access_token):
     """Get the current user's Spotify profile information."""
@@ -25,20 +78,6 @@ def get_user_profile(access_token):
     else:
         response.raise_for_status()
 
-
-def refresh_access_token(refresh_token, client_id, client_secret):
-    """Refresh the Spotify access token."""
-    token_url = "https://accounts.spotify.com/api/token"
-    response = requests.post(token_url, data={
-        "grant_type": "refresh_token",
-        "refresh_token": refresh_token,
-        "client_id": client_id,
-        "client_secret": client_secret,
-    })
-    if response.status_code == 200:
-        return response.json()
-    else:
-        response.raise_for_status()
 
 
 # Top Songs (Medium Term)
@@ -93,7 +132,7 @@ def get_total_minutes_listened(access_token):
 
     play_count = 30  # Approximate number of times each track was played over the medium term
     total_ms = sum(track['duration_ms'] * play_count for track in top_tracks if isinstance(track, dict))
-    return f"{total_ms / 1000 / 60:.2f} minutes" if total_ms > 0 else "Looks like you have no listening time recorded."
+    return total_ms / 1000.0 / 60.0
 
 
 # Listening Personality (Medium Term)

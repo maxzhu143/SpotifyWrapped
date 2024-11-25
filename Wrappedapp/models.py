@@ -112,7 +112,10 @@ class SpotifyWrapped(models.Model):
     top_genres = models.JSONField(default=dict)  # Example: List of genres
     personality = models.CharField(max_length=255, null=True, blank=True)  # Optional string field
     total_minutes_listened = models.IntegerField(default=0)  # Example: Total listening time
+    sound_town = models.CharField(max_length=255, null=True, blank=True)
+    artist_thank_you = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    top_podcasts = models.JSONField(default=dict)
 
     def __str__(self):
         return f"Wrapped {self.title} for {self.user.username}"
