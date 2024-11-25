@@ -27,19 +27,6 @@ client_secret = settings.SPOTIFY_CLIENT_SECRET
 redirect_uri = settings.SPOTIFY_REDIRECT_URI
 
 
-def spot_login(request):
-    # Step 1: Redirect the user to Spotify's authorization page
-    print(request.session.keys())
-    #return redirect('top_songs')
-
-    auth_url = (
-        'https://accounts.spotify.com/authorize'
-        '?response_type=code'
-        f'&client_id={settings.SPOTIFY_CLIENT_ID}'
-        f'&redirect_uri={settings.SPOTIFY_REDIRECT_URI}'
-        '&scope=user-top-read'
-    )
-    return redirect(auth_url)
 
 def spotify_callback(request):
     code = request.GET.get("code")
@@ -90,49 +77,11 @@ def unlink(request):
     return redirect('dashboard')  # Redirect to the dashboard
 
 
-def top_songs(request):
-    access_token = request.session.get('access_token')
-    if not access_token:
-        print("Access token is needed")
-        return redirect('spot_login')
 
-    headers = {'Authorization': f'Bearer {access_token}'}
-
-    # Get user profile information for the display name
-    profile_url = 'https://api.spotify.com/v1/me'
-    profile_response = requests.get(profile_url, headers=headers)
-    if profile_response.status_code == 200:
-        profile_data = profile_response.json()
-        user_name = profile_data.get('display_name', 'Spotify User')
-    else:
-        print("Failed to fetch user profile:", profile_response.status_code, profile_response.text)
-        user_name = 'Spotify User'
-
-    # Fetch top tracks
-    top_tracks_url = 'https://api.spotify.com/v1/me/top/tracks?limit=10'
-    tracks_response = requests.get(top_tracks_url, headers=headers)
-    if tracks_response.status_code == 200:
-        tracks_data = tracks_response.json()
-
-        # Extract song details if there are items in the response
-        songs = [{
-            'name': track['name'],
-            'artist': track['artists'][0]['name'],
-            'album': track['album']['name'],
-            'cover': track['album']['images'][0]['url']
-        } for track in tracks_data.get('items', [])]  # Safely handle missing 'items' key
-    else:
-        print("Failed to fetch top tracks:", tracks_response.status_code, tracks_response.text)
-        songs = []  # Provide an empty list as a fallback
-
-    return render(request, 'top_songs.html', {'songs': songs, 'user_name': user_name})
 
 def home(request):
     access_token = request.session.get("access_token", "")
     return render(request, "home.html", {"access_token": access_token})
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
 
 @login_required
 def dashboard(request):
@@ -148,8 +97,6 @@ def dashboard(request):
         "wrapped_objects": wrapped_objects,  # Add the saved wrapped objects to the context
     }
     return render(request, "dashboard.html", context)
-
-
 
 def register(request):
     """Handle user registration."""
@@ -167,7 +114,6 @@ def register(request):
 def contact_developers(request):
     return render(request, 'contact_developers.html')
 
-
 def spotify_authorize(request):
     spotify_auth_url = "https://accounts.spotify.com/authorize"
     params = {
@@ -178,39 +124,6 @@ def spotify_authorize(request):
     }
     auth_url = f"{spotify_auth_url}?{urllib.parse.urlencode(params)}"
     return redirect(auth_url)
-
-
-
-@csrf_exempt
-def describe_user_tracks(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            track_names = data.get('trackNames', [])
-
-            # Create a prompt for the LLM using the track names
-            prompt = f"Based on the top tracks that include {', '.join(track_names)}, " \
-                     "describe how this user might act or think in terms of personality and music preferences."
-
-            # Call OpenAI API to generate the description
-            response = openai.Completion.create(
-                model="text-davinci-003",
-                prompt=prompt,
-                max_tokens=100
-            )
-            description = response.choices[0].text.strip()
-
-            # Return the description to the frontend
-            return JsonResponse({'description': description})
-
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-
 
 @login_required
 def wrapped_carousel(request, wrapped_id):
@@ -263,42 +176,6 @@ def create_wrapped(request):
     except Exception as e:
         print(f"Error fetching Spotify data: {e}")
         return render(request, 'error.html', {'message': f"Failed to create Spotify Wrapped: {e}"})
-
-
-
-
-
-def stats_page(request):
-    access_token = request.session.get('access_token')
-    if not access_token:
-        return redirect('spotify_login')
-
-    # Collect data with error handling
-    top_songs = get_top_songs(access_token)
-    top_artists = get_top_artists(access_token)
-    top_genres = get_top_genres(access_token)
-    personality = determine_listening_personality(access_token)
-    sound_town = get_sound_town([genre[0] for genre in top_genres])
-    total_minutes_listened = get_total_minutes_listened(access_token)
-    top_podcasts = get_top_podcasts(access_token)  # This might be empty if 404 occurs
-    artist_messages = get_artist_thank_you(access_token)
-
-    context = {
-        'top_songs': top_songs,
-        'top_artists': top_artists,
-        'top_genres': top_genres,
-        'personality': personality,
-        'sound_town': sound_town,
-        'total_minutes_listened': total_minutes_listened,
-        'top_podcasts': top_podcasts,
-        'artist_messages': artist_messages,
-    }
-    return render(request, 'stats_page.html', context)
-
-
-
-
-
 
 @login_required
 
