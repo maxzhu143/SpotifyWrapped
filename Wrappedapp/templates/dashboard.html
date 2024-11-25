@@ -72,6 +72,29 @@
             gap: 10px;
             margin-top: 20px;
         }
+
+        /* Wrapped objects styling */
+        .wrapped-list {
+            margin-top: 20px;
+        }
+        .wrapped-list h2 {
+            margin-bottom: 15px;
+        }
+        .wrapped-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .wrapped-list li {
+            margin-bottom: 10px;
+        }
+        .wrapped-list a {
+            text-decoration: none;
+            color: var(--button-bg-color);
+            font-weight: bold;
+        }
+        .wrapped-list a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -84,12 +107,29 @@
             <p>Your Spotify account is linked!</p>
             <p>Account: {{ spotify_account.user.username }}</p>
             <a href="{% url 'unlink' %}" class="btn btn-danger">Unlink Spotify Account</a>
-            <a href="{% url 'top_songs' %}" class="btn btn-primary">View Top Songs</a>
+            <a href="{% url 'wrapped_carousel' %}" class="btn btn-primary">Create Spotify Wrapped</a>
         {% else %}
             <!-- Unlinked State -->
             <p>You need to link your Spotify account to access features.</p>
             <a href="{% url 'spotify_authorize' %}" class="btn btn-success">Link Spotify Account</a>
         {% endif %}
+
+        <!-- User's Spotify Wrapped objects -->
+        <div class="wrapped-list">
+            <h2>Your Spotify Wrapped Objects</h2>
+            {% if wrapped_objects %}
+                <ul>
+                    {% for wrapped in wrapped_objects %}
+                        <li>
+                            <a href="{% url 'view_wrapped' wrapped.id %}">{{ wrapped.title }}</a>
+                            (Created on {{ wrapped.created_at|date:"M d, Y" }})
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>You haven't created any Spotify Wrapped objects yet.</p>
+            {% endif %}
+        </div>
 
         <!-- Theme toggle buttons -->
         <div class="theme-toggle">

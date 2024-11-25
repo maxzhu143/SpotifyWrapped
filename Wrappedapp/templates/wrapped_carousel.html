@@ -1,134 +1,64 @@
 {% extends "base.html" %}
-{% load django_bootstrap5 %}
 
-{% block title %}Spotify Wrapped{% endblock %}
+{% block title %}Larger Carousel{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-
-    <!-- Custom CSS for the Carousel -->
-    <style>
-        /* Ensure the carousel container has a defined height */
-        #spotifyWrappedCarousel {
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Style for previous and next buttons */
-        .carousel-control-prev,
-        .carousel-control-next {
-            position: absolute;
-            top: 50%; /* Vertically center */
-            transform: translateY(-50%);
-            width: 50px; /* Consistent width */
-            height: 50px; /* Consistent height */
-            z-index: 10; /* Ensure arrows appear above content */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(0, 0, 0, 0.5); /* Optional: semi-transparent background */
-            border-radius: 50%; /* Make the buttons circular */
-        }
-
-        /* Ensure the icons inside the buttons are scaled properly */
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            width: 20px; /* Adjust icon size */
-            height: 20px; /* Adjust icon size */
-            background-size: contain; /* Fit the size */
-        }
-
-        /* Offset the arrows to the sides of the carousel */
-        .carousel-control-prev {
-            left: -60px; /* Move arrow left */
-        }
-
-        .carousel-control-next {
-            right: -60px; /* Move arrow right */
-        }
-    </style>
-
+<div class="container mt-5 position-relative">
     <!-- Carousel -->
-    <div id="spotifyWrappedCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-
-            <!-- Slide 1: Top Songs -->
+    <div id="basicCarousel" class="carousel slide">
+        <!-- Carousel Inner -->
+        <div class="carousel-inner" style="height: 500px; width: 100%; max-width: 900px; margin: 0 auto;">
             <div class="carousel-item active">
-                <h3>Top Songs</h3>
-                <ul>
-                    {% for song in top_songs %}
-                    <li>
-                        <img src="{{ song.cover }}" alt="{{ song.name }}" style="width: 100px; height: 100px;">
-                        <p>{{ song.name }} by {{ song.artist }}</p>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-
-            <!-- Slide 2: Top Artists -->
-            <div class="carousel-item">
-                <h3>Top Artists</h3>
-                <ul>
-                    {% for artist in top_artists %}
-                    <li>{{ artist }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-
-            <!-- Slide 3: Top Genres -->
-            <div class="carousel-item">
-                <h3>Top Genres</h3>
-                <ul>
-                    {% for genre in top_genres %}
-                    <li>{{ genre }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-
-            <!-- Slide 4: Personality -->
-            <div class="carousel-item">
-                <h3>Your Listening Personality</h3>
-                <p>{{ personality }}</p>
-            </div>
-
-            <!-- Slide 5: Total Minutes -->
-            <div class="carousel-item">
-                <h3>Total Minutes Listened</h3>
-                <p>{{ total_minutes_listened }}</p>
-            </div>
-
-            <!-- Additional Slides as Needed -->
-            <div class="carousel-item">
-                <h3>Sound Town</h3>
-                <p>{{ sound_town }}</p>
+                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #ccc;">
+                    <h3>Top Songs</h3>
+                </div>
             </div>
             <div class="carousel-item">
-                <h3>Top Podcasts</h3>
-                <ul>
-                    {% for podcast in top_podcasts %}
-                    <li>{{ podcast }}</li>
-                    {% endfor %}
-                </ul>
+                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #aaa;">
+                    <h3>Top Artists</h3>
+                </div>
             </div>
             <div class="carousel-item">
-                <h3>Artist Messages</h3>
-                <ul>
-                    {% for artist, message in artist_messages.items %}
-                    <li>{{ artist }}: {{ message }}</li>
-                    {% endfor %}
-                </ul>
+                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
+                    <h3>Top Genres</h3>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
+                    <h3>Minutes Listened</h3>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
+                    <h3>Listening Personality</h3>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
+                    <h3>Sound Town</h3>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
+                    <h3>Podcasts</h3>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
+                    <h3>Artist Thank You</h3>
+                </div>
             </div>
         </div>
-
-        <!-- Carousel Controls -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#spotifyWrappedCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#spotifyWrappedCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
     </div>
+
+    <!-- Controls placed completely outside the carousel -->
+    <button class="carousel-control-prev position-absolute" type="button" data-bs-target="#basicCarousel" data-bs-slide="prev" style="top: 50%; transform: translateY(-50%); left: -80px; width: 60px; height: 60px;">
+        <span class="carousel-control-prev-icon" aria-hidden="true" style="width: 30px; height: 30px;"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next position-absolute" type="button" data-bs-target="#basicCarousel" data-bs-slide="next" style="top: 50%; transform: translateY(-50%); right: -80px; width: 60px; height: 60px;">
+        <span class="carousel-control-next-icon" aria-hidden="true" style="width: 30px; height: 30px;"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
 </div>
 {% endblock %}

@@ -1,7 +1,6 @@
 """Views for Wrappedapp."""
 import urllib.parse
 from django.contrib.auth import login, logout
-from .models import SpotifyAccount
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -19,12 +18,13 @@ from .spotify_api_functions import (
 )
 from datetime import datetime, timedelta
 from django.shortcuts import redirect
-from Wrappedapp.models import SpotifyAccount
+from Wrappedapp.models import SpotifyWrapped, SpotifyAccount
 
 openai.api_key = settings.OPENAI_API_KEY
 client_id = settings.SPOTIFY_CLIENT_ID
 client_secret = settings.SPOTIFY_CLIENT_SECRET
 redirect_uri = settings.SPOTIFY_REDIRECT_URI
+
 
 def spot_login(request):
     # Step 1: Redirect the user to Spotify's authorization page
@@ -132,18 +132,22 @@ def home(request):
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from Wrappedapp.models import SpotifyAccount
 
 @login_required
 def dashboard(request):
     # Check if the Spotify account is linked
     spotify_account = SpotifyAccount.objects.filter(user=request.user).first()
 
+    # Get the user's saved SpotifyWrapped objects
+    wrapped_objects = SpotifyWrapped.objects.filter(user=request.user).order_by('-created_at')
+
     context = {
         "spotify_account": spotify_account,
         "spotify_linked": bool(spotify_account),  # True if Spotify account is linked
+        "wrapped_objects": wrapped_objects,  # Add the saved wrapped objects to the context
     }
     return render(request, "dashboard.html", context)
+
 
 
 def register(request):
@@ -203,8 +207,43 @@ def describe_user_tracks(request):
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
 def wrapped_carousel(request):
-    return render(request, 'wrapped_carousel.html')
+    """
+    View to render the Wrapped Carousel page with data pulled from Spotify API.
+    """
+    try:
+        # Fetch data from Spotify API using user's token
+        spotify_token = request.user.spotify_token  # Assuming you store tokens per user
+
+        top_songs = get_top_songs(spotify_token)  # Example: [{'name': 'Song1', 'artist': 'Artist1', 'cover': 'url1'}, ...]
+        top_artists = get_top_artists(spotify_token)  # Example: ['Artist1', 'Artist2', ...]
+        top_genres = get_top_genres(spotify_token)  # Example: ['Genre1', 'Genre2', ...]
+        personality = determine_listening_personality(spotify_token)  # Example: 'Adventurous Listener'
+        total_minutes_listened = get_total_minutes_listened(spotify_token)  # Example: 12000
+
+    except Exception as e:
+        # If API call fails or user has no data, provide defaults
+        print(f"Error fetching Spotify data: {e}")
+        top_songs = []
+        top_artists = []
+        top_genres = []
+        personality = "No personality data available."
+        total_minutes_listened = "No listening time recorded."
+
+    # Pass the data to the template
+    return render(request, 'wrapped_carousel.html', {
+        'top_songs': top_songs,
+        'top_artists': top_artists,
+        'top_genres': top_genres,
+        'personality': personality,
+        'total_minutes_listened': total_minutes_listened,
+    })
+
 
 
 

@@ -100,3 +100,19 @@ class WrappedSummary(models.Model):
 
     def __str__(self):
         return f"{self.spotify_account.user.username}'s Wrapped {self.year}"
+
+from django.db import models
+from django.conf import settings
+
+class SpotifyWrapped(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="wrapped_objects")
+    title = models.CharField(max_length=255, default="My Spotify Wrapped")  # Optional title
+    top_songs = models.JSONField(default=dict)  # Example: List of songs
+    top_artists = models.JSONField(default=dict)  # Example: List of artists
+    top_genres = models.JSONField(default=dict)  # Example: List of genres
+    personality = models.CharField(max_length=255, null=True, blank=True)  # Optional string field
+    total_minutes_listened = models.IntegerField(default=0)  # Example: Total listening time
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Wrapped {self.title} for {self.user.username}"
