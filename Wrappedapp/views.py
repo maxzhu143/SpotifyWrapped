@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth.decorators import login_required
 import requests
+from collections import Counter
 
 # THIS IS HOW YOU GET ACCESS TOKENS: access_token = request.session.get('access_token')
 
@@ -296,4 +297,37 @@ def top_song_view(request):
 
     # Pass the context to the carousel template
     context = {'track_data': track_data}
+    return render(request, 'wrapped_carousel.html', context)
+
+def top_genres_view(request):
+    access_token = request.session.get('access_token')
+    if not access_token:
+        return redirect('spot_login')  # Redirect to Spotify login if no token is available
+
+    headers = {'Authorization': f'Bearer {access_token}'}
+    top_artists_url = 'https://api.spotify.com/v1/me/top/artists?limit=50'  # Fetch up to 50 top artists
+    artists_response = requests.get(top_artists_url, headers=headers)
+
+    if artists_response.status_code == 200:
+        top_artists = artists_response.json().get('items', [])
+
+        # Extract genres from the top artists
+        genres = []
+        for artist in top_artists:
+            genres.extend(artist.get('genres', []))  # Add the artist's genres to the list
+
+        # Count the frequency of each genre
+        genre_counts = Counter(genres)
+        top_3_genres = genre_counts.most_common(3)  # Get the top 3 genres
+
+        context = {
+            'top_genres': top_3_genres,
+        }
+    else:
+        # Handle API failure
+        print("Failed to fetch top artists:", artists_response.status_code, artists_response.text)
+        context = {
+            'error': "Unable to retrieve top genres. Please try again later."
+        }
+
     return render(request, 'wrapped_carousel.html', context)
