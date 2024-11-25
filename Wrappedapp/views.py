@@ -17,6 +17,9 @@ from .spotify_api_functions import (
     get_top_songs, get_top_artists, get_top_genres, determine_listening_personality,
     get_sound_town, get_total_minutes_listened, get_top_podcasts, get_artist_thank_you
 )
+from datetime import datetime, timedelta
+from django.shortcuts import redirect
+from Wrappedapp.models import SpotifyAccount
 
 openai.api_key = settings.OPENAI_API_KEY
 client_id = settings.SPOTIFY_CLIENT_ID
@@ -37,41 +40,54 @@ def spot_login(request):
     )
     return redirect(auth_url)
 
-def callback(request):
-    print("CALLBACK")
-    # Step 2: Get the authorization code from the redirect URL
-    code = request.GET.get('code')
+def spotify_callback(request):
+    code = request.GET.get("code")
+    if not code:
+        return redirect('error')  # Handle missing code gracefully
 
-    # Step 3: Exchange the authorization code for an access token
-    token_url = 'https://accounts.spotify.com/api/token'
-    token_data = {
-        'grant_type': 'authorization_code',
-        'code': code,
-        'redirect_uri': settings.SPOTIFY_REDIRECT_URI,
-        'client_id': settings.SPOTIFY_CLIENT_ID,
-        'client_secret': settings.SPOTIFY_CLIENT_SECRET,
-    }
+    # Exchange code for tokens
+    token_url = "https://accounts.spotify.com/api/token"
+    response = requests.post(token_url, data={
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": settings.SPOTIFY_REDIRECT_URI,
+        "client_id": settings.SPOTIFY_CLIENT_ID,
+        "client_secret": settings.SPOTIFY_CLIENT_SECRET,
+    })
 
-    response = requests.post(token_url, data=token_data)
-    token_info = response.json()
-    request.session['access_token'] = token_info.get('access_token')
+    if response.status_code == 200:
+        tokens = response.json()
+        access_token = tokens.get("access_token")
+        refresh_token = tokens.get("refresh_token")
+        expires_in = tokens.get("expires_in", 3600)  # Default to 3600 seconds if missing
 
-    return redirect('top_songs')
+        # Ensure `expires_at` is calculated
+        if expires_in is None:
+            expires_in = 3600  # Fallback to 1 hour
+        expires_at = datetime.now() + timedelta(seconds=expires_in)
+
+        # Save or update the SpotifyAccount
+        spotify_account, created = SpotifyAccount.objects.get_or_create(user=request.user)
+        spotify_account.access_token = access_token
+        spotify_account.refresh_token = refresh_token
+        spotify_account.expires_at = expires_at
+        spotify_account.save()
+
+        return redirect('dashboard')
+
+    else:
+        print(f"Spotify API error: {response.status_code} - {response.text}")
+        return redirect('error')  # Handle API errors gracefully
 
 @csrf_exempt  # CSRF protection is already handled in the form
 def unlink(request):
-    print("UNLINK")
-    print(request)
-    if request.method == 'POST':
-        print(request.session.keys())
-        print("Currently Unlinking")
-        # Clear the session to log the user out of Spotify
-        request.session.pop('access_token', None)
-        request.session.pop('access_token', None)
-        request.session.pop('refresh_token', None)
-        request.session.pop('expires_at', None)
-        print("hey")
-        return redirect('dashboard')  # Redirect to login page or homepage
+    try:
+        # Delete the SpotifyAccount for the current user
+        SpotifyAccount.objects.filter(user=request.user).delete()
+    except SpotifyAccount.DoesNotExist:
+        pass  # Handle cases where the account doesn't exist gracefully
+    return redirect('dashboard')  # Redirect to the dashboard
+
 
 def top_songs(request):
     access_token = request.session.get('access_token')
@@ -114,16 +130,21 @@ def home(request):
     access_token = request.session.get("access_token", "")
     return render(request, "home.html", {"access_token": access_token})
 
-@login_required(login_url='login')
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from Wrappedapp.models import SpotifyAccount
+
+@login_required
 def dashboard(request):
-    # Get the Spotify account info if connected
-    spotify_account = None
-    if request.user.is_authenticated:
-        try:
-            spotify_account = SpotifyAccount.objects.get(user=request.user)
-        except SpotifyAccount.DoesNotExist:
-            spotify_account = None
-    return render(request, 'dashboard.html', {'spotify_account': spotify_account})
+    # Check if the Spotify account is linked
+    spotify_account = SpotifyAccount.objects.filter(user=request.user).first()
+
+    context = {
+        "spotify_account": spotify_account,
+        "spotify_linked": bool(spotify_account),  # True if Spotify account is linked
+    }
+    return render(request, "dashboard.html", context)
+
 
 def register(request):
     """Handle user registration."""
@@ -153,31 +174,7 @@ def spotify_authorize(request):
     auth_url = f"{spotify_auth_url}?{urllib.parse.urlencode(params)}"
     return redirect(auth_url)
 
-def spotify_callback(request):
-    code = request.GET.get("code")
-    token_url = "https://accounts.spotify.com/api/token"
 
-    response = requests.post(token_url, data={
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": settings.SPOTIFY_REDIRECT_URI,
-        "client_id": settings.SPOTIFY_CLIENT_ID,
-        "client_secret": settings.SPOTIFY_CLIENT_SECRET,
-    })
-
-    if response.status_code == 200:
-        tokens = response.json()
-        access_token = tokens["access_token"]
-        refresh_token = tokens["refresh_token"]
-
-        # Save tokens in the session (or database) for later use
-        request.session["access_token"] = access_token
-        request.session["refresh_token"] = refresh_token
-
-        # Redirect to another view, or render a template
-        return redirect("home")  # Change 'home' to your target URL
-    else:
-        return redirect("error")  # Handle errors gracefully
 
 @csrf_exempt
 def describe_user_tracks(request):

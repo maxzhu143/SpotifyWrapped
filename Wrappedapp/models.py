@@ -21,9 +21,7 @@ class SpotifyAccount(models.Model):
         max_length=255,
         help_text="The refresh token for renewing the access token."
     )
-    expires_at = models.DateTimeField(
-        help_text="The expiration time of the current access token."
-    )
+    expires_at = models.DateTimeField(null=True, blank=True)
     display_name = models.CharField(
         max_length=255,
         null=True,
