@@ -13,13 +13,15 @@ import requests
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .spotify_api_functions import (
-    get_valid_spotify_token, get_top_songs, get_top_artists, get_top_genres, determine_listening_personality,
+    get_valid_spotify_token, get_top_songs, get_top_artists, get_top_genres,
     get_sound_town, get_total_minutes_listened, get_top_podcasts, get_artist_thank_you
 )
 from datetime import datetime, timedelta
 from django.shortcuts import redirect
 from Wrappedapp.models import SpotifyWrapped, SpotifyAccount
 from django.utils import timezone
+
+from .utils import generate_psychoanalysis
 
 openai.api_key = settings.OPENAI_API_KEY
 client_id = settings.SPOTIFY_CLIENT_ID
@@ -150,11 +152,11 @@ def create_wrapped(request):
         top_songs = get_top_songs(spotify_token)
         top_artists = get_top_artists(spotify_token)
         top_genres = get_top_genres(spotify_token)
-        personality = determine_listening_personality(spotify_token)
         total_minutes = get_total_minutes_listened(spotify_token)
         sound_town = get_sound_town(top_genres)
         artist_thank_you = get_artist_thank_you(spotify_token)
         top_podcasts = get_top_podcasts(spotify_token)
+        personality = generate_psychoanalysis(top_songs, top_artists, top_genres, total_minutes)
 
 
         # Create a new SpotifyWrapped object

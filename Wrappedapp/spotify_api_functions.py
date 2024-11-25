@@ -1,3 +1,4 @@
+import openai
 import requests
 
 from datetime import datetime, timedelta
@@ -11,7 +12,6 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from .forms import SignUpForm
-import openai
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth.decorators import login_required
@@ -23,8 +23,8 @@ from datetime import datetime, timedelta
 from django.shortcuts import redirect
 from Wrappedapp.models import SpotifyWrapped, SpotifyAccount
 from django.utils import timezone
+from .utils import generate_psychoanalysis
 
-openai.api_key = settings.OPENAI_API_KEY
 client_id = settings.SPOTIFY_CLIENT_ID
 client_secret = settings.SPOTIFY_CLIENT_SECRET
 redirect_uri = settings.SPOTIFY_REDIRECT_URI
@@ -135,23 +135,6 @@ def get_total_minutes_listened(access_token):
     return total_ms / 1000.0 / 60.0
 
 
-# Listening Personality (Medium Term)
-def determine_listening_personality(access_token):
-    top_songs = get_top_songs(access_token)
-    top_artists = get_top_artists(access_token)
-    if isinstance(top_songs, list) and "Looks like you have never listened to any songs." in top_songs:
-        return ["No listening personality data available."]
-
-    traits = []
-    if len(top_songs) > 50:
-        traits.append("Explorer")
-    if any(artist['popularity'] > 80 for artist in top_artists if isinstance(artist, dict)):
-        traits.append("Trend Follower")
-    if len(set(song['name'] for song in top_songs if isinstance(song, dict))) < len(top_songs) * 0.5:
-        traits.append("Replayer")
-    return traits or ["Unique Listener"]
-
-
 # Estimated Sound Town (Medium Term)
 def get_sound_town(top_genres):
     if isinstance(top_genres, list) and "Looks like you have never listened to any genres." in top_genres:
@@ -190,32 +173,6 @@ def get_artist_thank_you(access_token):
     messages = {artist['name']: f"Thank you for listening to {artist['name']}!" for artist in top_artists}
     return messages
 
-@csrf_exempt
-def describe_user_tracks(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            track_names = data.get('trackNames', [])
-
-            # Create a prompt for the LLM using the track names
-            prompt = f"Based on the top tracks that include {', '.join(track_names)}, " \
-                     "describe how this user might act or think in terms of personality and music preferences."
-
-            # Call OpenAI API to generate the description
-            response = openai.Completion.create(
-                model="text-davinci-003",
-                prompt=prompt,
-                max_tokens=100
-            )
-            description = response.choices[0].text.strip()
-
-            # Return the description to the frontend
-            return JsonResponse({'description': description})
-
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def top_songs(request):
     access_token = request.session.get('access_token')

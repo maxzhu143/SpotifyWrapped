@@ -15,7 +15,6 @@ urlpatterns = [
     path('callback/', views.spotify_callback, name='spotify_callback'),
     path('unlink/', views.unlink, name='unlink'),
     path('contact/', views.contact_developers, name='contact_developers'),
-    path('stats/', views.stats_page, name='stats_page'),
     path('create_wrapped/', views.create_wrapped, name='create_wrapped'),
     path('wrapped_carousel/<int:wrapped_id>/', views.wrapped_carousel, name='wrapped_carousel'),
 
