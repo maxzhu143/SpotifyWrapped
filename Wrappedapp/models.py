@@ -1,19 +1,104 @@
-"""Model definitions for Wrappedapp."""
-
-
-# Define your models here if any exist
-# Example:
-# class YourModel(models.Model):
-#     """A description of what YourModel represents."""
-#     field_name = models.CharField(max_length=100)
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import datetime
 
-class SpotifyAccount(models.Model) :
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    access_token = models.CharField (max_length=255)
-    refresh_token = models.CharField (max_length=255)
-    expires_at = models.DateTimeField ()
+
+class SpotifyAccount(models.Model):
+    """
+    Represents a user's linked Spotify account, storing authentication tokens
+    and related metadata.
+    """
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="spotify_account"
+    )
+    access_token = models.CharField(
+        max_length=255,
+        help_text="The access token for Spotify API requests."
+    )
+    refresh_token = models.CharField(
+        max_length=255,
+        help_text="The refresh token for renewing the access token."
+    )
+    expires_at = models.DateTimeField(
+        help_text="The expiration time of the current access token."
+    )
+    display_name = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text="Spotify display name of the linked account."
+    )
+    spotify_id = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text="The unique Spotify ID for the account."
+    )
+    profile_url = models.URLField(
+        null=True,
+        blank=True,
+        help_text="URL to the user's Spotify profile."
+    )
+    profile_image = models.URLField(
+        null=True,
+        blank=True,
+        help_text="URL to the user's Spotify profile image."
+    )
+
+    def is_token_expired(self):
+        """Checks if the current access token has expired."""
+        return datetime.now() >= self.expires_at
+
     def __str__(self):
-        # Return a string representation, which can be the user's username
-        return self.user.username
+        return f"{self.user.username}'s Spotify Account"
+
+
+class ListeningHistory(models.Model):
+    """
+    Represents a user's listening history retrieved from Spotify.
+    """
+    spotify_account = models.ForeignKey(
+        SpotifyAccount,
+        on_delete=models.CASCADE,
+        related_name="listening_history"
+    )
+    track_name = models.CharField(max_length=255)
+    artist_name = models.CharField(max_length=255)
+    album_name = models.CharField(max_length=255, null=True, blank=True)
+    played_at = models.DateTimeField()
+    duration_ms = models.IntegerField(
+        help_text="Duration of the track in milliseconds."
+    )
+
+    def __str__(self):
+        return f"{self.track_name} by {self.artist_name}"
+
+
+class WrappedSummary(models.Model):
+    """
+    Represents a user's Spotify Wrapped summary for the year.
+    """
+    spotify_account = models.ForeignKey(
+        SpotifyAccount,
+        on_delete=models.CASCADE,
+        related_name="wrapped_summaries"
+    )
+    year = models.IntegerField(help_text="The year this summary covers.")
+    top_tracks = models.JSONField(
+        help_text="JSON representation of the user's top tracks."
+    )
+    top_artists = models.JSONField(
+        help_text="JSON representation of the user's top artists."
+    )
+    top_genres = models.JSONField(
+        help_text="JSON representation of the user's top genres."
+    )
+    listening_minutes = models.IntegerField(
+        help_text="Total minutes listened during the year."
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.spotify_account.user.username}'s Wrapped {self.year}"

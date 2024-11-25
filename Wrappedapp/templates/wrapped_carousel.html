@@ -6,51 +6,117 @@
 {% block content %}
 <div class="container mt-5">
 
+    <!-- Custom CSS for the Carousel -->
+    <style>
+        /* Ensure the carousel container has a defined height */
+        #spotifyWrappedCarousel {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Style for previous and next buttons */
+        .carousel-control-prev,
+        .carousel-control-next {
+            position: absolute;
+            top: 50%; /* Vertically center */
+            transform: translateY(-50%);
+            width: 50px; /* Consistent width */
+            height: 50px; /* Consistent height */
+            z-index: 10; /* Ensure arrows appear above content */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.5); /* Optional: semi-transparent background */
+            border-radius: 50%; /* Make the buttons circular */
+        }
+
+        /* Ensure the icons inside the buttons are scaled properly */
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            width: 20px; /* Adjust icon size */
+            height: 20px; /* Adjust icon size */
+            background-size: contain; /* Fit the size */
+        }
+
+        /* Offset the arrows to the sides of the carousel */
+        .carousel-control-prev {
+            left: -60px; /* Move arrow left */
+        }
+
+        .carousel-control-next {
+            right: -60px; /* Move arrow right */
+        }
+    </style>
+
     <!-- Carousel -->
     <div id="spotifyWrappedCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
 
-            <!-- First Slide: Content from stats.html -->
+            <!-- Slide 1: Top Songs -->
             <div class="carousel-item active">
-                {% include "stats_page.html" %}
+                <h3>Top Songs</h3>
+                <ul>
+                    {% for song in top_songs %}
+                    <li>
+                        <img src="{{ song.cover }}" alt="{{ song.name }}" style="width: 100px; height: 100px;">
+                        <p>{{ song.name }} by {{ song.artist }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
 
-            <!-- Other Slides -->
+            <!-- Slide 2: Top Artists -->
             <div class="carousel-item">
-                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <h3>Slide 2 Content</h3>
-                </div>
+                <h3>Top Artists</h3>
+                <ul>
+                    {% for artist in top_artists %}
+                    <li>{{ artist }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Slide 3: Top Genres -->
+            <div class="carousel-item">
+                <h3>Top Genres</h3>
+                <ul>
+                    {% for genre in top_genres %}
+                    <li>{{ genre }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Slide 4: Personality -->
+            <div class="carousel-item">
+                <h3>Your Listening Personality</h3>
+                <p>{{ personality }}</p>
+            </div>
+
+            <!-- Slide 5: Total Minutes -->
+            <div class="carousel-item">
+                <h3>Total Minutes Listened</h3>
+                <p>{{ total_minutes_listened }}</p>
+            </div>
+
+            <!-- Additional Slides as Needed -->
+            <div class="carousel-item">
+                <h3>Sound Town</h3>
+                <p>{{ sound_town }}</p>
             </div>
             <div class="carousel-item">
-                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <h3>Slide 3 Content</h3>
-                </div>
-            </div>
-            <!-- Add more slides as needed for a total of 8 -->
-            <div class="carousel-item">
-                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <h3>Slide 4 Content</h3>
-                </div>
+                <h3>Top Podcasts</h3>
+                <ul>
+                    {% for podcast in top_podcasts %}
+                    <li>{{ podcast }}</li>
+                    {% endfor %}
+                </ul>
             </div>
             <div class="carousel-item">
-                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <h3>Slide 5 Content</h3>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <h3>Slide 6 Content</h3>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <h3>Slide 7 Content</h3>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <h3>Slide 8 Content</h3>
-                </div>
+                <h3>Artist Messages</h3>
+                <ul>
+                    {% for artist, message in artist_messages.items %}
+                    <li>{{ artist }}: {{ message }}</li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
 

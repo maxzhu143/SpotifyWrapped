@@ -76,17 +76,21 @@
 </head>
 
 <body>
-    <div>
-        <h1>Spotify Wrapped</h1>
-        <h2>Welcome, {{ user.first_name }}!</h2>
-        <p>This is your dashboard.</p>
+    <div class="container">
+        <h1>Welcome, {{ user.first_name }}!</h1>
 
-        {% if spotify_account %}
-            <p>Connected to Spotify as: <strong>{{ spotify_account.user.username }}</strong></p>
-            <a href="{% url 'spotify_disconnect' %}" class="btn">Unlink Spotify Account</a>
+        {% if spotify_linked %}
+            <!-- Linked State -->
+            <p>Your Spotify account is linked!</p>
+            <p>Account: {{ spotify_account.user.username }}</p>
+            <a href="{% url 'spotify_disconnect' %}" class="btn btn-danger">Unlink Spotify Account</a>
+            <a href="{% url 'top_songs' %}" class="btn btn-primary">View Top Songs</a>
         {% else %}
-            <a href="{% url 'spot_login' %}" class="btn">Link Spotify Account</a>
+            <!-- Unlinked State -->
+            <p>You need to link your Spotify account to access features.</p>
+            <a href="{% url 'spotify_authorize' %}" class="btn btn-success">Link Spotify Account</a>
         {% endif %}
+
 
         <!-- Theme toggle buttons -->
         <div class="theme-toggle">
