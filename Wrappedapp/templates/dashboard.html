@@ -1,8 +1,10 @@
-
 {% block content %}
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <title>Dashboard</title>
     <style>
-        /* Define theme colors using CSS variables */
+        /* Default light theme */
         :root {
             --background-color: #ffffff;
             --text-color: #000000;
@@ -10,7 +12,7 @@
             --button-text-color: #ffffff;
         }
 
-        /* Dark theme */
+        /* Dark theme variables */
         .dark-theme {
             --background-color: #191414;
             --text-color: #ffffff;
@@ -18,14 +20,66 @@
             --button-text-color: #ffffff;
         }
 
-        /* Blue theme */
-        .blue-theme {
-            --background-color: #282c34;
-            --text-color: #ffffff;
-            --button-bg-color: #4a90e2;
-            --button-text-color: #ffffff;
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        /* Basic styles for the toggle switch */
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--button-bg-color);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+
+        a.btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 1rem;
+        }
+
+        a.btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Light mode toggle button */
+        .theme-toggle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: Arial, sans-serif;
+            cursor: pointer;
+        }
+
+        .theme-toggle span {
+            user-select: none;
+            font-size: 14px;
+        }
+
         /* Toggle switch styles */
         .switch {
             position: relative;
@@ -72,179 +126,162 @@
             transform: translateX(26px);
         }
 
-        /* Apply the theme variables */
-        body {
-            background-color: var(--background-color);
-            color: var(--text-color);
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            flex-direction: column;
-            text-align: center;
-        }
-
-        h1 {
-            color: var(--button-bg-color);
-            font-size: 2.5em;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        button, .btn {
-            background-color: var(--button-bg-color);
-            color: var(--button-text-color);
-            padding: 0.6rem 1.2rem;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 1em;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            margin: 5px;
-        }
-
-        button:hover, .btn:hover {
-            opacity: 0.9;
-        }
-
-        /* Theme toggle button container */
-        .theme-toggle {
+        /* Translate dropdown and button styles */
+        .translate-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
             display: flex;
             gap: 10px;
-            margin-top: 20px;
         }
-        /* Position the theme toggle in the upper left */
-.theme-toggle {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: Arial, sans-serif;
-    cursor: pointer;
-}
 
-.theme-toggle span {
-    user-select: none; /* Prevent text selection */
-    color: #333;
-    font-size: 14px;
-}
+        select {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            background-color: white;
+            color: #333;
+        }
 
-/* Toggle switch styles */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 24px;
-}
+        .translate-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
 
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: 0.4s;
-    border-radius: 34px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 20px;
-    width: 20px;
-    left: 4px;
-    bottom: 2px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: #2196F3;
-}
-
-input:checked + .slider:before {
-    transform: translateX(26px);
-}
-
+        .translate-btn:hover {
+            background-color: #1ed760;
+            transform: translateY(-3px);
+        }
     </style>
-    <title>Dashboard</title>
 </head>
-
 <body>
-    <div>
-        <h1>Welcome, {{ user.first_name }}!</h1>
+    <div class="theme-toggle">
+        <label class="switch">
+            <input type="checkbox" id="themeSwitch" onchange="toggleTheme()">
+            <span class="slider"></span>
+        </label>
+        <span id="themeLabel" class="translatable" data-original-text="Light Mode">Light Mode</span>
+    </div>
 
-        <!--
-        can drag this part and put it into the if user_name when we get it working
-        -->
-        <a href="{% url 'top_songs' %}" class="btn">Top Songs</a>
-        <a href="{% url 'stats' %}" class="btn">Stats</a>
 
+    <div class="container">
+        <h1 class="translatable" data-original-text="Welcome, {{ user.first_name }}!">Welcome, {{ user.first_name }}!</h1>
         {% if user_name %}
-            <p>Connected to Spotify ais:{{ user_name }}</p>
-            <a href="{% url 'spot_login' %}" class="btn">Unlink Spotify Account</a>
+            <p class="translatable" data-original-text="Connected to Spotify as: {{ user_name }}">Connected to Spotify as: {{ user_name }}</p>
+            <a href="{% url 'top_songs' %}" class="btn translatable" data-original-text="Top Songs">Top Songs</a>
+            <a href="{% url 'stats' %}" class="btn translatable" data-original-text="Stats">Stats</a>
+            <a href="{% url 'spot_login' %}" class="btn translatable" data-original-text="Unlink Spotify Account">Unlink Spotify Account</a>
         {% else %}
-            <p>Get Started By Logging In</p>
-            <a href="{% url 'spot_login' %}" class="btn">Link Spotify Account</a>
+            <p class="translatable" data-original-text="Get Started By Logging In">Get Started By Logging In</p>
+            <a href="{% url 'spot_login' %}" class="btn translatable" data-original-text="Link Spotify Account">Link Spotify Account</a>
         {% endif %}
     </div>
-    <div style="position: absolute; top: 10px; left: 10px; display: flex; align-items: center; gap: 10px;">
+
+    <!-- Translate Dropdown and Button -->
+    <div class="translate-container">
+        <select id="language-select">
+            <option value="en" class="translatable" data-original-text="English">English</option>
+            <option value="es" class="translatable" data-original-text="Spanish">Spanish</option>
+            <option value="fr" class="translatable" data-original-text="French">French</option>
+        </select>
+        <button id="translate-btn" class="translate-btn translatable" data-original-text="Translate">Translate</button>
     </div>
 
-
-
-         <div class="theme-toggle">
-            <label class="switch">
-                <input type="checkbox" id="themeSwitch" onchange="toggleTheme()">
-                <span class="slider"></span>
-            </label>
-            <span id="themeLabel" onclick="setTheme('blue')">Light Mode</span>
-        </div>
-
     <script>
-function setTheme(theme) {
-    document.body.classList.remove('dark-theme', 'blue-theme');
+        async function applyTranslations(lang) {
+            const elements = document.querySelectorAll('.translatable');
 
-    if (theme === 'dark') {
-        document.body.classList.add('dark-theme');
-    } else if (theme === 'blue') {
-        document.body.classList.add('blue-theme');
-    }
+            for (const el of elements) {
+                const originalText = el.getAttribute('data-original-text');
+                if (originalText) {
+                    try {
+                        const response = await fetch('/translate', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({ text: originalText, lang })
+                        });
 
-    localStorage.setItem('theme', theme);
+                        const data = await response.json();
+                        if (data.translated_text) {
+                            el.innerHTML = data.translated_text.replace(/\|/g, '<br>');
+                        }
+                    } catch (error) {
+                        console.error('Translation error:', error);
+                    }
+                }
+            }
+        }
 
-    // Update toggle and label dynamically
-    const themeSwitch = document.getElementById('themeSwitch');
-    const themeLabel = document.getElementById('themeLabel');
-    themeSwitch.checked = theme === 'dark';
-    themeLabel.textContent = theme === 'dark' ? 'Dark Mode' : theme === 'blue' ? 'Blue Theme' : 'Light Mode';
-}
+        document.addEventListener('DOMContentLoaded', async () => {
+            const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+            const languageSelect = document.getElementById('language-select');
+            if (languageSelect) {
+                languageSelect.value = savedLang;
+            }
+            await applyTranslations(savedLang);
+        });
 
-function toggleTheme() {
-    const isDarkMode = document.getElementById('themeSwitch').checked;
-    setTheme(isDarkMode ? 'dark' : 'light');
-}
+        document.getElementById('language-select').addEventListener('change', (event) => {
+            const lang = event.target.value;
+            localStorage.setItem('selectedLanguage', lang);
+        });
 
-window.addEventListener('DOMContentLoaded', () => {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    setTheme(savedTheme);
-});
+        document.getElementById('translate-btn').addEventListener('click', async () => {
+            const lang = document.getElementById('language-select').value;
+            await applyTranslations(lang);
+        });
 
+        function setTheme(theme) {
+            document.body.classList.remove('dark-theme', 'blue-theme');
+
+            // Add the appropriate theme class
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+            } else if (theme === 'blue') {
+                document.body.classList.add('blue-theme');
+            }
+
+            // Save the theme preference in localStorage
+            localStorage.setItem('theme', theme);
+
+            // Update the theme label with its original text
+            const themeLabel = document.getElementById('themeLabel');
+            if (themeLabel) {
+                const originalText =
+                    theme === 'dark' ? 'Dark Mode' :
+                    theme === 'blue' ? 'Blue Theme' :
+                    'Light Mode';
+                themeLabel.setAttribute('data-original-text', originalText);
+
+                // Apply the translation for the theme label
+                applyTranslations(localStorage.getItem('selectedLanguage') || 'en');
+            }
+        }
+
+
+        function toggleTheme() {
+            const isDarkMode = document.getElementById('themeSwitch').checked;
+            setTheme(isDarkMode ? 'dark' : 'light');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
+        });
     </script>
 </body>
+</html>
 {% endblock %}

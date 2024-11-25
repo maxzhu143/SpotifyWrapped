@@ -1,146 +1,121 @@
-
 {% block content %}
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <title>Dashboard</title>
     <style>
-        /* General Body Styling */
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #191414;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
-            padding: 0;
         }
 
-        /* Container Styling */
-        .register-container {
-            background-color: #282828;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 450px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .register-container:hover {
-            box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.3);
-            transform: translateY(-5px);
-        }
-
-        h2 {
-            color: #1DB954;
-            font-size: 2.5em;
+        .container {
             text-align: center;
-            margin-bottom: 25px;
         }
 
-        /* Form Styling */
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            font-size: 1rem;
-            color: #cccccc;
-            margin-top: 15px;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"], input[type="email"], input[type="password"] {
-            padding: 14px;
-            margin: 5px 0;
-            border-radius: 10px;
-            background-color: #333333;
-            border: 1px solid #444;
-            color: white;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
-            border-color: #1DB954;
-            outline: none;
-        }
-
-        .help-text {
-            font-size: 0.85rem;
-            color: #aaaaaa;
-            margin-top: 2px;
-            margin-bottom: 10px;
-        }
-
-        /* Enhanced Error List Styling */
-        .errorlist {
-            background-color: #ff4d4d;
-            padding: 15px;
-            color: #ffffff;
-            border: 1px solid #ff1a1a;
-            border-radius: 10px;
+        h1 {
+            color: #1DB954;
+            font-size: 2.5rem;
             margin-bottom: 20px;
-            text-align: center;
-            font-size: 1rem;
-            font-weight: bold;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-        .errorlist p {
-            margin: 0;
-            line-height: 1.5;
+        p {
+            font-size: 1.2rem;
+            margin: 10px 0;
         }
 
-        /* Button Styling */
-        button[type="submit"] {
-            padding: 14px;
+        a.btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
             background-color: #1DB954;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            margin-top: 20px;
-            transition: all 0.3s ease;
-            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        button[type="submit"]:hover {
-            background-color: #1ed760;
-            transform: scale(1.05);
-            box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Redirect Text Styling */
-        .redirect-text {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .redirect-text a {
-            color: #1DB954;
+            color: #ffffff;
             text-decoration: none;
+            border-radius: 25px;
+            font-size: 1rem;
         }
 
-        .redirect-text a:hover {
-            text-decoration: underline;
-        }
-        /* Lighter color for "Don't have an account?" text */
-        .redirect-text span {
-            color: #aaaaaa; /* Light gray */
-            font-size: 0.9rem; /* Adjust font size if needed */
+        a.btn:hover {
+            background-color: #1ed760;
         }
 
+        /* Light mode toggle button */
+        .theme-toggle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: Arial, sans-serif;
+            cursor: pointer;
+        }
 
+        .theme-toggle span {
+            user-select: none;
+            color: #333;
+            font-size: 14px;
+        }
 
-        /* Translate dropdown and button styling */
+        /* Toggle switch styles */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 2px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Translate dropdown and button styles */
         .translate-container {
             position: fixed;
             bottom: 20px;
             right: 20px;
             display: flex;
-            align-items: center;
             gap: 10px;
         }
 
@@ -163,156 +138,119 @@
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
         .translate-btn:hover {
             background-color: #1ed760;
-            transform: translateY(-3px);
         }
     </style>
 </head>
-
-<div class="register-container">
-    <h2 class="translatable" data-original-text="Register">Register</h2>
-    <form method="POST" action="{% url 'register' %}" autocomplete="off">
-        {% csrf_token %}
-
-        {% if form.errors %}
-        <div class="errorlist">
-            <ul>
-                {% for field in form %}
-                    {% if field.errors %}
-                        <li><strong>{{ field.label }}:</strong>
-                            <ul>
-                                {% for error in field.errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                            </ul>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
-
-        <label for="id_first_name" class="translatable" data-original-text="First Name">First Name</label>
-        {{ form.first_name }}
-        <div class="help-text translatable" data-original-text="Enter your first name.">Enter your first name.</div>
-
-        <label for="id_last_name" class="translatable" data-original-text="Last Name">Last Name</label>
-        {{ form.last_name }}
-        <div class="help-text translatable" data-original-text="Enter your last name.">Enter your last name.</div>
-
-        <label for="id_username" class="translatable" data-original-text="Username">Username</label>
-        {{ form.username }}
-        <div class="help-text translatable" data-original-text="Enter your username (4-16 characters, letters, numbers, and underscores only).">Enter your username (4-16 characters, letters, numbers, and underscores only).</div>
-
-        <label for="id_email" class="translatable" data-original-text="Email">Email</label>
-        {{ form.email }}
-        <div class="help-text translatable" data-original-text="Enter a valid email address.">Enter a valid email address.</div>
-
-        <label for="id_password1" class="translatable" data-original-text="Password">Password</label>
-        {{ form.password1 }}
-        <div
-            class="help-text translatable"
-            data-original-text="• Must be at least 8 characters.|• Cannot be entirely numeric or too similar to personal info.">
-            • Must be at least 8 characters.<br>
-            • Cannot be entirely numeric or too similar to personal info.
-        </div>
-
-
-        <label for="id_password2" class="translatable" data-original-text="Confirm Password">Confirm Password</label>
-        {{ form.password2 }}
-        <div class="help-text translatable" data-original-text="Please confirm your password.">Please confirm your password.</div>
-
-        <button type="submit" class="translatable" data-original-text="Register">Register</button>
-    </form>
-
-    <div class="redirect-text">
-        <p>
-            <span class="translatable" data-original-text="Already have an account?">Already have an account?</span>
-            <a href="{% url 'login' %}" class="translatable" data-original-text="Log in here">Log in here</a>
-        </p>
+<body>
+    <div class="theme-toggle">
+        <label class="switch">
+            <input type="checkbox" id="themeSwitch" onchange="toggleTheme()">
+            <span class="slider"></span>
+        </label>
+        <span id="themeLabel" onclick="setTheme('blue')">Light Mode</span>
     </div>
-</div>
 
-<!-- Translate Dropdown and Button -->
-<div class="translate-container">
-    <select id="language-select" class="translatable">
-        <option value="en" class="translatable" data-original-text="English">English</option>
-        <option value="es" class="translatable" data-original-text="Spanish">Spanish</option>
-        <option value="fr" class="translatable" data-original-text="French">French</option>
-    </select>
-    <button id="translate-btn" class="translate-btn translatable" data-original-text="Translate">Translate</button>
-</div>
+    <div class="container">
+        <h1 class="translatable" data-original-text="Welcome, {{ user.first_name }}!">Welcome, {{ user.first_name }}!</h1>
+        {% if user_name %}
+            <p class="translatable" data-original-text="Connected to Spotify as: {{ user_name }}">Connected to Spotify as: {{ user_name }}</p>
+            <a href="{% url 'top_songs' %}" class="btn translatable" data-original-text="Top Songs">Top Songs</a>
+            <a href="{% url 'stats' %}" class="btn translatable" data-original-text="Stats">Stats</a>
+            <a href="{% url 'spot_login' %}" class="btn translatable" data-original-text="Unlink Spotify Account">Unlink Spotify Account</a>
+        {% else %}
+            <p class="translatable" data-original-text="Get Started By Logging In">Get Started By Logging In</p>
+            <a href="{% url 'spot_login' %}" class="btn translatable" data-original-text="Link Spotify Account">Link Spotify Account</a>
+        {% endif %}
+    </div>
 
-<script>
-    async function applyTranslations(lang) {
-        const elements = document.querySelectorAll('.translatable');
+    <!-- Translate Dropdown and Button -->
+    <div class="translate-container">
+        <select id="language-select">
+            <option value="en" class="translatable" data-original-text="English">English</option>
+            <option value="es" class="translatable" data-original-text="Spanish">Spanish</option>
+            <option value="fr" class="translatable" data-original-text="French">French</option>
+        </select>
+        <button id="translate-btn" class="translate-btn translatable" data-original-text="Translate">Translate</button>
+    </div>
 
-        for (const el of elements) {
-            const originalText = el.getAttribute('data-original-text');
-            if (originalText) {
-                try {
-                    const response = await fetch('/translate', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'
-                        },
-                        body: JSON.stringify({ text: originalText, lang })
-                    });
+    <script>
+        async function applyTranslations(lang) {
+            const elements = document.querySelectorAll('.translatable');
 
-                    const data = await response.json();
-                    if (data.translated_text) {
-                        // Apply translated text
-                        el.innerHTML = data.translated_text.replace(/\|/g, '<br>');
+            for (const el of elements) {
+                const originalText = el.getAttribute('data-original-text');
+                if (originalText) {
+                    try {
+                        const response = await fetch('/translate', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({ text: originalText, lang })
+                        });
+
+                        const data = await response.json();
+                        if (data.translated_text) {
+                            el.innerHTML = data.translated_text.replace(/\|/g, '<br>');
+                        }
+                    } catch (error) {
+                        console.error('Translation error:', error);
                     }
-                } catch (error) {
-                    console.error('Translation error:', error);
                 }
             }
         }
-    }
 
-    // Automatically translate on page load using saved language
-    document.addEventListener('DOMContentLoaded', async () => {
-        const savedLang = localStorage.getItem('selectedLanguage') || 'en'; // Default to English if not set
-        const languageSelect = document.getElementById('language-select');
+        document.addEventListener('DOMContentLoaded', async () => {
+            const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+            const languageSelect = document.getElementById('language-select');
+            if (languageSelect) {
+                languageSelect.value = savedLang;
+            }
+            await applyTranslations(savedLang);
+        });
 
-        // Set dropdown to the saved language
-        if (languageSelect) {
-            languageSelect.value = savedLang;
+        document.getElementById('language-select').addEventListener('change', (event) => {
+            const lang = event.target.value;
+            localStorage.setItem('selectedLanguage', lang);
+        });
+
+        document.getElementById('translate-btn').addEventListener('click', async () => {
+            const lang = document.getElementById('language-select').value;
+            await applyTranslations(lang);
+        });
+
+        function setTheme(theme) {
+            document.body.classList.remove('dark-theme', 'blue-theme');
+
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+            } else if (theme === 'blue') {
+                document.body.classList.add('blue-theme');
+            }
+
+            localStorage.setItem('theme', theme);
+
+            const themeSwitch = document.getElementById('themeSwitch');
+            const themeLabel = document.getElementById('themeLabel');
+            themeSwitch.checked = theme === 'dark';
+            themeLabel.textContent = theme === 'dark' ? 'Dark Mode' : theme === 'blue' ? 'Blue Theme' : 'Light Mode';
         }
 
-        // Automatically apply translations for the saved language
-        await applyTranslations(savedLang);
-    });
+        function toggleTheme() {
+            const isDarkMode = document.getElementById('themeSwitch').checked;
+            setTheme(isDarkMode ? 'dark' : 'light');
+        }
 
-    // Handle dropdown changes (manual language switch)
-    document.getElementById('language-select').addEventListener('change', (event) => {
-        const lang = event.target.value;
-
-        // Save the newly selected language to localStorage
-        localStorage.setItem('selectedLanguage', lang);
-    });
-
-    // Apply translations only when Translate button is clicked
-    document.getElementById('translate-btn').addEventListener('click', async () => {
-        const lang = document.getElementById('language-select').value;
-
-        // Apply translations for the selected language
-        await applyTranslations(lang);
-    });
-
-</script>
-
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
+        });
+    </script>
+</body>
+</html>
 {% endblock %}
-
-
-
-
-
-

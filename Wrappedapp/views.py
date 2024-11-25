@@ -143,6 +143,10 @@ def dashboard(request):
 
 def register(request):
     """Handle user registration."""
+    if request.user.is_authenticated:
+        # Prevent authenticated users from accessing the register page
+        return redirect('dashboard')
+
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -153,12 +157,6 @@ def register(request):
         form = SignUpForm()
 
     return render(request, 'register.html', {'form': form})
-
-#might cause issues becuase we have two
-@login_required
-def dashboard(request):
-    """Display user dashboard."""
-    return render(request, 'dashboard.html')
 
 def contact_developers(request):
     return render(request, 'contact_developers.html')
