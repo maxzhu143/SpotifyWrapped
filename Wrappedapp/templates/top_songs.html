@@ -71,6 +71,41 @@
         .unlink-button:hover {
             background-color: #14833b;
         }
+
+        /* Translate dropdown and button styles */
+        .translate-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            background-color: white;
+            color: #333;
+        }
+
+        .translate-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        .translate-btn:hover {
+            background-color: #1ed760;
+        }
+
     </style>
 </head>
 <body>
@@ -84,31 +119,79 @@
 
     {% if user_name %}
         <div class="user-info">
-            <p>Connected as: {{ user_name }}</p>
+            <p class="translatable" data-original-text="Connected as: {{ user_name }}">Connected as: {{ user_name }}</p>
             <form action="{% url 'unlink' %}" method="post">
                 {% csrf_token %}
-                <button type="submit" class="unlink-button">Unlink Account</button>
+                <button type="submit" class="unlink-button translatable" data-original-text="Unlink Account">Unlink Account</button>
             </form>
         </div>
 
-        <h1>Your Top 10 Songs</h1>
+        <h1 class="translatable" data-original-text="Your Top 10 Songs">Your Top 10 Songs</h1>
 
         <ul class="song-list">
             {% for song in songs %}
                 <li class="song-item">
                     <img src="{{ song.cover }}" alt="{{ song.name }}">
                     <div class="song-details">
-                        <p class="song-name">{{ song.name }}</p>
-                        <p class="song-artist">{{ song.artist }} - {{ song.album }}</p>
+                        <p class="song-name translatable" data-original-text="{{ song.name }}">{{ song.name }}</p>
+                        <p class="song-artist translatable" data-original-text="{{ song.artist }} - {{ song.album }}">{{ song.artist }} - {{ song.album }}</p>
                     </div>
                 </li>
             {% endfor %}
         </ul>
     {% else %}
-        <h1>Connect Your Spotify Account</h1>
-        <a href="{% url 'spot_login' %}" class="unlink-button">Link Spotify Account</a>
+        <h1 class="translatable" data-original-text="Connect Your Spotify Account">Connect Your Spotify Account</h1>
+        <a href="{% url 'spot_login' %}" class="unlink-button translatable" data-original-text="Link Spotify Account">Link Spotify Account</a>
     {% endif %}
 
+    <!-- Translate Dropdown and Button -->
+    <div class="translate-container">
+        <select id="language-select">
+            <option value="en" class="translatable" data-original-text="English">English</option>
+            <option value="es" class="translatable" data-original-text="Spanish">Spanish</option>
+            <option value="fr" class="translatable" data-original-text="French">French</option>
+        </select>
+        <button id="translate-btn" class="translate-btn translatable" data-original-text="Translate">Translate</button>
+    </div>
+
+    <script>
+        async function applyTranslations(lang) {
+            const elements = document.querySelectorAll('.translatable');
+            for (const el of elements) {
+                const text = el.getAttribute('data-original-text');
+                if (text) {
+                    try {
+                        const response = await fetch('/translate', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({ text, lang })
+                        });
+
+                        const data = await response.json();
+                        if (data.translated_text) {
+                            el.innerHTML = data.translated_text.replace(/\|/g, '<br>');
+                        }
+                    } catch (error) {
+                        console.error('Translation error:', error);
+                    }
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+            document.getElementById('language-select').value = savedLang;
+            await applyTranslations(savedLang);
+        });
+
+        document.getElementById('translate-btn').addEventListener('click', async () => {
+            const lang = document.getElementById('language-select').value;
+            localStorage.setItem('selectedLanguage', lang);
+            await applyTranslations(lang);
+        });
+    </script>
 </body>
 </html>
-
