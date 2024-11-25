@@ -1,5 +1,45 @@
 import requests
 
+def get_access_token(code, redirect_uri, client_id, client_secret):
+    """Exchange authorization code for an access token."""
+    token_url = "https://accounts.spotify.com/api/token"
+    response = requests.post(token_url, data={
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": redirect_uri,
+        "client_id": client_id,
+        "client_secret": client_secret,
+    })
+    if response.status_code == 200:
+        return response.json()
+    else:
+        response.raise_for_status()
+
+def get_user_profile(access_token):
+    """Get the current user's Spotify profile information."""
+    url = "https://api.spotify.com/v1/me"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        response.raise_for_status()
+
+
+def refresh_access_token(refresh_token, client_id, client_secret):
+    """Refresh the Spotify access token."""
+    token_url = "https://accounts.spotify.com/api/token"
+    response = requests.post(token_url, data={
+        "grant_type": "refresh_token",
+        "refresh_token": refresh_token,
+        "client_id": client_id,
+        "client_secret": client_secret,
+    })
+    if response.status_code == 200:
+        return response.json()
+    else:
+        response.raise_for_status()
+
 
 # Top Songs (Medium Term)
 def get_top_songs(access_token, limit=10):
