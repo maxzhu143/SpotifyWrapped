@@ -11,11 +11,11 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth.decorators import login_required
 import requests
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import ButtonClick
 
 # THIS IS HOW YOU GET ACCESS TOKENS: access_token = request.session.get('access_token')
-
-
-
 
 
 
@@ -65,7 +65,7 @@ def callback(request):
     token_info = response.json()
     request.session['access_token'] = token_info.get('access_token')
 
-    return redirect('top_songs')
+    return redirect('dashboard')
 
 @csrf_exempt  # CSRF protection is already handled in the form
 def unlink(request):
@@ -79,7 +79,6 @@ def unlink(request):
         request.session.pop('access_token', None)
         request.session.pop('refresh_token', None)
         request.session.pop('expires_at', None)
-        print("hey")
         return redirect('dashboard')  # Redirect to login page or homepage
 
 def top_songs(request):
@@ -127,8 +126,12 @@ def home(request):
 @login_required(login_url='login')
 def dashboard(request):
     spotify_account = None
+    user_name = "Guest"
     if "access_token" in request.session:
         access_token = request.session.get('access_token')
+
+        profile_response = requests.get('https://api.spotify.com/v1/me', headers={'Authorization': f'Bearer {access_token}'})
+        user_name = profile_response.json().get('display_name', 'Spotify User')
         response = requests.get(
             "https://api.spotify.com/v1/me",
             headers={"Authorization": f"Bearer {access_token}"}
@@ -136,7 +139,7 @@ def dashboard(request):
         if response.status_code == 200:
             spotify_account = response.json()
 
-    return render(request, "dashboard.html", {"spotify_account": spotify_account})
+    return render(request, "dashboard.html", {"spotify_account": spotify_account, "user_name" : user_name})
 
 
 def register(request):
@@ -151,12 +154,6 @@ def register(request):
         form = SignUpForm()
 
     return render(request, 'register.html', {'form': form})
-
-#might cause issues becuase we have two
-@login_required
-def dashboard(request):
-    """Display user dashboard."""
-    return render(request, 'dashboard.html')
 
 def contact_developers(request):
     return render(request, 'contact_developers.html')
@@ -176,32 +173,6 @@ def spotify_authorize(request):
     }
     auth_url = f"{spotify_auth_url}?{urllib.parse.urlencode(params)}"
     return redirect(auth_url)
-
-def spotify_callback(request):
-    code = request.GET.get("code")
-    token_url = "https://accounts.spotify.com/api/token"
-
-    response = requests.post(token_url, data={
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": settings.SPOTIFY_REDIRECT_URI,
-        "client_id": settings.SPOTIFY_CLIENT_ID,
-        "client_secret": settings.SPOTIFY_CLIENT_SECRET,
-    })
-
-    if response.status_code == 200:
-        tokens = response.json()
-        access_token = tokens["access_token"]
-        refresh_token = tokens["refresh_token"]
-
-        # Save tokens in the session (or database) for later use
-        request.session["access_token"] = access_token
-        request.session["refresh_token"] = refresh_token
-
-        # Redirect to another view, or render a template
-        return redirect("home")  # Change 'home' to your target URL
-    else:
-        return redirect("error")  # Handle errors gracefully
 
 @csrf_exempt
 def describe_user_tracks(request):
@@ -270,3 +241,35 @@ def stats_view(request):
 def custom_logout_view(request):
     logout(request)
     return render(request, 'logout.html')
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import ButtonClick
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import ButtonClick
+
+@login_required
+def track_click(request):
+    # Get or create the ButtonClick object for the logged-in user
+    button_click, created = ButtonClick.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        # Toggle the clicked status
+        button_click.clicked = not button_click.clicked
+        button_click.save()
+        return redirect('track_click')  # Redirect to avoid form resubmission
+
+    # Determine background color, button position, and styles
+    background_color = 'blue' if button_click.clicked else 'red'
+    button_color = 'green' if button_click.clicked else 'orange'
+    button_position = 'top-right' if button_click.clicked else 'bottom-right'
+    message = "The button has been clicked!" if button_click.clicked else "The button needs to be clicked."
+
+    return render(request, 'track_click.html', {
+        'background_color': background_color,
+        'button_color': button_color,
+        'button_position': button_position,
+        'message': message,
+    })
