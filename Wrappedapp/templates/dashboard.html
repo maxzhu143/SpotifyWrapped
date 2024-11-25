@@ -189,20 +189,24 @@ input:checked + .slider:before {
     <div>
         <h1>Welcome, {{ user.first_name }}!</h1>
 
-        <!--
-        can drag this part and put it into the if user_name when we get it working
-        -->
-        <a href="{% url 'top_songs' %}" class="btn">Top Songs</a>
-        <a href="{% url 'stats' %}" class="btn">Stats</a>
+        {% if spotify_account != None %}
+            <p>Currently Connected as: {{ user_name }}</p>
+            <a href="{% url 'top_songs' %}" class="btn">Top Songs</a>
 
-        {% if user_name %}
-            <p>Connected to Spotify ais:{{ user_name }}</p>
-            <a href="{% url 'spot_login' %}" class="btn">Unlink Spotify Account</a>
+            <a href="{% url 'stats' %}" class="btn">Show Me My Stats</a>
+            <a href="{% url 'wrapped_carousel' %}" class="btn">Create Another Carousel</a>
+
+
+            <form action="{% url 'unlink' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="unlink-button">Unlink Account</button>
+            </form>
         {% else %}
             <p>Get Started By Logging In</p>
             <a href="{% url 'spot_login' %}" class="btn">Link Spotify Account</a>
         {% endif %}
     </div>
+
     <div style="position: absolute; top: 10px; left: 10px; display: flex; align-items: center; gap: 10px;">
     </div>
 

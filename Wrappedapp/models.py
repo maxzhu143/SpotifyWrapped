@@ -17,3 +17,10 @@ class SpotifyAccount(models.Model) :
     def __str__(self):
         # Return a string representation, which can be the user's username
         return self.user.username
+
+class ButtonClick(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    clicked = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.username} - {'Clicked' if self.clicked else 'Not Clicked'}"
