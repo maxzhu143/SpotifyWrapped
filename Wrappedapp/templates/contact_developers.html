@@ -1,56 +1,47 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Contact the Developers</title>
-    <style>
-        body {
-            background-color: #191414; /* Spotify black */
-            color: white;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* Full viewport height */
-            text-align: center;
-        }
+{% extends 'base.html' %}
 
-        .contact-container {
-            background-color: #282828; /* Dark gray for a card-like effect */
-            color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow */
-            max-width: 600px;
-            width: 80%;
-        }
+{% block title %}Contact the Developers{% endblock %}
 
-        .contact-container h1 {
-            color: #1DB954; /* Spotify green */
-            font-size: 2em;
-            margin-bottom: 1rem;
-        }
+{% block content %}
+<div class="contact-container">
+    <h1>Contact the Developers</h1>
+    <p>For inquiries, please reach out via email at
+        <a href="mailto:developers@example.com">developers@example.com</a>
+    </p>
+</div>
+{% endblock %}
 
-        .contact-container p {
-            font-size: 1.2em;
-            margin: 0.5rem 0;
-        }
+{% block extra_styles %}
+<style>
+    .contact-container {
+        background-color: #282828; /* Dark gray for a card-like effect */
+        color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+        max-width: 600px;
+        width: 80%;
+        margin: 5rem auto; /* Center content with space from top */
+    }
 
-        .contact-container a {
-            color: #1DB954; /* Spotify green */
-            text-decoration: none;
-        }
+    .contact-container h1 {
+        color: #1DB954; /* Spotify green */
+        font-size: 2em;
+        margin-bottom: 1rem;
+    }
 
-        .contact-container a:hover {
-            color: #1ed760; /* Lighter green on hover */
-        }
-    </style>
-</head>
-<body>
-    <div class="contact-container">
-        <h1>Contact the Developers</h1>
-        <p>For inquiries, please reach out via email at <a href="mailto:developers@example.com">developers@example.com</a></p>
-    </div>
-</body>
-</html>
+    .contact-container p {
+        font-size: 1.2em;
+        margin: 0.5rem 0;
+    }
+
+    .contact-container a {
+        color: #1DB954; /* Spotify green */
+        text-decoration: none;
+    }
+
+    .contact-container a:hover {
+        color: #1ed760; /* Lighter green on hover */
+    }
+</style>
+{% endblock %}
