@@ -127,6 +127,13 @@
             text-decoration: underline;
         }
 
+        /* Lighter color for "Don't have an account?" text */
+        .redirect-text span {
+            color: #aaaaaa; /* Light gray */
+            font-size: 0.9rem; /* Adjust font size if needed */
+        }
+
+
         /* Translate dropdown and button styling */
         .translate-container {
             position: fixed;
@@ -237,27 +244,36 @@
         }
     }
 
+    // Automatically translate on page load using saved language
     document.addEventListener('DOMContentLoaded', async () => {
         const savedLang = localStorage.getItem('selectedLanguage') || 'en'; // Default to English if not set
         const languageSelect = document.getElementById('language-select');
 
-        // Set dropdown value and apply translations
+        // Set dropdown to the saved language
         if (languageSelect) {
             languageSelect.value = savedLang;
         }
+
+        // Automatically apply translations for the saved language
         await applyTranslations(savedLang);
     });
 
-    // Handle dropdown language change
-    document.getElementById('language-select').addEventListener('change', async (event) => {
+    // Handle dropdown changes (manual language switch)
+    document.getElementById('language-select').addEventListener('change', (event) => {
         const lang = event.target.value;
 
-        // Save language preference
+        // Save the newly selected language to localStorage
         localStorage.setItem('selectedLanguage', lang);
+    });
 
-        // Reapply translations for the selected language
+    // Apply translations only when Translate button is clicked
+    document.getElementById('translate-btn').addEventListener('click', async () => {
+        const lang = document.getElementById('language-select').value;
+
+        // Apply translations for the selected language
         await applyTranslations(lang);
     });
+
 
 </script>
 
