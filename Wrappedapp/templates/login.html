@@ -126,8 +126,45 @@
         .redirect-text a:hover {
             text-decoration: underline;
         }
+
+        /* Translate dropdown and button styling */
+        .translate-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            background-color: white;
+            color: #333;
+        }
+
+        .translate-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .translate-btn:hover {
+            background-color: #1ed760;
+            transform: translateY(-3px);
+        }
     </style>
-    <title>Login</title>
 </head>
 
 <div class="login-container">
@@ -142,12 +179,10 @@
         </div>
         {% endif %}
 
-        <!-- Username Input Field -->
         <label for="id_username" class="translatable" data-original-text="Username">Username</label>
         {{ form.username }}
         <div class="help-text translatable" data-original-text="Enter your username.">Enter your username.</div>
 
-        <!-- Password Input Field -->
         <label for="id_password" class="translatable" data-original-text="Password">Password</label>
         {{ form.password }}
         <div class="help-text translatable" data-original-text="Enter your password.">Enter your password.</div>
@@ -156,10 +191,75 @@
     </form>
 
     <div class="redirect-text">
-        <p><span class="translatable" data-original-text="Don't have an account?">Don't have an account?</span>
-           <a href="{% url 'register' %}" class="translatable" data-original-text="Register here">Register here</a>
+        <p>
+            <span class="translatable" data-original-text="Don't have an account?">Don't have an account?</span>
+            <a href="{% url 'register' %}" class="translatable" data-original-text="Register here">Register here</a>
         </p>
     </div>
 </div>
+
+<!-- Translate Dropdown and Button -->
+<div class="translate-container">
+    <select id="language-select" class="translatable">
+        <option value="en" class="translatable" data-original-text="English">English</option>
+        <option value="es" class="translatable" data-original-text="Spanish">Spanish</option>
+        <option value="fr" class="translatable" data-original-text="French">French</option>
+    </select>
+    <button id="translate-btn" class="translate-btn translatable" data-original-text="Translate">Translate</button>
+</div>
+
+<script>
+    async function applyTranslations(lang) {
+        const elements = document.querySelectorAll('.translatable');
+
+        for (const el of elements) {
+            const originalText = el.getAttribute('data-original-text');
+            if (originalText) {
+                try {
+                    const response = await fetch('/translate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ text: originalText, lang })
+                    });
+
+                    const data = await response.json();
+                    if (data.translated_text) {
+                        // Apply translated text
+                        el.innerHTML = data.translated_text.replace(/\|/g, '<br>');
+                    }
+                } catch (error) {
+                    console.error('Translation error:', error);
+                }
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const savedLang = localStorage.getItem('selectedLanguage') || 'en'; // Default to English if not set
+        const languageSelect = document.getElementById('language-select');
+
+        // Set dropdown value and apply translations
+        if (languageSelect) {
+            languageSelect.value = savedLang;
+        }
+        await applyTranslations(savedLang);
+    });
+
+    // Handle dropdown language change
+    document.getElementById('language-select').addEventListener('change', async (event) => {
+        const lang = event.target.value;
+
+        // Save language preference
+        localStorage.setItem('selectedLanguage', lang);
+
+        // Reapply translations for the selected language
+        await applyTranslations(lang);
+    });
+
+</script>
+
 {% endblock %}
 

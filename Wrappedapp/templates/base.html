@@ -1,11 +1,11 @@
 <head>
     <style>
-                /* Navbar Styling */
+        /* Navbar Styling */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 20px; /* Increase top and bottom padding to make it taller */
+            padding: 20px 20px;
             width: 100%;
             box-sizing: border-box;
             background-color: #1db954; /* Spotify green */
@@ -28,7 +28,7 @@
         }
 
         /* Button Styles */
-        .auth-links .btn {
+        .auth-links .btn, .translate-btn {
             background-color: #1db954;
             color: white;
             border: none;
@@ -42,11 +42,23 @@
             box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
         }
 
-        /* Hover Effect for Buttons */
-        .auth-links .btn:hover {
+        .auth-links .btn:hover, .translate-btn:hover {
             background-color: #1ed760;
             transform: scale(1.05);
             box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Translate Dropdown Styling */
+        .translate-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        select {
+            padding: 5px;
+            border-radius: 10px;
+            font-size: 0.9rem;
         }
 
         /* Responsive Adjustments for Smaller Screens */
@@ -54,12 +66,14 @@
             .navbar h1 {
                 font-size: 18px;
             }
+
             .auth-links {
                 flex-direction: column;
                 gap: 8px;
                 width: 100%;
                 align-items: flex-start;
             }
+
             .auth-links .btn {
                 width: 100%; /* Full width for smaller screens */
                 text-align: center;
@@ -67,19 +81,7 @@
         }
     </style>
 </head>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Spotify Wrapped{% endblock %}</title>
-    {% load static %}
-    {% load django_bootstrap5 %}
-    {% bootstrap_css %}
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-</head>
 <body>
-    {% bootstrap_javascript %}
   <!-- Navigation bar -->
   <nav class="navbar">
     <a href="{% url 'home' %}" class="logo">
@@ -97,30 +99,67 @@
             <a href="{% url 'login' %}" class="btn translatable" data-original-text="Log In">Log In</a>
         {% endif %}
     </div>
-    <button id="translate-btn" class="translate-btn" data-lang="es">Translate</button>
+    <div class="translate-container">
+        <select id="language-select" class="translatable">
+            <option value="en" data-original-text="English">English</option>
+            <option value="es" data-original-text="Spanish">Spanish</option>
+            <option value="fr" data-original-text="French">French</option>
+        </select>
+        <button id="translate-btn" class="translate-btn translatable" data-original-text="Translate">Translate</button>
+    </div>
   </nav>
-
 
   <!-- Main content area for other templates -->
   <main>
       {% block content %}{% endblock %}
   </main>
+
   <script>
-    document.getElementById('translate-btn').addEventListener('click', () => {
-        const lang = document.getElementById('translate-btn').getAttribute('data-lang') || 'es'; // Default to Spanish
+      async function applyTranslations(lang) {
         const elements = document.querySelectorAll('.translatable');
-        elements.forEach((el) => {
+
+        for (const el of elements) {
             const text = el.getAttribute('data-original-text');
-            fetch(`/translate?text=${encodeURIComponent(text)}&lang=${lang}`)
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.translatedText) {
-                        el.textContent = data.translatedText;
+            if (text) {
+                try {
+                    const response = await fetch('/translate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ text, lang })
+                    });
+
+                    const data = await response.json();
+                    if (data.translated_text) {
+                        el.textContent = data.translated_text;
                     }
-                })
-                .catch((error) => console.error('Translation error:', error));
-        });
+                } catch (error) {
+                    console.error('Translation error:', error);
+                }
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const savedLang = localStorage.getItem('selectedLanguage') || 'en'; // Default to English if not set
+        const languageSelect = document.getElementById('language-select');
+
+        // Set dropdown value and apply translations
+        if (languageSelect) {
+            languageSelect.value = savedLang;
+        }
+        await applyTranslations(savedLang);
     });
+
+    // Save selected language when dropdown changes
+    document.getElementById('language-select').addEventListener('change', (event) => {
+        const lang = event.target.value;
+        localStorage.setItem('selectedLanguage', lang);
+    });
+
+
   </script>
 </body>
-</html>
+

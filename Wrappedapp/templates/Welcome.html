@@ -166,42 +166,57 @@
     </div>
 
     <script>
-        document.getElementById('translate-btn').addEventListener('click', async () => {
-        const lang = document.getElementById('language-select').value; // Get selected language
-        const elements = document.querySelectorAll('.translatable');
+        async function applyTranslations(lang) {
+            const elements = document.querySelectorAll('.translatable');
 
-        for (const el of elements) {
-            const text = el.getAttribute('data-original-text'); // Get original text
-            if (text) {
-                try {
-                    console.log(`Translating "${text}" to ${lang}`); // Debug log
-                    const response = await fetch('/translate', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'
-                        },
-                        body: JSON.stringify({ text, lang }) // Send text and target language
-                    });
+            for (const el of elements) {
+                const originalText = el.getAttribute('data-original-text');
+                if (originalText) {
+                    try {
+                        const response = await fetch('/translate', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({ text: originalText, lang })
+                        });
 
-                    const data = await response.json();
-                    console.log('Response:', data); // Debug log
-
-                    if (data.translated_text) {
-                        if (el.tagName === 'OPTION') {
-                            el.textContent = data.translated_text; // Update dropdown option text
-                        } else if (el.tagName === 'BUTTON') {
-                            el.textContent = data.translated_text; // Update button text
-                        } else {
-                            el.textContent = data.translated_text; // Update regular text
+                        const data = await response.json();
+                        if (data.translated_text) {
+                            // Apply translated text
+                            el.innerHTML = data.translated_text.replace(/\|/g, '<br>');
                         }
+                    } catch (error) {
+                        console.error('Translation error:', error);
                     }
-                } catch (error) {
-                    console.error('Translation error:', error);
                 }
             }
         }
-    });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const savedLang = localStorage.getItem('selectedLanguage') || 'en'; // Default to English if not set
+            const languageSelect = document.getElementById('language-select');
+
+            // Set dropdown value and apply translations
+            if (languageSelect) {
+                languageSelect.value = savedLang;
+            }
+            await applyTranslations(savedLang);
+        });
+
+        // Handle dropdown language change
+        document.getElementById('language-select').addEventListener('change', async (event) => {
+            const lang = event.target.value;
+
+            // Save language preference
+            localStorage.setItem('selectedLanguage', lang);
+
+            // Reapply translations for the selected language
+            await applyTranslations(lang);
+        });
+
     </script>
+
 </body>
 </html>
