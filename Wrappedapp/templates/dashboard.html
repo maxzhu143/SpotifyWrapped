@@ -107,7 +107,7 @@
             <p>Your Spotify account is linked!</p>
             <p>Account: {{ spotify_account.user.username }}</p>
             <a href="{% url 'unlink' %}" class="btn btn-danger">Unlink Spotify Account</a>
-            <a href="{% url 'wrapped_carousel' %}" class="btn btn-primary">Create Spotify Wrapped</a>
+            <a href="{% url 'create_wrapped' %}" class="btn btn-primary">Create Spotify Wrapped</a>
         {% else %}
             <!-- Unlinked State -->
             <p>You need to link your Spotify account to access features.</p>
@@ -121,7 +121,7 @@
                 <ul>
                     {% for wrapped in wrapped_objects %}
                         <li>
-                            <a href="{% url 'view_wrapped' wrapped.id %}">{{ wrapped.title }}</a>
+                            <a href="{% url 'wrapped_carousel' wrapped.id %}">{{ wrapped.title }}</a>
                             (Created on {{ wrapped.created_at|date:"M d, Y" }})
                         </li>
                     {% endfor %}

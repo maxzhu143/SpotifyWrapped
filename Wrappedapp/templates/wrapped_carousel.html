@@ -11,41 +11,64 @@
             <div class="carousel-item active">
                 <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #ccc;">
                     <h3>Top Songs</h3>
+                    <ul>
+                        {% for song in wrapped.top_songs %}
+                            <li>
+                                <img src="{{ song.cover }}" alt="{{ song.name }}" style="width: 50px; height: 50px;">
+                                <p>{{ song.name }} by {{ song.artist }}</p>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
             <div class="carousel-item">
                 <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #aaa;">
                     <h3>Top Artists</h3>
+                    <ul>
+                        {% for artist in wrapped.top_artists %}
+                            <li>{{ artist }}</li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
             <div class="carousel-item">
                 <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
                     <h3>Top Genres</h3>
+                    <ul>
+                        {% for genre in wrapped.top_genres %}
+                            <li>{{ genre }}</li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
             <div class="carousel-item">
                 <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
                     <h3>Minutes Listened</h3>
+                    <p>{{ wrapped.total_minutes_listened }}</p>
                 </div>
             </div>
             <div class="carousel-item">
                 <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
                     <h3>Listening Personality</h3>
+                    <p>{{ wrapped.personality }}</p>
                 </div>
             </div>
             <div class="carousel-item">
                 <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
                     <h3>Sound Town</h3>
+                    <p>{{ wrapped.sound_town }}</p>
                 </div>
             </div>
             <div class="carousel-item">
                 <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
                     <h3>Podcasts</h3>
+                    <p>{{ wrapped.top_podcasts }}</p>
                 </div>
             </div>
             <div class="carousel-item">
                 <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
                     <h3>Artist Thank You</h3>
+                    <p>{{ wrapped.artist_thank_you }}</p>
                 </div>
             </div>
         </div>

@@ -13,12 +13,13 @@ import requests
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .spotify_api_functions import (
-    get_top_songs, get_top_artists, get_top_genres, determine_listening_personality,
+    get_valid_spotify_token, get_top_songs, get_top_artists, get_top_genres, determine_listening_personality,
     get_sound_town, get_total_minutes_listened, get_top_podcasts, get_artist_thank_you
 )
 from datetime import datetime, timedelta
 from django.shortcuts import redirect
 from Wrappedapp.models import SpotifyWrapped, SpotifyAccount
+from django.utils import timezone
 
 openai.api_key = settings.OPENAI_API_KEY
 client_id = settings.SPOTIFY_CLIENT_ID
@@ -212,37 +213,57 @@ from django.contrib.auth.decorators import login_required
 
 
 @login_required
-def wrapped_carousel(request):
+def wrapped_carousel(request, wrapped_id):
     """
-    View to render the Wrapped Carousel page with data pulled from Spotify API.
+    View to render the Wrapped Carousel page for a specific SpotifyWrapped object.
     """
     try:
-        # Fetch data from Spotify API using user's token
-        spotify_token = request.user.spotify_token  # Assuming you store tokens per user
+        # Fetch the specific SpotifyWrapped object for the user
+        wrapped = SpotifyWrapped.objects.get(id=wrapped_id, user=request.user)
 
-        top_songs = get_top_songs(spotify_token)  # Example: [{'name': 'Song1', 'artist': 'Artist1', 'cover': 'url1'}, ...]
-        top_artists = get_top_artists(spotify_token)  # Example: ['Artist1', 'Artist2', ...]
-        top_genres = get_top_genres(spotify_token)  # Example: ['Genre1', 'Genre2', ...]
-        personality = determine_listening_personality(spotify_token)  # Example: 'Adventurous Listener'
-        total_minutes_listened = get_total_minutes_listened(spotify_token)  # Example: 12000
+        # Pass the SpotifyWrapped data to the template
+        return render(request, 'wrapped_carousel.html', {'wrapped': wrapped})
+    except SpotifyWrapped.DoesNotExist:
+        # Handle case where the Wrapped object does not exist
+        return render(request, 'error.html', {'message': 'Spotify Wrapped not found.'})
 
+
+@login_required
+def create_wrapped(request):
+    try:
+        # Fetch Spotify token from the linked account
+        spotify_token = get_valid_spotify_token(request.user)
+        # Fetch data from Spotify API
+        top_songs = get_top_songs(spotify_token)
+        top_artists = get_top_artists(spotify_token)
+        top_genres = get_top_genres(spotify_token)
+        personality = determine_listening_personality(spotify_token)
+        total_minutes = get_total_minutes_listened(spotify_token)
+        sound_town = get_sound_town(top_genres)
+        artist_thank_you = get_artist_thank_you(spotify_token)
+        top_podcasts = get_top_podcasts(spotify_token)
+
+
+        # Create a new SpotifyWrapped object
+        wrapped = SpotifyWrapped.objects.create(
+            user=request.user,
+            title=f"My Spotify Wrapped {SpotifyWrapped.objects.filter(user=request.user).count() + 1}",
+            top_songs=top_songs,
+            top_artists=top_artists,
+            top_genres=top_genres,
+            personality=personality,
+            total_minutes_listened=total_minutes,
+            sound_town=sound_town,
+            artist_thank_you=artist_thank_you,
+            top_podcasts=top_podcasts,
+        )
+
+        # Redirect to the carousel view to display the new Wrapped data
+        return redirect('wrapped_carousel', wrapped_id=wrapped.id)
     except Exception as e:
-        # If API call fails or user has no data, provide defaults
         print(f"Error fetching Spotify data: {e}")
-        top_songs = []
-        top_artists = []
-        top_genres = []
-        personality = "No personality data available."
-        total_minutes_listened = "No listening time recorded."
+        return render(request, 'error.html', {'message': f"Failed to create Spotify Wrapped: {e}"})
 
-    # Pass the data to the template
-    return render(request, 'wrapped_carousel.html', {
-        'top_songs': top_songs,
-        'top_artists': top_artists,
-        'top_genres': top_genres,
-        'personality': personality,
-        'total_minutes_listened': total_minutes_listened,
-    })
 
 
 
