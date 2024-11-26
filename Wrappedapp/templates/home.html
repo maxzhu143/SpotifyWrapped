@@ -1,142 +1,122 @@
-{% extends 'base.html' %}
 
-{% block content %}
-<head>
-    <style>
-        /* Navbar Styling */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 20px; /* Increase top and bottom padding to make it taller */
-            width: 100%;
-            box-sizing: border-box;
-            background-color: #1db954; /* Spotify green */
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .navbar h1 {
-            color: #ffffff;
-            font-size: 1.5em;
-            font-weight: bold;
-            margin: 0;
-            white-space: nowrap;
-        }
-
-        /* Auth Links Styling */
-        .auth-links {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        /* Button Styles */
-        .auth-links .btn {
-            background-color: #1db954;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            padding: 5px 10px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            white-space: nowrap;
-            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Hover Effect for Buttons */
-        .auth-links .btn:hover {
-            background-color: #1ed760;
-            transform: scale(1.05);
-            box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Responsive Adjustments for Smaller Screens */
-        @media (max-width: 600px) {
-            .navbar h1 {
-                font-size: 18px;
-            }
-            .auth-links {
-                flex-direction: column;
-                gap: 8px;
-                width: 100%;
-                align-items: flex-start;
-            }
-            .auth-links .btn {
-                width: 100%; /* Full width for smaller screens */
-                text-align: center;
-            }
-        }
-
-    </style>
-</head>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spotify Wrapped</title>
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Wrapped</title>
+    <style>
+        /* Reset some default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00bc2d; /* Tomato color */
+            --secondary-color: #1e7100; /* Red for contrast */
+            --font-size: 16px;
+            --border-radius: 15px;
+            --padding: 20px;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('https://storage.googleapis.com/pr-newsroom-wp/1/2023/11/Spotify_Holiday2023_Social_1920x1080_Green_2_BG-1440x733.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #333;
+            margin: 0;
+        }
+
+        /* Container for centering content */
+        .container {
+            text-align: center;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); /* Subtle shadow for modern look */
+            max-width: 600px;
+            z-index: 2; /* Ensure the container is above the overlay */
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .container:hover {
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
+        }
+
+        /* Welcome heading */
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            letter-spacing: 1.5px;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        /* Style for the buttons */
+        .button,
+        .miniButton {
+            display: inline-block;
+            padding: 14px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: white;
+            background-color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 29px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(1, 62, 0, 0.3);
+        }
+
+        .button:hover,
+        .miniButton:hover {
+            background-color: #014000; /* Darker shade on hover */
+            transform: translateY(-3px); /* Slight hover effect for interaction */
+        }
+
+        .miniButton {
+            background-color: #ffffff; /* White for the login button */
+            color: #333; /* Dark text color */
+            box-shadow: 0 4px 10px rgba(1, 62, 0, 0.3);
+        }
+
+        .miniButton:hover {
+            background-color: #014000; /* Change color on hover */
+            color: white;
+        }
+    </style>
 </head>
+
 <body>
+    <div class="overlay"></div>
+    <div class="container">
+        <h1>Welcome to Spotify Wrapped</h1>
+        <h3>Login To View Your Wrapped All Year Long</h3>
 
-  <!-- Navigation Bar with Sign-In and Log-In -->
-  <nav class="navbar">
-    <h1>Spotify Wrapped</h1>
-    <div class="auth-links">
-      {% if user.is_authenticated %}
-        <a href="{% url 'dashboard' %}" class="btn">Dashboard</a>
-          <a href="{% url 'contact_developers' %}">Contact the Developers</a>
-          <a href="{% url 'wrapped_carousel' %}" class="btn btn-primary">Create Spotify Wrapped</a>
+        <!-- Register Button -->
+        <a href="{% url 'register' %}" class="button">Register</a>
 
-        <form method="POST" action="{% url 'logout' %}">
-          {% csrf_token %}
-          <button type="submit" class="btn">Log Out</button>
-        </form>
-      {% else %}
-        <a href="{% url 'register' %}" class="btn">Sign Up</a>
-        <a href="{% url 'login' %}" class="btn">Log In</a>
-          <a href="{% url 'wrapped_carousel' %}" class="btn btn-primary">Create Spotify Wrapped</a>
-      {% endif %}
+        <!-- Login Button -->
+        <br><br>
+        <a href="{% url 'login' %}" class="miniButton">Log in here</a>
     </div>
-  </nav>
-
-  <!-- Main Content Section -->
-  <main class="main-content">
-    <section class="features">
-      <h2>Discover Your Listening Habits</h2>
-
-      <!-- Feature 1 -->
-      <div class="feature">
-        <img src="{% static 'images/feature1.jpg' %}" alt="Feature 1 Image">
-        <div class="feature-text">
-          <h3>Top Songs of the Year</h3>
-          <p>See the tracks you've played the most in 2024!</p>
-        </div>
-      </div>
-
-      <!-- Feature 2 -->
-      <div class="feature">
-        <img src="{% static 'images/feature2.jpg' %}" alt="Feature 2 Image">
-        <div class="feature-text">
-          <h3>Your Favorite Artists</h3>
-          <p>Discover the artists who defined your 2024 listening experience.</p>
-        </div>
-      </div>
-
-      <!-- Feature 3 -->
-      <div class="feature">
-        <img src="{% static 'images/feature3.jpg' %}" alt="Feature 3 Image">
-        <div class="feature-text">
-          <h3>Year in Review</h3>
-          <p>Get a detailed look at your most listened-to genres and podcasts.</p>
-        </div>
-      </div>
-    </section>
-  </main>
-
 </body>
+
 </html>
-{% endblock %}
