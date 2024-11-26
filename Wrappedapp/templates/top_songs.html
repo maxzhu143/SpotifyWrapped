@@ -74,14 +74,18 @@
     </style>
 </head>
 <body>
+    <div style="position: absolute; top: 10px; left: 10px; display: flex; align-items: center; gap: 10px;">
+        <a href="{% url 'dashboard' %}" style="display: flex; align-items: center; text-decoration: none; color: #333;">
+            <img src="https://static.vecteezy.com/system/resources/previews/033/504/263/non_2x/home-with-ai-generated-free-png.png"
+                 alt="Home Logo"
+                 style="width: 30px; height: 30px; object-fit: cover; margin-right: 8px;">
+        </a>
+    </div>
+
     {% if user_name %}
-    <!-- User information section -->
         <div class="user-info">
             <p>Connected as: {{ user_name }}</p>
-            <form action="{% url 'unlink' %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="unlink-button">Unlink Account</button>
-            </form>
+
         </div>
 
         <h1>Your Top 10 Songs</h1>
