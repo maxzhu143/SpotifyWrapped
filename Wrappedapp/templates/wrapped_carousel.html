@@ -1,87 +1,287 @@
 {% extends "base.html" %}
+{% load django_bootstrap5 %}
 
-{% block title %}Larger Carousel{% endblock %}
+{% block title %}Spotify Wrapped{% endblock %}
 
 {% block content %}
-<div class="container mt-5 position-relative">
+<div class="container-fluid p-0" style="height: 100vh; width: 100vw;">
     <!-- Carousel -->
-    <div id="basicCarousel" class="carousel slide">
-        <!-- Carousel Inner -->
-        <div class="carousel-inner" style="height: 500px; width: 100%; max-width: 900px; margin: 0 auto;">
-            <div class="carousel-item active">
-                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #ccc;">
-                    <h3>Top Songs</h3>
-                    <ul>
-                        {% for song in wrapped.top_songs %}
-                            <li>
-                                <img src="{{ song.cover }}" alt="{{ song.name }}" style="width: 50px; height: 50px;">
-                                <p>{{ song.name }} by {{ song.artist }}</p>
-                            </li>
-                        {% endfor %}
+    <div id="spotifyWrappedCarousel" class="carousel slide" data-bs-ride="carousel" style="height: 100%; width: 100%;">
+        <div class="carousel-inner" style="height: 100%; width: 100%;">
+
+            <!-- Slide 1: Welcome -->
+            <div class="carousel-item active animated-background">
+                <div class="dynamic-shapes">
+                    <div class="circle large"></div>
+                    <div class="circle medium"></div>
+                    <div class="circle small"></div>
+                    <div class="circle tiny"></div>
+                    <div class="flower"></div>
+                    <div class="flower small"></div>
+                    <div class="star floating"></div>
+                    <div class="star shooting"></div>
+                    <div class="star shooting alternate"></div>
+                </div>
+                <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
+                    <h1 class="welcome-title text-animate-fade">Welcome to Your Spotify Wrapped</h1>
+                    <h2 class="welcome-name text-animate-slide">Lauren's 2024 Music Journey</h2>
+                    <p class="welcome-subtext text-animate-zoom">Dive into your personalized music stats!</p>
+                </div>
+            </div>
+
+            <!-- Slide 2: Total Listening Time -->
+            <div class="carousel-item animated-background">
+                <div class="dynamic-shapes">
+                    <div class="circle large"></div>
+                    <div class="circle medium"></div>
+                    <div class="circle small"></div>
+                    <div class="circle tiny"></div>
+                    <div class="flower"></div>
+                    <div class="flower small"></div>
+                    <div class="star floating"></div>
+                    <div class="star shooting"></div>
+                    <div class="star shooting alternate"></div>
+                </div>
+                <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
+                    <h1 class="listening-title text-animate-fade">Total Listening Time</h1>
+                    <p class="listening-subtext text-animate-hover">
+                        You spent <span class="highlight">150 hours</span> listening this year!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Slide 3: Your Top Artists -->
+            <div class="carousel-item animated-background">
+                <div class="dynamic-shapes">
+                    <div class="circle large"></div>
+                    <div class="circle medium"></div>
+                    <div class="circle small"></div>
+                    <div class="circle tiny"></div>
+                    <div class="flower"></div>
+                    <div class="flower small"></div>
+                    <div class="star floating"></div>
+                    <div class="star shooting"></div>
+                    <div class="star shooting alternate"></div>
+                </div>
+                <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
+                    <h1 class="artists-title text-animate-zoom">Your Top Artists</h1>
+                    <ul class="artists-list">
+                        <li class="text-animate-hover"><span class="highlight">1.</span> Artist A</li>
+                        <li class="text-animate-hover"><span class="highlight">2.</span> Artist B</li>
+                        <li class="text-animate-hover"><span class="highlight">3.</span> Artist C</li>
                     </ul>
                 </div>
             </div>
-            <div class="carousel-item">
-                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #aaa;">
-                    <h3>Top Artists</h3>
-                    <ul>
-                        {% for artist in wrapped.top_artists %}
-                            <li>{{ artist }}</li>
-                        {% endfor %}
-                    </ul>
+
+            <!-- Slide 4: Music Trends -->
+            <div class="carousel-item animated-background">
+                <div class="dynamic-shapes">
+                    <div class="circle large"></div>
+                    <div class="circle medium"></div>
+                    <div class="circle small"></div>
+                    <div class="circle tiny"></div>
+                    <div class="flower"></div>
+                    <div class="flower small"></div>
+                    <div class="star floating"></div>
+                    <div class="star shooting"></div>
+                    <div class="star shooting alternate"></div>
                 </div>
-            </div>
-            <div class="carousel-item">
-                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
-                    <h3>Top Genres</h3>
-                    <ul>
-                        {% for genre in wrapped.top_genres %}
-                            <li>{{ genre }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
-                    <h3>Minutes Listened</h3>
-                    <p>{{ wrapped.total_minutes_listened }}</p>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
-                    <h3>Listening Personality</h3>
-                    <p>{{ wrapped.personality }}</p>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
-                    <h3>Sound Town</h3>
-                    <p>{{ wrapped.sound_town }}</p>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
-                    <h3>Podcasts</h3>
-                    <p>{{ wrapped.top_podcasts }}</p>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="d-flex justify-content-center align-items-center" style="height: 100%; background-color: #888;">
-                    <h3>Artist Thank You</h3>
-                    <p>{{ wrapped.artist_thank_you }}</p>
+                <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
+                    <h1 class="trends-title text-animate-slide">Music Trends</h1>
+                    <p class="trends-subtext text-animate-fade">You listened to <span class="highlight">more Pop</span> and <span class="highlight">Hip-Hop</span> than ever before!</p>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Controls placed completely outside the carousel -->
-    <button class="carousel-control-prev position-absolute" type="button" data-bs-target="#basicCarousel" data-bs-slide="prev" style="top: 50%; transform: translateY(-50%); left: -80px; width: 60px; height: 60px;">
-        <span class="carousel-control-prev-icon" aria-hidden="true" style="width: 30px; height: 30px;"></span>
-        <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next position-absolute" type="button" data-bs-target="#basicCarousel" data-bs-slide="next" style="top: 50%; transform: translateY(-50%); right: -80px; width: 60px; height: 60px;">
-        <span class="carousel-control-next-icon" aria-hidden="true" style="width: 30px; height: 30px;"></span>
-        <span class="visually-hidden">Next</span>
-    </button>
+        <!-- Carousel Controls -->
+        <button class="carousel-control-prev static-arrow" type="button" data-bs-target="#spotifyWrappedCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon no-hover" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next static-arrow" type="button" data-bs-target="#spotifyWrappedCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon no-hover" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
 </div>
+
+<style>
+    /* Text Animations */
+    .text-animate-fade {
+        animation: fadeIn 2s ease-in-out;
+    }
+    @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+
+    .text-animate-slide {
+        animation: slideIn 2s ease-in-out;
+    }
+    @keyframes slideIn {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(0); }
+    }
+
+    .text-animate-zoom {
+        animation: zoomIn 2s ease-in-out;
+    }
+    @keyframes zoomIn {
+        0% { transform: scale(0.5); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .text-animate-hover:hover {
+        transform: scale(1.1);
+        transition: transform 0.3s ease-in-out;
+    }
+    @keyframes colorShift {
+        0% { background: linear-gradient(45deg, #1DB954, #191414); }
+        25% { background: linear-gradient(45deg, #FF007F, #590FB7); }
+        50% { background: linear-gradient(45deg, #FFC312, #EE5A24); }
+        75% { background: linear-gradient(45deg, #16A085, #27AE60); }
+        100% { background: linear-gradient(45deg, #1DB954, #191414); }
+    }
+
+    .animated-background {
+        animation: colorShift 12s infinite;
+        background-size: 300% 300%;
+        height: 100%;
+    }
+
+    /* Dynamic Shapes */
+    .dynamic-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 0;
+    }
+
+    .circle {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        animation: float 10s infinite ease-in-out;
+    }
+
+    .circle.small { width: 100px; height: 100px; top: 25%; left: 15%; }
+    .circle.medium { width: 150px; height: 150px; top: 50%; left: 50%; }
+    .circle.large { width: 200px; height: 200px; top: 10%; left: 60%; }
+    .circle.tiny { width: 80px; height: 80px; top: 75%; left: 80%; }
+
+    .flower {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, #16A085, #27AE60);
+        clip-path: polygon(50% 0%, 61% 35%, 100% 35%, 68% 57%, 80% 91%, 50% 70%, 21% 91%, 32% 57%, 0 35%, 39% 35%);
+        top: 70%;
+        left: 20%;
+        animation: float 12s infinite ease-in-out;
+    }
+
+    .flower.small { width: 80px; height: 80px; top: 40%; left: 75%; }
+
+    .star {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #FF007F, #FFC312);
+        clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    }
+
+    .star.floating {
+        animation: float 8s infinite ease-in-out;
+        top: 20%;
+        left: 10%;
+    }
+
+    .star.shooting {
+        animation: shootDiagonal 8s infinite linear;
+        top: 10%;
+        left: -20%;
+    }
+
+    .star.shooting.alternate {
+        animation: shootDiagonalAlternate 10s infinite linear;
+        top: 30%;
+        left: -30%;
+    }
+
+    @keyframes shootDiagonal {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(120vw, 100vh); }
+    }
+
+    @keyframes shootDiagonalAlternate {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(120vw, -100vh); }
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    /* Arrows */
+    .static-arrow {
+        width: 50px;
+        height: 50px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+    }
+
+    .no-hover {
+        transition: none !important;
+    }
+
+    /* Text Styling */
+    .text-container {
+        position: relative;
+        z-index: 1;
+        color: white;
+        text-align: center;
+    }
+
+    .welcome-title,
+    .listening-title,
+    .artists-title,
+    .trends-title {
+        font-family: 'Arial Black', sans-serif;
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .welcome-name {
+        font-size: 2rem;
+        font-family: 'Arial', sans-serif;
+        margin-bottom: 1rem;
+    }
+
+    .welcome-subtext,
+    .listening-subtext,
+    .trends-subtext {
+        font-size: 1.25rem;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .artists-list li {
+        font-size: 1.5rem;
+        line-height: 2rem;
+    }
+
+    .highlight {
+        color: #FFC312;
+        font-weight: bold;
+    }
+</style>
 {% endblock %}

@@ -20,6 +20,8 @@ from datetime import datetime, timedelta
 from django.shortcuts import redirect
 from Wrappedapp.models import SpotifyWrapped, SpotifyAccount
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
+
 
 openai.api_key = settings.OPENAI_API_KEY
 client_id = settings.SPOTIFY_CLIENT_ID
@@ -76,12 +78,8 @@ def unlink(request):
         pass  # Handle cases where the account doesn't exist gracefully
     return redirect('dashboard')  # Redirect to the dashboard
 
-
-
-
 def home(request):
-    access_token = request.session.get("access_token", "")
-    return render(request, "home.html", {"access_token": access_token})
+    return render(request, "home.html")
 
 @login_required
 def dashboard(request):
@@ -91,10 +89,18 @@ def dashboard(request):
     # Get the user's saved SpotifyWrapped objects
     wrapped_objects = SpotifyWrapped.objects.filter(user=request.user).order_by('-created_at')
 
+
+    access_token = request.session.get('access_token')
+
+    profile_response = requests.get('https://api.spotify.com/v1/me', headers={'Authorization': f'Bearer {access_token}'})
+    user_name = profile_response.json().get('display_name', 'Spotify User')
+
+
     context = {
         "spotify_account": spotify_account,
         "spotify_linked": bool(spotify_account),  # True if Spotify account is linked
         "wrapped_objects": wrapped_objects,  # Add the saved wrapped objects to the context
+        "user_name" : user_name,
     }
     return render(request, "dashboard.html", context)
 
@@ -178,8 +184,12 @@ def create_wrapped(request):
         return render(request, 'error.html', {'message': f"Failed to create Spotify Wrapped: {e}"})
 
 @login_required
-
-
 def custom_logout_view(request):
     logout(request)
     return render(request, 'logout.html')
+
+@login_required
+def delete_wrapped(request, wrapped_id):
+    wrapped = get_object_or_404(SpotifyWrapped, id=wrapped_id, user=request.user)
+    wrapped.delete()
+    return redirect('dashboard')  # Replace 'home' with the name of your main page or Wrapped list page.
