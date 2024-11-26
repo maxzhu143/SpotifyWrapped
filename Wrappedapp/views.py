@@ -23,7 +23,6 @@ from django.utils import timezone
 
 from .utils import generate_psychoanalysis
 
-openai.api_key = settings.OPENAI_API_KEY
 client_id = settings.SPOTIFY_CLIENT_ID
 client_secret = settings.SPOTIFY_CLIENT_SECRET
 redirect_uri = settings.SPOTIFY_REDIRECT_URI
@@ -170,7 +169,7 @@ def create_wrapped(request):
             total_minutes_listened=total_minutes,
             sound_town=sound_town,
             artist_thank_you=artist_thank_you,
-            top_podcasts=top_podcasts,
+            top_podcasts="top_podcasts",
         )
 
         # Redirect to the carousel view to display the new Wrapped data
