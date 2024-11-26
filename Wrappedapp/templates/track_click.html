@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Click Tracker</title>
+    <style>
+        body {
+            background-color: {{ background_color }};
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        /* Common button styles */
+        .button {
+            position: absolute;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: white;
+        }
+
+        /* Button position styles */
+        .bottom-right {
+            bottom: 20px;
+            right: 20px;
+        }
+
+        .top-right {
+            top: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ message }}</h1>
+    <form method="POST">
+        {% csrf_token %}
+        {% if button_position == 'bottom-right' %}
+            <button
+                type="submit"
+                class="button bottom-right"
+                style="background-color: {{ button_color }};">
+                Click Me
+            </button>
+        {% else %}
+            <button
+                type="submit"
+                class="button top-right"
+                style="background-color: {{ button_color }};">
+                Reset
+            </button>
+        {% endif %}
+    </form>
+</body>
+</html>

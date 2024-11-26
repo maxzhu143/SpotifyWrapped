@@ -1,7 +1,6 @@
 """Views for Wrappedapp."""
 import urllib.parse
 from django.contrib.auth import login, logout
-from .models import SpotifyAccount
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -11,12 +10,17 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth.decorators import login_required
 import requests
-
-# THIS IS HOW YOU GET ACCESS TOKENS: access_token = request.session.get('access_token')
-
-
-
-
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from .spotify_api_functions import (
+    get_valid_spotify_token, get_top_songs, get_top_artists, get_top_genres, determine_listening_personality,
+    get_sound_town, get_total_minutes_listened, get_top_podcasts, get_artist_thank_you
+)
+from datetime import datetime, timedelta
+from django.shortcuts import redirect
+from Wrappedapp.models import SpotifyWrapped, SpotifyAccount
+from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
 
 openai.api_key = settings.OPENAI_API_KEY
@@ -25,112 +29,80 @@ client_secret = settings.SPOTIFY_CLIENT_SECRET
 redirect_uri = settings.SPOTIFY_REDIRECT_URI
 
 
-# Create your views here.
-# Wrappedapp/views.py
 
+def spotify_callback(request):
+    code = request.GET.get("code")
+    if not code:
+        return redirect('error')  # Handle missing code gracefully
 
+    # Exchange code for tokens
+    token_url = "https://accounts.spotify.com/api/token"
+    response = requests.post(token_url, data={
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": settings.SPOTIFY_REDIRECT_URI,
+        "client_id": settings.SPOTIFY_CLIENT_ID,
+        "client_secret": settings.SPOTIFY_CLIENT_SECRET,
+    })
 
-def spot_login(request):
-    # Step 1: Redirect the user to Spotify's authorization page
-    print(request.session.keys())
-    #return redirect('top_songs')
+    if response.status_code == 200:
+        tokens = response.json()
+        access_token = tokens.get("access_token")
+        refresh_token = tokens.get("refresh_token")
+        expires_in = tokens.get("expires_in", 3600)  # Default to 3600 seconds if missing
 
-    auth_url = (
-        'https://accounts.spotify.com/authorize'
-        '?response_type=code'
-        f'&client_id={settings.SPOTIFY_CLIENT_ID}'
-        f'&redirect_uri={settings.SPOTIFY_REDIRECT_URI}'
-        '&scope=user-top-read'
-    )
-    return redirect(auth_url)
+        # Ensure `expires_at` is calculated
+        if expires_in is None:
+            expires_in = 3600  # Fallback to 1 hour
+        expires_at = datetime.now() + timedelta(seconds=expires_in)
 
-def callback(request):
-    print("CALLBACK")
-    # Step 2: Get the authorization code from the redirect URL
-    code = request.GET.get('code')
+        # Save or update the SpotifyAccount
+        spotify_account, created = SpotifyAccount.objects.get_or_create(user=request.user)
+        spotify_account.access_token = access_token
+        spotify_account.refresh_token = refresh_token
+        spotify_account.expires_at = expires_at
+        spotify_account.save()
 
-    # Step 3: Exchange the authorization code for an access token
-    token_url = 'https://accounts.spotify.com/api/token'
-    token_data = {
-        'grant_type': 'authorization_code',
-        'code': code,
-        'redirect_uri': settings.SPOTIFY_REDIRECT_URI,
-        'client_id': settings.SPOTIFY_CLIENT_ID,
-        'client_secret': settings.SPOTIFY_CLIENT_SECRET,
-    }
+        return redirect('dashboard')
 
-    response = requests.post(token_url, data=token_data)
-    token_info = response.json()
-    request.session['access_token'] = token_info.get('access_token')
-
-    return redirect('top_songs')
+    else:
+        print(f"Spotify API error: {response.status_code} - {response.text}")
+        return redirect('error')  # Handle API errors gracefully
 
 @csrf_exempt  # CSRF protection is already handled in the form
 def unlink(request):
-    print("UNLINK")
-    print(request)
-    if request.method == 'POST':
-        print(request.session.keys())
-        print("Currently Unlinking")
-        # Clear the session to log the user out of Spotify
-        request.session.pop('access_token', None)
-        request.session.pop('access_token', None)
-        request.session.pop('refresh_token', None)
-        request.session.pop('expires_at', None)
-        print("hey")
-        return redirect('dashboard')  # Redirect to login page or homepage
-
-def top_songs(request):
-    access_token = request.session.get('access_token')
-    if not access_token:
-        print("Access token is needed")
-        return redirect('spot_login')
-
-    headers = {'Authorization': f'Bearer {access_token}'}
-
-    # Get user profile information for the display name
-    profile_url = 'https://api.spotify.com/v1/me'
-    profile_response = requests.get(profile_url, headers=headers)
-    if profile_response.status_code == 200:
-        profile_data = profile_response.json()
-        user_name = profile_data.get('display_name', 'Spotify User')
-    else:
-        print("Failed to fetch user profile:", profile_response.status_code, profile_response.text)
-        user_name = 'Spotify User'
-
-    # Fetch top tracks
-    top_tracks_url = 'https://api.spotify.com/v1/me/top/tracks?limit=10'
-    tracks_response = requests.get(top_tracks_url, headers=headers)
-    if tracks_response.status_code == 200:
-        tracks_data = tracks_response.json()
-
-        # Extract song details if there are items in the response
-        songs = [{
-            'name': track['name'],
-            'artist': track['artists'][0]['name'],
-            'album': track['album']['name'],
-            'cover': track['album']['images'][0]['url']
-        } for track in tracks_data.get('items', [])]  # Safely handle missing 'items' key
-    else:
-        print("Failed to fetch top tracks:", tracks_response.status_code, tracks_response.text)
-        songs = []  # Provide an empty list as a fallback
-
-    return render(request, 'top_songs.html', {'songs': songs, 'user_name': user_name})
+    try:
+        # Delete the SpotifyAccount for the current user
+        SpotifyAccount.objects.filter(user=request.user).delete()
+    except SpotifyAccount.DoesNotExist:
+        pass  # Handle cases where the account doesn't exist gracefully
+    return redirect('dashboard')  # Redirect to the dashboard
 
 def home(request):
-    access_token = request.session.get("access_token", "")
-    return render(request, "home.html", {"access_token": access_token})
+    return render(request, "home.html")
 
-@login_required(login_url='login')
+@login_required
 def dashboard(request):
-    # Get the Spotify account info if connected
-    spotify_account = None
-    if request.user.is_authenticated:
-        try:
-            spotify_account = SpotifyAccount.objects.get(user=request.user)
-        except SpotifyAccount.DoesNotExist:
-            spotify_account = None
-    return render(request, 'dashboard.html', {'spotify_account': spotify_account})
+    # Check if the Spotify account is linked
+    spotify_account = SpotifyAccount.objects.filter(user=request.user).first()
+
+    # Get the user's saved SpotifyWrapped objects
+    wrapped_objects = SpotifyWrapped.objects.filter(user=request.user).order_by('-created_at')
+
+
+    access_token = request.session.get('access_token')
+
+    profile_response = requests.get('https://api.spotify.com/v1/me', headers={'Authorization': f'Bearer {access_token}'})
+    user_name = profile_response.json().get('display_name', 'Spotify User')
+
+
+    context = {
+        "spotify_account": spotify_account,
+        "spotify_linked": bool(spotify_account),  # True if Spotify account is linked
+        "wrapped_objects": wrapped_objects,  # Add the saved wrapped objects to the context
+        "user_name" : user_name,
+    }
+    return render(request, "dashboard.html", context)
 
 def register(request):
     """Handle user registration."""
@@ -145,19 +117,8 @@ def register(request):
 
     return render(request, 'register.html', {'form': form})
 
-#might cause issues becuase we have two
-@login_required
-def dashboard(request):
-    """Display user dashboard."""
-    return render(request, 'dashboard.html')
-
 def contact_developers(request):
     return render(request, 'contact_developers.html')
-
-#might not need
-def my_data_view(request):
-    data = {"message": "Hello from Django!"}
-    return JsonResponse(data)
 
 def spotify_authorize(request):
     spotify_auth_url = "https://accounts.spotify.com/authorize"
@@ -170,92 +131,65 @@ def spotify_authorize(request):
     auth_url = f"{spotify_auth_url}?{urllib.parse.urlencode(params)}"
     return redirect(auth_url)
 
-def spotify_callback(request):
-    code = request.GET.get("code")
-    token_url = "https://accounts.spotify.com/api/token"
+@login_required
+def wrapped_carousel(request, wrapped_id):
+    """
+    View to render the Wrapped Carousel page for a specific SpotifyWrapped object.
+    """
+    try:
+        # Fetch the specific SpotifyWrapped object for the user
+        wrapped = SpotifyWrapped.objects.get(id=wrapped_id, user=request.user)
 
-    response = requests.post(token_url, data={
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": settings.SPOTIFY_REDIRECT_URI,
-        "client_id": settings.SPOTIFY_CLIENT_ID,
-        "client_secret": settings.SPOTIFY_CLIENT_SECRET,
-    })
+        # Pass the SpotifyWrapped data to the template
+        return render(request, 'wrapped_carousel.html', {'wrapped': wrapped})
+    except SpotifyWrapped.DoesNotExist:
+        # Handle case where the Wrapped object does not exist
+        return render(request, 'error.html', {'message': 'Spotify Wrapped not found.'})
 
-    if response.status_code == 200:
-        tokens = response.json()
-        access_token = tokens["access_token"]
-        refresh_token = tokens["refresh_token"]
-
-        # Save tokens in the session (or database) for later use
-        request.session["access_token"] = access_token
-        request.session["refresh_token"] = refresh_token
-
-        # Redirect to another view, or render a template
-        return redirect("home")  # Change 'home' to your target URL
-    else:
-        return redirect("error")  # Handle errors gracefully
-
-@csrf_exempt
-def describe_user_tracks(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            track_names = data.get('trackNames', [])
-
-            # Create a prompt for the LLM using the track names
-            prompt = f"Based on the top tracks that include {', '.join(track_names)}, " \
-                     "describe how this user might act or think in terms of personality and music preferences."
-
-            # Call OpenAI API to generate the description
-            response = openai.Completion.create(
-                model="text-davinci-003",
-                prompt=prompt,
-                max_tokens=100
-            )
-            description = response.choices[0].text.strip()
-
-            # Return the description to the frontend
-            return JsonResponse({'description': description})
-
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 @login_required
-def stats_view(request):
-    access_token = request.session.get('access_token')
-    headers = {"Authorization": f"Bearer {access_token}"}
+def create_wrapped(request):
+    try:
+        # Fetch Spotify token from the linked account
+        spotify_token = get_valid_spotify_token(request.user)
+        # Fetch data from Spotify API
+        top_songs = get_top_songs(spotify_token)
+        top_artists = get_top_artists(spotify_token)
+        top_genres = get_top_genres(spotify_token)
+        personality = determine_listening_personality(spotify_token)
+        total_minutes = get_total_minutes_listened(spotify_token)
+        sound_town = get_sound_town(top_genres)
+        artist_thank_you = get_artist_thank_you(spotify_token)
+        top_podcasts = get_top_podcasts(spotify_token)
 
-    # Fetch user’s top artists with cover images and Spotify URLs
-    top_artists_response = requests.get("https://api.spotify.com/v1/me/top/artists", headers=headers)
-    top_artists = top_artists_response.json().get('items', []) if top_artists_response.status_code == 200 else []
 
-    # Fetch user’s top tracks for covers, URLs, and duration calculation
-    top_tracks_response = requests.get("https://api.spotify.com/v1/me/top/tracks", headers=headers)
-    top_tracks = top_tracks_response.json().get('items', []) if top_tracks_response.status_code == 200 else []
+        # Create a new SpotifyWrapped object
+        wrapped = SpotifyWrapped.objects.create(
+            user=request.user,
+            title=f"My Spotify Wrapped {SpotifyWrapped.objects.filter(user=request.user).count() + 1}",
+            top_songs=top_songs,
+            top_artists=top_artists,
+            top_genres=top_genres,
+            personality=personality,
+            total_minutes_listened=total_minutes,
+            sound_town=sound_town,
+            artist_thank_you=artist_thank_you,
+            top_podcasts=top_podcasts,
+        )
 
-    # Calculate total listening time from top tracks' durations
-    total_listening_time_ms = sum(track['duration_ms'] for track in top_tracks)
-    total_listening_time_hours = total_listening_time_ms // (1000 * 60 * 60)
-    total_listening_time_minutes = (total_listening_time_ms // (1000 * 60)) % 60
+        # Redirect to the carousel view to display the new Wrapped data
+        return redirect('wrapped_carousel', wrapped_id=wrapped.id)
+    except Exception as e:
+        print(f"Error fetching Spotify data: {e}")
+        return render(request, 'error.html', {'message': f"Failed to create Spotify Wrapped: {e}"})
 
-    # Include album art and Spotify URLs in top tracks and artists if available
-    for track in top_tracks:
-        track['album_cover'] = track['album']['images'][0]['url'] if track['album']['images'] else None
-        track['spotify_url'] = track['external_urls']['spotify']
-    for artist in top_artists:
-        artist['cover_image'] = artist['images'][0]['url'] if artist['images'] else None
-        artist['spotify_url'] = artist['external_urls']['spotify']
-
-    context = {
-        'top_artists': top_artists,
-        'top_tracks': top_tracks,
-        'total_listening_time': f"{total_listening_time_hours} hours, {total_listening_time_minutes} minutes",
-    }
-    return render(request, 'stats.html', context)
-
+@login_required
 def custom_logout_view(request):
     logout(request)
     return render(request, 'logout.html')
+
+@login_required
+def delete_wrapped(request, wrapped_id):
+    wrapped = get_object_or_404(SpotifyWrapped, id=wrapped_id, user=request.user)
+    wrapped.delete()
+    return redirect('dashboard')  # Replace 'home' with the name of your main page or Wrapped list page.
