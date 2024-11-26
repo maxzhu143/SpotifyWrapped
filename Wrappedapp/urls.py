@@ -6,7 +6,6 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),  # Home page
-    path('home/', views.home, name='home'),  # Home page route
     path('register/', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('dashboard/', views.dashboard, name='dashboard'),  # Dashboard route
@@ -15,10 +14,8 @@ urlpatterns = [
     path('callback/', views.spotify_callback, name='spotify_callback'),
     path('unlink/', views.unlink, name='unlink'),
     path('contact/', views.contact_developers, name='contact_developers'),
-    path('stats/', views.stats_page, name='stats_page'),
     path('create_wrapped/', views.create_wrapped, name='create_wrapped'),
     path('wrapped_carousel/<int:wrapped_id>/', views.wrapped_carousel, name='wrapped_carousel'),
-
-
+    path('wrapped/delete/<int:wrapped_id>/', views.delete_wrapped, name='delete_wrapped'),
 
 ]
