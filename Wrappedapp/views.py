@@ -142,11 +142,26 @@ def wrapped_carousel(request, wrapped_id):
         # Fetch the specific SpotifyWrapped object for the user
         wrapped = SpotifyWrapped.objects.get(id=wrapped_id, user=request.user)
 
-        # Pass the SpotifyWrapped data to the template
-        return render(request, 'wrapped_carousel.html', {'wrapped': wrapped})
+        # Process top songs for the carousel
+        top_songs = wrapped.top_songs  # Assuming `top_songs` is a list of dictionaries
+
+        for song in top_songs:
+
+            # Add fallback values for Spotify URL, album cover, and artist name
+            song['spotify_url'] = song.get('spotify_url', '#')  # Fallback to '#' if no URL
+            song['album_cover'] = song.get('album_cover', 'default_album_cover.jpg')  # Default cover image
+            song['artist'] = song.get('artist', 'Unknown Artist')  # Fallback artist name
+
+        # Pass the Wrapped object and processed top songs to the template
+        return render(request, 'wrapped_carousel.html', {
+            'wrapped': wrapped,
+            'top_songs': top_songs,  # Pass the top songs data to the template
+        })
+
     except SpotifyWrapped.DoesNotExist:
         # Handle case where the Wrapped object does not exist
         return render(request, 'error.html', {'message': 'Spotify Wrapped not found.'})
+
 
 
 @login_required
