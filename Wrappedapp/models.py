@@ -116,6 +116,7 @@ class SpotifyWrapped(models.Model):
     artist_thank_you = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     top_podcasts = models.JSONField(default=dict)
+    personality_word = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return f"Wrapped {self.title} for {self.user.username}"

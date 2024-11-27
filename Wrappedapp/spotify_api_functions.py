@@ -102,10 +102,22 @@ def get_top_artists(access_token, limit=5):
     response = requests.get(url, headers=headers, params=params)
     if response.status_code == 200:
         items = response.json().get('items', [])
-        return items if items else ["Looks like you have never listened to any artists."]
+        if items:
+            top_artists = [
+                {
+                    'name': artist['name'],
+                    'image_url': artist['images'][0]['url'] if artist['images'] else None,
+                    'genres': ', '.join(artist['genres'][:2])  # Limit to 2 genres for brevity
+                }
+                for artist in items
+            ]
+            return top_artists
+        else:
+            return [{"name": "Looks like you have never listened to any artists.", "image_url": None, "genres": ""}]
     else:
         print(f"Error fetching top artists: {response.status_code}")
-        return ["Looks like you have never listened to any artists."]
+        return [{"name": "Error fetching data from Spotify.", "image_url": None, "genres": ""}]
+
 
 
 # Top Genres (Medium Term)
@@ -120,8 +132,15 @@ def get_top_genres(access_token):
     if not genres:
         return ["Looks like you have never listened to any genres."]
 
+    # Count occurrences of each genre
     genre_counts = {genre: genres.count(genre) for genre in set(genres)}
-    return sorted(genre_counts.items(), key=lambda x: x[1], reverse=True)
+
+    # Sort genres by count (descending) and take the top 5
+    top_5_genres = sorted(genre_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+
+    # Return only the genre names
+    return [genre for genre, count in top_5_genres]
+
 
 
 # Estimated Listening Time (Medium Term)
@@ -134,22 +153,6 @@ def get_total_minutes_listened(access_token):
     total_ms = sum(track['duration_ms'] * play_count for track in top_tracks if isinstance(track, dict))
     return total_ms / 1000.0 / 60.0
 
-
-# Listening Personality (Medium Term)
-def determine_listening_personality(access_token):
-    top_songs = get_top_songs(access_token)
-    top_artists = get_top_artists(access_token)
-    if isinstance(top_songs, list) and "Looks like you have never listened to any songs." in top_songs:
-        return ["No listening personality data available."]
-
-    traits = []
-    if len(top_songs) > 50:
-        traits.append("Explorer")
-    if any(artist['popularity'] > 80 for artist in top_artists if isinstance(artist, dict)):
-        traits.append("Trend Follower")
-    if len(set(song['name'] for song in top_songs if isinstance(song, dict))) < len(top_songs) * 0.5:
-        traits.append("Replayer")
-    return traits or ["Unique Listener"]
 
 
 # Estimated Sound Town (Medium Term)
@@ -168,17 +171,7 @@ def get_sound_town(top_genres):
     return "Unknown Sound Town"
 
 
-# Top Podcasts (Medium Term)
-def get_top_podcasts(access_token, limit=5):
-    url = "https://api.spotify.com/v1/me/top/shows"
-    headers = {"Authorization": f"Bearer {access_token}"}
-    response = requests.get(url, headers=headers, params={"time_range": "medium_term", "limit": limit})
-    if response.status_code == 200:
-        items = response.json().get('items', [])
-        return items if items else ["Looks like you have never listened to any podcasts."]
-    else:
-        print(f"Error fetching top podcasts: {response.status_code}")
-        return ["Looks like you have never listened to any podcasts."]
+
 
 
 # Artist Messages (Mocked, Medium Term)
