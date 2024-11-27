@@ -58,6 +58,7 @@ def generate_psychoanalysis(top_songs, top_artists, top_genres, total_minutes):
                 + "Give me description, don't include the inputs in your response. "
                 + "Also first two word should be one word to describe listener with."
                 + "lowercase respective article adjective in front of it (a/an)"
+                + "seperate grammar from the rest of the description"
             }
         ]
     )

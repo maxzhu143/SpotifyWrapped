@@ -86,12 +86,27 @@ def get_top_songs(access_token, limit=10):
     headers = {"Authorization": f"Bearer {access_token}"}
     params = {"time_range": "medium_term", "limit": limit}
     response = requests.get(url, headers=headers, params=params)
+
     if response.status_code == 200:
         items = response.json().get('items', [])
-        return items if items else ["Looks like you have never listened to any songs."]
+        print(json.dumps(items, indent=2))  # Debug the response structure
+        # Extract detailed song information for the template
+        songs = []
+        for track in items:
+            songs.append({
+                'name': track.get('name', 'Unknown Song'),  # Add safe default
+                'artist': track['artists'][0]['name'] if track.get('artists') else 'Unknown Artist',
+                'album': track['album']['name'] if track.get('album') else 'Unknown Album',
+                'cover': track['album']['images'][0]['url'] if track.get('album') and track['album'].get('images') else 'https://via.placeholder.com/150',
+                'spotify_url': track['external_urls']['spotify'] if track.get('external_urls') else '#',
+                'duration_ms': track.get('duration_ms', 0)  # Add a safe default
+            })
+        return songs
     else:
         print(f"Error fetching top songs: {response.status_code}")
-        return ["Looks like you have never listened to any songs."]
+        return []  # Return an empty list as a fallback
+
+
 
 
 # Top Artists (Medium Term)
@@ -183,66 +198,5 @@ def get_artist_thank_you(access_token):
     messages = {artist['name']: f"Thank you for listening to {artist['name']}!" for artist in top_artists}
     return messages
 
-@csrf_exempt
-def describe_user_tracks(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            track_names = data.get('trackNames', [])
 
-            # Create a prompt for the LLM using the track names
-            prompt = f"Based on the top tracks that include {', '.join(track_names)}, " \
-                     "describe how this user might act or think in terms of personality and music preferences."
 
-            # Call OpenAI API to generate the description
-            response = openai.Completion.create(
-                model="text-davinci-003",
-                prompt=prompt,
-                max_tokens=100
-            )
-            description = response.choices[0].text.strip()
-
-            # Return the description to the frontend
-            return JsonResponse({'description': description})
-
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-def top_songs(request):
-    access_token = request.session.get('access_token')
-    if not access_token:
-        print("Access token is needed")
-        return redirect('spot_login')
-
-    headers = {'Authorization': f'Bearer {access_token}'}
-
-    # Get user profile information for the display name
-    profile_url = 'https://api.spotify.com/v1/me'
-    profile_response = requests.get(profile_url, headers=headers)
-    if profile_response.status_code == 200:
-        profile_data = profile_response.json()
-        user_name = profile_data.get('display_name', 'Spotify User')
-    else:
-        print("Failed to fetch user profile:", profile_response.status_code, profile_response.text)
-        user_name = 'Spotify User'
-
-    # Fetch top tracks
-    top_tracks_url = 'https://api.spotify.com/v1/me/top/tracks?limit=10'
-    tracks_response = requests.get(top_tracks_url, headers=headers)
-    if tracks_response.status_code == 200:
-        tracks_data = tracks_response.json()
-
-        # Extract song details if there are items in the response
-        songs = [{
-            'name': track['name'],
-            'artist': track['artists'][0]['name'],
-            'album': track['album']['name'],
-            'cover': track['album']['images'][0]['url']
-        } for track in tracks_data.get('items', [])]  # Safely handle missing 'items' key
-    else:
-        print("Failed to fetch top tracks:", tracks_response.status_code, tracks_response.text)
-        songs = []  # Provide an empty list as a fallback
-
-    return render(request, 'top_songs.html', {'songs': songs, 'user_name': user_name})

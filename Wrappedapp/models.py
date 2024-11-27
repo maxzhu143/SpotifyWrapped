@@ -107,7 +107,7 @@ from django.conf import settings
 class SpotifyWrapped(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="wrapped_objects")
     title = models.CharField(max_length=255, default="My Spotify Wrapped")  # Optional title
-    top_songs = models.JSONField(default=dict)  # Example: List of songs
+    top_songs = models.JSONField(default=list)  # Example: List of songs
     top_artists = models.JSONField(default=dict)  # Example: List of artists
     top_genres = models.JSONField(default=dict)  # Example: List of genres
     personality = models.CharField(max_length=255, null=True, blank=True)  # Optional string field
