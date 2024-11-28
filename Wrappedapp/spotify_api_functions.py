@@ -89,6 +89,7 @@ def get_top_songs(access_token, limit=10):
 
     if response.status_code == 200:
         items = response.json().get('items', [])
+        print(json.dumps(items, indent=2))  # Debug the response structure
         # Extract detailed song information for the template
         songs = []
         for track in items:
