@@ -89,7 +89,6 @@ def get_top_songs(access_token, limit=10):
 
     if response.status_code == 200:
         items = response.json().get('items', [])
-        print(json.dumps(items, indent=2))  # Debug the response structure
         # Extract detailed song information for the template
         songs = []
         for track in items:
@@ -197,6 +196,3 @@ def get_artist_thank_you(access_token):
 
     messages = {artist['name']: f"Thank you for listening to {artist['name']}!" for artist in top_artists}
     return messages
-
-
-
