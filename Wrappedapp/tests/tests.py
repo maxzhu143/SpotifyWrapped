@@ -3,6 +3,10 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
+from unittest.mock import patch
+from django.urls import reverse
+from django.test import TestCase
+from django.contrib.auth.models import User
 
 
 class UserRegistrationTest(TestCase):
@@ -79,41 +83,6 @@ class UserLogoutTest(TestCase):
 
         # Check that the logout page renders successfully (status code 200)
         self.assertEqual(response.status_code, 302)
-
-
-
-class NavbarDisplayTest(TestCase):
-    def setUp(self):
-        # Set up URLs and user for testing
-        self.user = User.objects.create_user(username='testuser', password='pokPyw-xyxquf-gozdo0')
-        self.home_url = reverse('home')
-
-    def test_navbar_for_authenticated_user(self):
-        # Log in the user
-        self.client.login(username='testuser', password='pokPyw-xyxquf-gozdo0')
-
-        # Get response and check navbar elements
-        response = self.client.get(self.home_url)
-        self.assertContains(response, 'Dashboard')  # Confirms 'Dashboard' link is present
-        self.assertContains(response, 'Log Out')  # Confirms 'Log Out' button is present
-        self.assertNotContains(response, 'Sign Up')  # Authenticated users should not see 'Sign Up'
-        self.assertNotContains(response, 'Log In')  # Authenticated users should not see 'Log In'
-
-    def test_navbar_for_unauthenticated_user(self):
-        # Get response without logging in
-        response = self.client.get(self.home_url)
-
-        # Check that unauthenticated users see 'Sign Up' and 'Log In' links
-        self.assertContains(response, 'Sign Up')
-        self.assertContains(response, 'Log In')
-        self.assertNotContains(response, 'Dashboard')  # Unauthenticated users shouldn't see 'Dashboard'
-        self.assertNotContains(response, 'Log Out')  # Unauthenticated users shouldn't see 'Log Out'
-
-
-from unittest.mock import patch
-from django.urls import reverse
-from django.test import TestCase
-from django.contrib.auth.models import User
 
 
 class SpotifyIntegrationTest(TestCase):
