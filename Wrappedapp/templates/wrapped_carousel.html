@@ -4,6 +4,7 @@
 {% block title %}Spotify Wrapped{% endblock %}
 
 {% block content %}
+
 <div class="container-fluid p-0" style="height: 100vh; width: 100vw;">
     <!-- Carousel -->
     <div id="spotifyWrappedCarousel" class="carousel slide" data-bs-ride="carousel" style="height: 100%; width: 100%;">
@@ -135,7 +136,7 @@
                 </div>
             </div>
 
-            <!-- Slide: Your Top Songs -->
+                        <!-- Slide: Your Top Songs -->
             <div class="carousel-item animated-background">
                 <div class="dynamic-shapes">
                     <div class="circle large"></div>
@@ -158,13 +159,15 @@
                                 <h3 class="song-title">{{ song.name }}</h3>
                                 <p class="artist-name">By: {{ song.artist }}</p>
                                 <p class="album-name">Album: {{ song.album }}</p>
-                                <a href="{{ song.spotify_url }}" target="_blank" class="spotify-link">Play on Spotify</a>
+                                <a href="{{ song.spotify_url }}" target="_blank" class="spotify-link">Open on Spotify</a>
+                                <button id="togglePlay" data-uri="{{ song.spotify_url }}">Play</button>
                             </div>
                         </div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
+
 
 
         <!-- Carousel Controls -->
@@ -179,6 +182,7 @@
         </div>
     </div>
 </div>
+
 
 
 
