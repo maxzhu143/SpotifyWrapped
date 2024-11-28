@@ -53,7 +53,7 @@ def spotify_callback(request):
         refresh_token = tokens.get("refresh_token")
         expires_in = tokens.get("expires_in", 3600)  # Default to 3600 seconds if missing
 
-        # Ensure expires_at is calculated
+        # Ensure `expires_at` is calculated
         if expires_in is None:
             expires_in = 3600  # Fallback to 1 hour
         expires_at = datetime.now() + timedelta(seconds=expires_in)
@@ -128,13 +128,10 @@ def spotify_authorize(request):
         "client_id": settings.SPOTIFY_CLIENT_ID,
         "response_type": "code",
         "redirect_uri": settings.SPOTIFY_REDIRECT_URI,
-        "scope": "streaming user-read-playback-state user-modify-playback-state user-read-currently-playing",
+        "scope": "user-top-read",  # Add other scopes as needed
     }
     auth_url = f"{spotify_auth_url}?{urllib.parse.urlencode(params)}"
     return redirect(auth_url)
-
-
-
 
 @login_required
 def wrapped_carousel(request, wrapped_id):
@@ -145,39 +142,25 @@ def wrapped_carousel(request, wrapped_id):
         # Fetch the specific SpotifyWrapped object for the user
         wrapped = SpotifyWrapped.objects.get(id=wrapped_id, user=request.user)
 
-        # Get a valid access token for playback
-        try:
-            spotify_access_token = get_valid_spotify_token(request.user)
-        except Exception as token_error:
-            spotify_access_token = None
-            print(f"Error fetching Spotify token: {token_error}")
-
         # Process top songs for the carousel
-        top_songs = wrapped.top_songs if wrapped.top_songs else []  # Ensure it's a list
+        top_songs = wrapped.top_songs  # Assuming `top_songs` is a list of dictionaries
 
-        # Add fallback values for each song in top_songs
-        default_cover = 'https://via.placeholder.com/150'
         for song in top_songs:
-            song['spotify_url'] = song.get('spotify_url', '#')  # Fallback to '#' if no URL
-            song['album_cover'] = song.get('album_cover', default_cover)  # Default cover image
-            song['artist'] = song.get('artist', 'Unknown Artist')  # Fallback artist name
-            song['name'] = song.get('name', 'Unknown Song')  # Fallback song name
 
-        # Pass the Wrapped object, top songs, and access token to the template
+            # Add fallback values for Spotify URL, album cover, and artist name
+            song['spotify_url'] = song.get('spotify_url', '#')  # Fallback to '#' if no URL
+            song['album_cover'] = song.get('album_cover', 'default_album_cover.jpg')  # Default cover image
+            song['artist'] = song.get('artist', 'Unknown Artist')  # Fallback artist name
+
+        # Pass the Wrapped object and processed top songs to the template
         return render(request, 'wrapped_carousel.html', {
             'wrapped': wrapped,
             'top_songs': top_songs,  # Pass the top songs data to the template
-            'spotify_access_token': spotify_access_token,  # Pass the token for playback
         })
 
     except SpotifyWrapped.DoesNotExist:
         # Handle case where the Wrapped object does not exist
         return render(request, 'error.html', {'message': 'Spotify Wrapped not found.'})
-    except Exception as e:
-        # Handle unexpected errors
-        print(f"Unexpected error in wrapped_carousel: {e}")
-        return render(request, 'error.html', {'message': 'An unexpected error occurred.'})
-
 
 
 
@@ -186,7 +169,6 @@ def create_wrapped(request):
     try:
         # Fetch Spotify token from the linked account
         spotify_token = get_valid_spotify_token(request.user)
-        print(request.user)
         # Fetch data from Spotify API
         top_songs = get_top_songs(spotify_token)
         top_artists = get_top_artists(spotify_token)
@@ -227,4 +209,3 @@ def delete_wrapped(request, wrapped_id):
     wrapped = get_object_or_404(SpotifyWrapped, id=wrapped_id, user=request.user)
     wrapped.delete()
     return redirect('dashboard')  # Replace 'home' with the name of your main page or Wrapped list page.
-
