@@ -4,13 +4,10 @@ from SpotifyWrapped.settings import OPENAI_API_KEY
 
 client = OpenAI()
 
-
-
-from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 
-
-def ensure_string_list(sequence, key=None):
+#was "key=none" before
+def ensure_string_list(sequence, key=OPENAI_API_KEY):
     """
     Converts a list of dictionaries or other objects into a list of strings.
     - If key is provided, extracts the value corresponding to the key.
