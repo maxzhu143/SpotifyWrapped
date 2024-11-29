@@ -20,4 +20,3 @@ urlpatterns = [
     path('wrapped/delete/<int:wrapped_id>/', views.delete_wrapped, name='delete_wrapped'),
 
 ]
-

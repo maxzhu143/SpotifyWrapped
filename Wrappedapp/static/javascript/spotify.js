@@ -58,3 +58,4 @@ async function fetchTopTracksAndDescribe(token) {
 function getCsrfToken() {
   return document.querySelector('[name=csrfmiddlewaretoken]').value;
 }
+
