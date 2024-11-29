@@ -1,5 +1,0 @@
-DJANGO_SECRET_KEY='django-insecure --_16r%2v2^- (3hh0(a8k! gmz_m@hx@#4t^$_mgiohdt9bl)$gu'
-SPOTIFY_CLIENT_ID='dc04d654c9bb4d8fb746b070ed098806'
-SPOTIFY_CLIENT_SECRET='52015bd2968d4c280a27914527262b8'
-SPOTIFY_REDIRECT_URI= 'http://localhost: 8000/spotify/callback/'
-DJANGO_SECRET_KEY= 'django-insecure --_16%2v2^- (3hh0(a8k! gmz_m@hx@#4t^$-moiohdt9bl)$gu'
