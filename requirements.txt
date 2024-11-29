@@ -39,3 +39,4 @@ sqlparse==0.5.1
 tomlkit==0.13.2
 urllib3==2.2.3
 wrapt==1.16.0
+gunicorn==23.0.0
