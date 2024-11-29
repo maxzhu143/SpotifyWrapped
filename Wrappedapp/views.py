@@ -23,7 +23,7 @@ from django.shortcuts import redirect
 from Wrappedapp.models import SpotifyWrapped, SpotifyAccount
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
-
+from django.http import HttpResponseForbidden
 
 openai.api_key = settings.OPENAI_API_KEY
 client_id = settings.SPOTIFY_CLIENT_ID
@@ -209,3 +209,15 @@ def delete_wrapped(request, wrapped_id):
     wrapped = get_object_or_404(SpotifyWrapped, id=wrapped_id, user=request.user)
     wrapped.delete()
     return redirect('dashboard')  # Replace 'home' with the name of your main page or Wrapped list page.
+
+@login_required
+def save_wrapped(request, wrapped_id):
+    wrapped = get_object_or_404(SpotifyWrapped, id=wrapped_id, user=request.user)
+    # The object is already created, so just redirect to the dashboard.
+    return redirect('dashboard')
+
+@login_required
+def discard_wrapped(request, wrapped_id):
+    wrapped = get_object_or_404(SpotifyWrapped, id=wrapped_id, user=request.user)
+    wrapped.delete()
+    return redirect('dashboard')
