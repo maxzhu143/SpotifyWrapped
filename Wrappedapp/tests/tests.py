@@ -82,7 +82,7 @@ class UserLogoutTest(TestCase):
         response = self.client.post(self.logout_url)
 
         # Check that the logout page renders successfully (status code 200)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
 
 
 class SpotifyIntegrationTest(TestCase):

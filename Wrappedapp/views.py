@@ -1,5 +1,6 @@
 """Views for Wrappedapp."""
 import urllib.parse
+import logging
 from django.contrib.auth import login, logout
 from django.conf import settings
 from django.http import JsonResponse
@@ -24,7 +25,7 @@ from Wrappedapp.models import SpotifyWrapped, SpotifyAccount
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseForbidden
-
+logger = logging.getLogger(__name__)
 openai.api_key = settings.OPENAI_API_KEY
 client_id = settings.SPOTIFY_CLIENT_ID
 client_secret = settings.SPOTIFY_CLIENT_SECRET
@@ -166,20 +167,39 @@ def wrapped_carousel(request, wrapped_id):
 
 @login_required
 def create_wrapped(request):
+    """
+    Handles the creation of a SpotifyWrapped object for the logged-in user.
+    Fetches data from Spotify and processes it.
+    """
     try:
-        # Fetch Spotify token from the linked account
+        logger.info("Starting 'create_wrapped' for user: %s", request.user.username)
+
+        # Fetch Spotify token
         spotify_token = get_valid_spotify_token(request.user)
-        # Fetch data from Spotify API
+        if not spotify_token:
+            raise ValueError("Failed to retrieve Spotify token for the user.")
+
+        # Fetch Spotify data
+        logger.info("Fetching Spotify data...")
         top_songs = get_top_songs(spotify_token)
+        logger.info(f"Top songs: {top_songs}")
         top_artists = get_top_artists(spotify_token)
+        logger.info(f"Top artists: {top_artists}")
         top_genres = get_top_genres(spotify_token)
+        logger.info(f"Top genres: {top_genres}")
         total_minutes = get_total_minutes_listened(spotify_token)
         sound_town = get_sound_town(top_genres)
         artist_thank_you = get_artist_thank_you(spotify_token)
-        personality, personality_word = generate_psychoanalysis(top_songs, top_artists, top_genres, total_minutes)
 
+        # Generate psychoanalysis using OpenAI
+        logger.info("Generating psychoanalysis...")
+        personality, personality_word = generate_psychoanalysis(
+            top_songs, top_artists, top_genres, total_minutes
+        )
+        logger.info(f"Psychoanalysis: {personality} ({personality_word})")
 
-        # Create a new SpotifyWrapped object
+        # Create SpotifyWrapped object
+        logger.info("Creating SpotifyWrapped object...")
         wrapped = SpotifyWrapped.objects.create(
             user=request.user,
             title=f"My Spotify Wrapped {SpotifyWrapped.objects.filter(user=request.user).count() + 1}",
@@ -193,10 +213,11 @@ def create_wrapped(request):
             artist_thank_you=artist_thank_you,
         )
 
-        # Redirect to the carousel view to display the new Wrapped data
+        logger.info(f"SpotifyWrapped created successfully with ID: {wrapped.id}")
         return redirect('wrapped_carousel', wrapped_id=wrapped.id)
+
     except Exception as e:
-        print(f"Error fetching Spotify data: {e}")
+        logger.error(f"Error in create_wrapped: {e}", exc_info=True)
         return render(request, 'error.html', {'message': f"Failed to create Spotify Wrapped: {e}"})
 
 @login_required
