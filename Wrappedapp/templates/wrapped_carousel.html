@@ -24,7 +24,7 @@
                 </div>
                 <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
                     <h1 class="welcome-title text-animate-fade">Welcome to Your Spotify Wrapped</h1>
-                    <h2 class="welcome-name text-animate-slide">Lauren's 2024 Music Journey</h2>
+                    <h2 class="welcome-name text-animate-slide">{{ wrapped.user }}'s 2024 Music Journey</h2>
                     <p class="welcome-subtext text-animate-zoom">Dive into your personalized music stats!</p>
                 </div>
             </div>
@@ -45,10 +45,11 @@
                 <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
                     <h1 class="listening-title text-animate-fade">Total Listening Time</h1>
                     <p class="listening-subtext text-animate-hover">
-                        You spent <span class="highlight">150 hours</span> listening this year!
+                        You spent <span class="highlight">{{ wrapped.total_minutes_listened }}</span> minutes listening this year!
                     </p>
                 </div>
             </div>
+
 
             <!-- Slide 3: Your Top Artists -->
             <div class="carousel-item animated-background">
@@ -65,13 +66,26 @@
                 </div>
                 <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
                     <h1 class="artists-title text-animate-zoom">Your Top Artists</h1>
-                    <ul class="artists-list">
-                        <li class="text-animate-hover"><span class="highlight">1.</span> Artist A</li>
-                        <li class="text-animate-hover"><span class="highlight">2.</span> Artist B</li>
-                        <li class="text-animate-hover"><span class="highlight">3.</span> Artist C</li>
-                    </ul>
+                    <div class="artist-list">
+                        {% for artist in wrapped.top_artists %}
+                        <div class="artist-item">
+                            {% if artist.image_url %}
+                            <img src="{{ artist.image_url }}" alt="{{ artist.name }}'s image" class="artist-image">
+                            {% else %}
+                            <div class="artist-image" style="background-color: gray;"></div>
+                            {% endif %}
+                            <div class="artist-details">
+                                <div class="artist-name">{{ artist.name }}</div>
+                                {% if artist.genres %}
+                                <div class="artist-genres">Genres: {{ artist.genres }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
+
 
             <!-- Slide 4: Music Trends -->
             <div class="carousel-item animated-background">
@@ -91,7 +105,67 @@
                     <p class="trends-subtext text-animate-fade">You listened to <span class="highlight">more Pop</span> and <span class="highlight">Hip-Hop</span> than ever before!</p>
                 </div>
             </div>
-        </div>
+
+            <!-- Slide 5: Listening Personality -->
+            <div class="carousel-item animated-background">
+                <div class="dynamic-shapes">
+                    <div class="circle large"></div>
+                    <div class="circle medium"></div>
+                    <div class="circle small"></div>
+                    <div class="circle tiny"></div>
+                    <div class="flower"></div>
+                    <div class="flower small"></div>
+                    <div class="star floating"></div>
+                    <div class="star shooting"></div>
+                    <div class="star shooting alternate"></div>
+                </div>
+                <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
+                    <h1 class="personality-title text-animate-slide">
+                        Your Listening Personality
+                    </h1>
+                    <h2 class="personality-highlight text-animate-zoom">
+                        You are <span class="highlight">{{ wrapped.personality_word }}</span> listener!
+                    </h2>
+                    <p class="personality-description text-animate-fade">
+                        This {{ wrapped.personality }}
+                    </p>
+                    <p class="personality-subtext text-animate-hover">
+                        Discover how your music habits define your unique listening traits.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Slide: Your Top Songs -->
+            <div class="carousel-item animated-background">
+                <div class="dynamic-shapes">
+                    <div class="circle large"></div>
+                    <div class="circle medium"></div>
+                    <div class="circle small"></div>
+                    <div class="circle tiny"></div>
+                    <div class="flower"></div>
+                    <div class="flower small"></div>
+                    <div class="star floating"></div>
+                    <div class="star shooting"></div>
+                    <div class="star shooting alternate"></div>
+                </div>
+                <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
+                    <h1 class="title text-animate-fade">Your Top Songs</h1>
+                    <div class="top-songs-container">
+                        {% for song in top_songs %}
+                        <div class="top-song-item">
+                            <img src="{{ song.cover }}" alt="Album cover for {{ song.name }}" class="album-cover">
+                            <div class="song-details">
+                                <h3 class="song-title">{{ song.name }}</h3>
+                                <p class="artist-name">By: {{ song.artist }}</p>
+                                <p class="album-name">Album: {{ song.album }}</p>
+                                <a href="{{ song.spotify_url }}" target="_blank" class="spotify-link">Play on Spotify</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
 
         <!-- Carousel Controls -->
         <button class="carousel-control-prev static-arrow" type="button" data-bs-target="#spotifyWrappedCarousel" data-bs-slide="prev">
@@ -102,8 +176,11 @@
             <span class="carousel-control-next-icon no-hover" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
+        </div>
     </div>
 </div>
+
+
 
 <style>
     /* Text Animations */
@@ -283,5 +360,184 @@
         color: #FFC312;
         font-weight: bold;
     }
+
+    /* Artist list container */
+    .artist-list {
+        display: flex;                  /* Use flexbox for layout */
+        flex-wrap: wrap;                /* Wrap items to the next row if needed */
+        justify-content: center;        /* Center items horizontally */
+        gap: 20px;                      /* Space between artist items */
+        max-width: 90%;                 /* Restrict the width of the entire list */
+        padding: 20px;                  /* Add padding around the list */
+    }
+
+    /* Individual artist items */
+    .artist-item {
+        display: flex;                  /* Flex layout for image and details */
+        flex-direction: column;         /* Stack image and text vertically */
+        align-items: center;            /* Center-align text and image */
+        background-color: #282828;      /* Dark Spotify-like background */
+        border-radius: 10px;            /* Rounded corners */
+        padding: 10px;                  /* Add padding inside each item */
+        width: 150px;                   /* Limit the width of each item */
+        text-align: center;             /* Center-align text */
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    }
+
+    /* Artist image */
+    .artist-image {
+        border-radius: 50%;             /* Circular image */
+        width: 100px;                   /* Fixed width */
+        height: 100px;                  /* Fixed height */
+        object-fit: cover;              /* Crop and fit the image */
+        margin-bottom: 10px;            /* Space between image and details */
+    }
+
+    /* Artist details */
+    .artist-details .artist-name {
+        font-size: 16px;                /* Adjust font size */
+        font-weight: bold;              /* Bold text for names */
+        color: white;                   /* White text for better contrast */
+        margin-bottom: 5px;             /* Space between name and genres */
+    }
+
+    .artist-details .artist-genres {
+        font-size: 14px;                /* Smaller font for genres */
+        color: #a3a3a3;                 /* Lighter color for genres */
+    }
+
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 768px) {
+        .artist-item {
+            width: 120px;               /* Reduce item size for smaller screens */
+        }
+
+        .artist-image {
+            width: 80px;                /* Adjust image size for smaller screens */
+            height: 80px;
+        }
+
+        .artist-details .artist-name {
+            font-size: 14px;            /* Adjust font size */
+        }
+
+        .artist-details .artist-genres {
+            font-size: 12px;            /* Adjust font size */
+        }
+    }
+
+        /* Personality Slide Title */
+    .personality-title {
+        font-family: 'Arial Black', sans-serif;
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #fff;
+    }
+
+    /* Highlight Style */
+    .personality-highlight {
+        font-family: 'Arial Black', sans-serif;
+        font-size: 2.5rem;
+        color: #FFC312; /* Highlight in gold */
+        margin-bottom: 1rem;
+    }
+
+    /* Description Text */
+    .personality-description {
+        font-family: 'Arial', sans-serif;
+        font-size: 1.25rem;
+        color: white;
+        max-width: 80%; /* Limit the width to 80% of the container */
+        margin: 0 auto; /* Center-align the text */
+        text-align: center; /* Ensure text is center-aligned */
+        line-height: 1.6; /* Add line spacing for better readability */
+        padding: 10px; /* Add padding for spacing */
+        background: rgba(0, 0, 0, 0.5); /* Add a subtle background for contrast */
+        border-radius: 10px; /* Rounded corners for a polished look */
+    }
+
+    /* Subtext Styling */
+    .personality-subtext {
+        font-family: 'Arial', sans-serif;
+        font-size: 1rem;
+        color: #a3a3a3;
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    /* Adjust Responsiveness */
+    @media (max-width: 768px) {
+        .personality-title {
+            font-size: 2rem; /* Reduce font size on smaller screens */
+        }
+
+        .personality-highlight {
+            font-size: 1.8rem;
+        }
+
+        .personality-description {
+            font-size: 1rem; /* Smaller font for mobile */
+            max-width: 90%; /* Adjust width for smaller screens */
+        }
+
+        .personality-subtext {
+            font-size: 0.9rem;
+        }
+    }
+    /* Top Songs Slide */
+    /* Top Songs Slide */
+    .top-songs-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        max-width: 90%;
+        padding: 20px;
+    }
+
+    .top-song-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 10px;
+        padding: 15px;
+        width: 200px;
+        text-align: center;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .album-cover {
+        width: 100%;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+    .song-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin: 5px 0;
+        color: white;
+    }
+
+    .artist-name, .album-name {
+        font-size: 1rem;
+        margin: 5px 0;
+        color: #FFC312;
+    }
+
+    .spotify-link {
+        margin-top: 10px;
+        color: #1DB954;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .spotify-link:hover {
+        text-decoration: underline;
+    }
+
+
+
 </style>
 {% endblock %}
