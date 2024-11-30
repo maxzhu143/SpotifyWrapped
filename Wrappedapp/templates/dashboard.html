@@ -215,47 +215,81 @@
             text-decoration: underline;
         }
 
+        .translate-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            background-color: white;
+            color: #333;
+        }
+
+        .translate-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .translate-btn:hover {
+            background-color: #1ed760;
+            transform: translateY(-3px);
+        }
 
     </style>
 </head>
 
 <body>
 
-    <a href="{% url 'logout' %}" class="btn top-right-button-container">Logout</a>
+    <a href="{% url 'logout' %}" class="btn top-right-button-container translatable" data-original-text="Logout">Logout</a>
 
     <div class="container">
-        <h1>Welcome, {{ user.first_name }}!</h1>
+    <h1 class="translatable" data-original-text="Welcome, {{ user.first_name }}!">Welcome, {{ user.first_name }}!</h1>
 
-        {% if spotify_linked %}
-            <!-- Linked State -->
-            <p>Connected as: {{ user_name }}</p>
-            <a href="{% url 'unlink' %}" class="btn btn-danger">Unlink Spotify Account</a>
-            <a href="{% url 'create_wrapped' %}" class="btn btn-primary">Create Spotify Wrapped</a>
+    {% if spotify_linked %}
+        <!-- Linked State -->
+        <p class="translatable" data-original-text="Connected as: {{ user_name }}">Connected as: {{ user_name }}</p>
+        <a href="{% url 'unlink' %}" class="btn btn-danger translatable" data-original-text="Unlink Spotify Account">Unlink Spotify Account</a>
+        <a href="{% url 'create_wrapped' %}" class="btn btn-primary translatable" data-original-text="Create Spotify Wrapped">Create Spotify Wrapped</a>
+    {% else %}
+        <!-- Unlinked State -->
+        <p class="translatable" data-original-text="No Spotify Account Linked">No Spotify Account Linked</p>
+        <a href="{% url 'spotify_authorize' %}" class="btn btn-success translatable" data-original-text="Link Spotify Account">Link Spotify Account</a>
+    {% endif %}
+
+    <!-- User's Spotify Wrapped objects -->
+    <div class="wrapped-list">
+        <h2 class="translatable" data-original-text="Your Spotify Wrapped Objects">Your Spotify Wrapped Objects</h2>
+        {% if wrapped_objects %}
+            <ul>
+                {% for wrapped in wrapped_objects %}
+                    <li>
+                        <a href="{% url 'wrapped_carousel' wrapped.id %}" class="translatable" data-original-text="{{ wrapped.title }}">{{ wrapped.title }}</a>
+                        <span class="translatable" data-original-text="(Created on {{ wrapped.created_at|date:'M d, Y' }})">(Created on {{ wrapped.created_at|date:"M d, Y" }})</span>
+                        <a href="{% url 'delete_wrapped' wrapped.id %}" class="delete-btn translatable" data-original-text="&times;" title="Delete this item">&times;</a>
+                    </li>
+                {% endfor %}
+            </ul>
         {% else %}
-            <!-- Unlinked State -->
-            <p>No Spotify Account Linked</p>
-            <a href="{% url 'spotify_authorize' %}" class="btn btn-success">Link Spotify Account</a>
+            <p class="translatable" data-original-text="You haven't created any Spotify Wrapped objects yet.">You haven't created any Spotify Wrapped objects yet.</p>
         {% endif %}
+    </div>
 
-        <!-- Have some sort of cool UI, maybe a drop down box or maybe if you scroll down, it shows your past wraps-->
-
-        <!-- User's Spotify Wrapped objects -->
-        <div class="wrapped-list">
-            <h2>Your Spotify Wrapped Objects</h2>
-            {% if wrapped_objects %}
-                <ul>
-                    {% for wrapped in wrapped_objects %}
-                        <li>
-                            <a href="{% url 'wrapped_carousel' wrapped.id %}">{{ wrapped.title }}</a>
-                            (Created on {{ wrapped.created_at|date:"M d, Y" }})
-                            <a href="{% url 'delete_wrapped' wrapped.id %}" class="delete-btn" title="Delete this item">&times;</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>You haven't created any Spotify Wrapped objects yet.</p>
-            {% endif %}
-        </div>
 
 
          <div class="theme-toggle">
@@ -263,13 +297,69 @@
                 <input type="checkbox" id="themeSwitch" onchange="toggleTheme()">
                 <span class="slider"></span>
             </label>
-            <span id="themeLabel" onclick="setTheme('blue')">Light Mode</span>
+            <span id="themeLabel" class="translatable" data-original-text="Light Mode">Light Mode</span>
         </div>
 
 
     </div>
 
+    <!-- Translate Dropdown and Button -->
+    <div class="translate-container">
+        <select id="language-select">
+            <option value="en" class="translatable" data-original-text="English">English</option>
+            <option value="es" class="translatable" data-original-text="Spanish">Spanish</option>
+            <option value="fr" class="translatable" data-original-text="French">French</option>
+        </select>
+        <button id="translate-btn" class="translate-btn translatable" data-original-text="Translate">Translate</button>
+    </div>
+
     <script>
+    async function applyTranslations(lang) {
+            const elements = document.querySelectorAll('.translatable');
+
+            for (const el of elements) {
+                const originalText = el.getAttribute('data-original-text');
+                if (originalText) {
+                    try {
+                        const response = await fetch('/translate', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({ text: originalText, lang })
+                        });
+
+                        const data = await response.json();
+                        if (data.translated_text) {
+                            el.innerHTML = data.translated_text.replace(/\|/g, '<br>');
+                        }
+                    } catch (error) {
+                        console.error('Translation error:', error);
+                    }
+                }
+            }
+        }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+            const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+            const languageSelect = document.getElementById('language-select');
+            if (languageSelect) {
+                languageSelect.value = savedLang;
+            }
+            await applyTranslations(savedLang);
+        });
+
+        document.getElementById('language-select').addEventListener('change', (event) => {
+            const lang = event.target.value;
+            localStorage.setItem('selectedLanguage', lang);
+        });
+
+        document.getElementById('translate-btn').addEventListener('click', async () => {
+            const lang = document.getElementById('language-select').value;
+            await applyTranslations(lang);
+        });
+
     function setTheme(theme) {
         document.body.classList.remove('dark-theme', 'blue-theme');
 

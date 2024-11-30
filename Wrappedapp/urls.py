@@ -19,4 +19,7 @@ urlpatterns = [
     path('wrapped_carousel/<int:wrapped_id>/', views.wrapped_carousel, name='wrapped_carousel'),
     path('wrapped/delete/<int:wrapped_id>/', views.delete_wrapped, name='delete_wrapped'),
 
+    path('translate', views.translate_text, name='translate_text'),
+    path('translate-batch', views.translate_batch, name='translate_batch'),
+
 ]
