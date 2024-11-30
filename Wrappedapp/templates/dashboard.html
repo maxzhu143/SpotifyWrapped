@@ -341,14 +341,20 @@
             }
         }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-            const savedLang = localStorage.getItem('selectedLanguage') || 'en';
-            const languageSelect = document.getElementById('language-select');
-            if (languageSelect) {
-                languageSelect.value = savedLang;
-            }
-            await applyTranslations(savedLang);
-        });
+    // Initialize the theme and translations on page load
+document.addEventListener('DOMContentLoaded', async () => {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+
+    setTheme(savedTheme);
+
+    const languageSelect = document.getElementById('language-select');
+    if (languageSelect) {
+        languageSelect.value = savedLang;
+    }
+
+    await applyTranslations(savedLang);
+});
 
         document.getElementById('language-select').addEventListener('change', (event) => {
             const lang = event.target.value;
@@ -371,17 +377,50 @@
 
         localStorage.setItem('theme', theme);
 
-        // Update toggle and label dynamically
-        const themeSwitch = document.getElementById('themeSwitch');
+        // Update the theme label's original text
         const themeLabel = document.getElementById('themeLabel');
-        themeSwitch.checked = theme === 'dark';
-        themeLabel.textContent = theme === 'dark' ? 'Dark Mode' : theme === 'blue' ? 'Blue Theme' : 'Light Mode';
+        if (themeLabel) {
+            const originalText =
+                theme === 'dark' ? 'Dark Mode' :
+                theme === 'blue' ? 'Blue Theme' :
+                'Light Mode';
+
+            themeLabel.setAttribute('data-original-text', originalText);
+
+            // Apply the translation for the updated theme label
+            const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+            translateElement(themeLabel, savedLang);
+        }
     }
 
     function toggleTheme() {
         const isDarkMode = document.getElementById('themeSwitch').checked;
         setTheme(isDarkMode ? 'dark' : 'light');
     }
+
+    async function translateElement(element, lang) {
+    const originalText = element.getAttribute('data-original-text');
+    if (originalText) {
+        try {
+            const response = await fetch('/translate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify({ text: originalText, lang }),
+            });
+
+            const data = await response.json();
+            if (data.translated_text) {
+                element.textContent = data.translated_text;
+            }
+        } catch (error) {
+            console.error('Translation error:', error);
+        }
+    }
+}
+
 
     window.addEventListener('DOMContentLoaded', () => {
         const savedTheme = localStorage.getItem('theme') || 'light';
