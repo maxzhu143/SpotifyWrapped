@@ -28,7 +28,7 @@ from django.shortcuts import get_object_or_404
 openai.api_key = settings.OPENAI_API_KEY
 client_id = settings.SPOTIFY_CLIENT_ID
 client_secret = settings.SPOTIFY_CLIENT_SECRET
-redirect_uri = settings.SPOTIFY_REDIRECT_URI
+redirect_uri = settings.REDIRECT_URI
 
 
 
@@ -42,7 +42,7 @@ def spotify_callback(request):
     response = requests.post(token_url, data={
         "grant_type": "authorization_code",
         "code": code,
-        "redirect_uri": settings.SPOTIFY_REDIRECT_URI,
+        "redirect_uri": settings.REDIRECT_URI,
         "client_id": settings.SPOTIFY_CLIENT_ID,
         "client_secret": settings.SPOTIFY_CLIENT_SECRET,
     })
@@ -127,7 +127,7 @@ def spotify_authorize(request):
     params = {
         "client_id": settings.SPOTIFY_CLIENT_ID,
         "response_type": "code",
-        "redirect_uri": settings.SPOTIFY_REDIRECT_URI,
+        "redirect_uri": settings.REDIRECT_URI,
         "scope": "user-top-read",  # Add other scopes as needed
     }
     auth_url = f"{spotify_auth_url}?{urllib.parse.urlencode(params)}"
