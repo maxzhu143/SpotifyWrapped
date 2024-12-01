@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3cf79401-01b7-4dde-9881-e91487b1db8b" name="Changes" comment="Trying to add Heroku Implementation">
-      <change beforePath="$PROJECT_DIR$/SpotifyWrapped/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/SpotifyWrapped/settings.py" afterDir="false" />
-    </list>
+    <list default="true" id="3cf79401-01b7-4dde-9881-e91487b1db8b" name="Changes" comment="Trying to add Heroku Implementation" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -153,7 +151,7 @@
       <workItem from="1732845276769" duration="1968000" />
       <workItem from="1733011440868" duration="4251000" />
       <workItem from="1733018266888" duration="1214000" />
-      <workItem from="1733019522220" duration="21731000" />
+      <workItem from="1733019522220" duration="22053000" />
     </task>
     <task id="LOCAL-00001" summary="I added a way to test our code before we upload it. This is in accordance with the CI/DI user story. I made a test file which tests 81% of our code currently. All of the tests passed. The part that I didn't cover with the tests is the spotify linking because I don't really know how that works.">
       <option name="closed" value="true" />
@@ -443,7 +441,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733042273485</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="Trying to add Heroku Implementation">
+      <option name="closed" value="true" />
+      <created>1733042553242</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1733042553242</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

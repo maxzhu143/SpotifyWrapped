@@ -27,13 +27,7 @@ DEBUG = True
 SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-IS_HEROKU = "DJANGO_SECRET_KEY" in os.environ
-
-# Choose the appropriate URI
-if IS_HEROKU:
-    REDIRECT_URI = os.getenv("HEROKU_REDIRECT_URI")
-else:
-    REDIRECT_URI = os.getenv("LOCAL_REDIRECT_URI")
+REDIRECT_URI = os.getenv("HEROKU_REDIRECT_URI")
 
 
 ALLOWED_HOSTS = ["*"]
