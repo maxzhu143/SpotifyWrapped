@@ -27,7 +27,7 @@ from django.utils import timezone
 openai.api_key = settings.OPENAI_API_KEY
 client_id = settings.SPOTIFY_CLIENT_ID
 client_secret = settings.SPOTIFY_CLIENT_SECRET
-redirect_uri = settings.SPOTIFY_REDIRECT_URI
+redirect_uri = settings.REDIRECT_URI
 
 def get_valid_spotify_token(user):
     """
