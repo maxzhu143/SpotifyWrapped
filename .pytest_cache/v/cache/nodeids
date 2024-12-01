@@ -1,9 +1,0 @@
-[
-  "Wrappedapp/tests.py::NavbarDisplayTest::test_navbar_for_authenticated_user",
-  "Wrappedapp/tests.py::NavbarDisplayTest::test_navbar_for_unauthenticated_user",
-  "Wrappedapp/tests.py::UserLoginTest::test_login_failed",
-  "Wrappedapp/tests.py::UserLoginTest::test_user_login",
-  "Wrappedapp/tests.py::UserLogoutTest::test_user_logout",
-  "Wrappedapp/tests.py::UserRegistrationTest::test_register_user",
-  "tests/test_example.py::test_addition"
-]
