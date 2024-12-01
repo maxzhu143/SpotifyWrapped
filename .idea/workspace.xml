@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3cf79401-01b7-4dde-9881-e91487b1db8b" name="Changes" comment="Trying to add Heroku Implementation">
+      <change beforePath="$PROJECT_DIR$/SpotifyWrapped/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/SpotifyWrapped/settings.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="SYNC" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;TerryMooreV&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:/maxzhu143/SpotifyWrapped.git&quot;,
+    &quot;accountId&quot;: &quot;3fae9ddf-89f5-47de-b644-63f013995ffb&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2oAiHYlf4LMRRBlsp2gAzL5Ht2u" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Django Server.Unnamed.executor": "Run",
+    "JavaScript Debug.spotify_playback.html.executor": "Run",
+    "Python.openai_functions.executor": "Run",
+    "Python.openai_test.executor": "Run",
+    "Python.settings.executor": "Run",
+    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "herokybranch",
+    "last_opened_file_path": "/Users/terry_moore_5/Desktop/CS2340/PycharmProjects/SpotifyWrapped",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Wrappedapp/tests" />
+      <recent name="$PROJECT_DIR$/Wrappedapp/static/images" />
+      <recent name="$PROJECT_DIR$/Wrappedapp/static" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Unnamed" type="Python.DjangoServer" factoryName="Django server" nameIsGenerated="true">
+      <module name="SpotifyWrapped" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="SpotifyWrapped.settings" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.9 (SpotifyWrapped) (2)" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="localhost" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-7c0b70fcd90d-JavaScript-PY-242.21829.153" />
+        <option value="bundled-python-sdk-464836ebc622-b74155a9e76b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-242.21829.153" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3cf79401-01b7-4dde-9881-e91487b1db8b" name="Changes" comment="" />
+      <created>1730318694037</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1730318694037</updated>
+      <workItem from="1730318695099" duration="708000" />
+      <workItem from="1730319474918" duration="5529000" />
+      <workItem from="1730335383472" duration="8109000" />
+      <workItem from="1730380786742" duration="13983000" />
+      <workItem from="1731014135286" duration="6524000" />
+      <workItem from="1731027705492" duration="187000" />
+      <workItem from="1731028095881" duration="10576000" />
+      <workItem from="1731530397211" duration="6381000" />
+      <workItem from="1731902427466" duration="89000" />
+      <workItem from="1731962465258" duration="1444000" />
+      <workItem from="1732500337820" duration="1770000" />
+      <workItem from="1732505478458" duration="7552000" />
+      <workItem from="1732533365065" duration="12084000" />
+      <workItem from="1732561286276" duration="1360000" />
+      <workItem from="1732562890170" duration="16425000" />
+      <workItem from="1732661695942" duration="24272000" />
+      <workItem from="1732742550224" duration="6000" />
+      <workItem from="1732742669811" duration="6237000" />
+      <workItem from="1732760891221" duration="4560000" />
+      <workItem from="1732765850592" duration="317000" />
+      <workItem from="1732766182830" duration="3103000" />
+      <workItem from="1732818742131" duration="5142000" />
+      <workItem from="1732841365646" duration="19000" />
+      <workItem from="1732841819520" duration="29000" />
+      <workItem from="1732842757268" duration="180000" />
+      <workItem from="1732845276769" duration="1968000" />
+      <workItem from="1733011440868" duration="4251000" />
+      <workItem from="1733018266888" duration="1214000" />
+      <workItem from="1733019522220" duration="21731000" />
+    </task>
+    <task id="LOCAL-00001" summary="I added a way to test our code before we upload it. This is in accordance with the CI/DI user story. I made a test file which tests 81% of our code currently. All of the tests passed. The part that I didn't cover with the tests is the spotify linking because I don't really know how that works.">
+      <option name="closed" value="true" />
+      <created>1730374716579</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1730374716579</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Made a requirements.txt">
+      <option name="closed" value="true" />
+      <created>1730376241284</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1730376241284</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Added a way to test pylint score and improved score by adding in docStrings. This version is 7.29/10">
+      <option name="closed" value="true" />
+      <created>1730382133196</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1730382133196</updated>
+    </task>
+    <task id="LOCAL-00004" summary="changed requirements.txt">
+      <option name="closed" value="true" />
+      <created>1730657961129</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1730657961129</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Merge remote-tracking branch 'origin/AddedTestBranch' into AddedTestBranch">
+      <option name="closed" value="true" />
+      <created>1730657982941</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1730657982941</updated>
+    </task>
+    <task id="LOCAL-00006" summary="added pytest.ini">
+      <option name="closed" value="true" />
+      <created>1730659079039</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1730659079039</updated>
+    </task>
+    <task id="LOCAL-00007" summary="added pytest.ini">
+      <option name="closed" value="true" />
+      <created>1730659393109</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1730659393109</updated>
+    </task>
+    <task id="LOCAL-00008" summary="added pytest.ini">
+      <option name="closed" value="true" />
+      <created>1730821140650</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1730821140650</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Fixed max's shitty code.">
+      <option name="closed" value="true" />
+      <created>1731027733435</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1731027733435</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Fixed some bugs with linking and unlinking. Need to update some of the tests">
+      <option name="closed" value="true" />
+      <created>1731032564021</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1731032564021</updated>
+    </task>
+    <task id="LOCAL-00011" summary="95% coverage">
+      <option name="closed" value="true" />
+      <created>1731032773679</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1731032773679</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Created Spotify API Branch that easily desplays the data we are pulling from Spotify API on a stats page. This is just for an easy way to error handle pulling from spotify api's. Includes new apotify api file and some error handling in methods already">
+      <option name="closed" value="true" />
+      <created>1731902510176</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1731902510176</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Combined laurens and my code, adding the correct spotify api data pulls into each slide of the carousel. I have since editted multiple parts of the code to try and make it better and i messed it up. However, i am close to getting a version up and running that is good">
+      <option name="closed" value="true" />
+      <created>1732509995903</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1732509995903</updated>
+    </task>
+    <task id="LOCAL-00014" summary="I think i fixed it. Now I need to move the carousel button from the home page to the linked spotify dashboard page">
+      <option name="closed" value="true" />
+      <created>1732512551592</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1732512551592</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Carousel buttons didn't work so i had to back track the carousel. I'm making the spotify wrapped more dynamic with the user making and saving spotify wrapped objects. The objects are saved to their account, and then they can view them through the carousel">
+      <option name="closed" value="true" />
+      <created>1732538664998</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1732538664998</updated>
+    </task>
+    <task id="LOCAL-00016" summary="User can now make WrappedApp objects with 8 fields pulled from the spotify api. These objects can be displayed in carousel.">
+      <option name="closed" value="true" />
+      <created>1732545636807</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1732545636807</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Cleaned up project by getting rid of methods and urls that are no longer in use. I also moved some methods into the Spotify API file. Made sure landing and home page hav ethe contact the deveoplers button">
+      <option name="closed" value="true" />
+      <created>1732564570610</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1732564570610</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Cleaned up project by getting rid of methods and urls that are no longer in use. I also moved some methods into the Spotify API file. Made sure landing and home page hav ethe contact the deveoplers button">
+      <option name="closed" value="true" />
+      <created>1732571762044</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1732571762044</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Finally got the LLM working">
+      <option name="closed" value="true" />
+      <created>1732583552400</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1732583552400</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Put pulls from spotify instead of hard coding for carousel">
+      <option name="closed" value="true" />
+      <created>1732732641607</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1732732641607</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Added top songs slide">
+      <option name="closed" value="true" />
+      <created>1732737139127</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1732737139127</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Added top songs slide">
+      <option name="closed" value="true" />
+      <created>1732817163840</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1732817163840</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Reverting to pre-playback functionality">
+      <option name="closed" value="true" />
+      <created>1732820464118</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1732820464118</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Added Tests">
+      <option name="closed" value="true" />
+      <created>1732829379834</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1732829379834</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Trying to add Heroku Implementation">
+      <option name="closed" value="true" />
+      <created>1733015452271</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1733015452271</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Trying to add Heroku Implementation">
+      <option name="closed" value="true" />
+      <created>1733015925063</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1733015925063</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Trying to add Heroku Implementation">
+      <option name="closed" value="true" />
+      <created>1733024459595</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1733024459595</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Trying to add Heroku Implementation">
+      <option name="closed" value="true" />
+      <created>1733024495990</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1733024495990</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Trying to add Heroku Implementation">
+      <option name="closed" value="true" />
+      <created>1733028201686</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1733028201686</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Trying to add Heroku Implementation">
+      <option name="closed" value="true" />
+      <created>1733030670970</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1733030670970</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Trying to add Heroku Implementation">
+      <option name="closed" value="true" />
+      <created>1733037691407</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1733037691407</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Trying to add Heroku Implementation">
+      <option name="closed" value="true" />
+      <created>1733037905134</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1733037905134</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Trying to add Heroku Implementation">
+      <option name="closed" value="true" />
+      <created>1733039714803</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1733039714803</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Trying to add Heroku Implementation">
+      <option name="closed" value="true" />
+      <created>1733040386230</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1733040386230</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Trying to add Heroku Implementation">
+      <option name="closed" value="true" />
+      <created>1733041788759</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1733041788759</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Trying to add Heroku Implementation">
+      <option name="closed" value="true" />
+      <created>1733042273485</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1733042273485</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="I added a way to test our code before we upload it. This is in accordance with the CI/DI user story. I made a test file which tests 81% of our code currently. All of the tests passed. The part that I didn't cover with the tests is the spotify linking because I don't really know how that works." />
+    <MESSAGE value="Made a requirements.txt" />
+    <MESSAGE value="Added a way to test pylint score and improved score by adding in docStrings. This version is 7.29/10" />
+    <MESSAGE value="changed requirements.txt" />
+    <MESSAGE value="Merge remote-tracking branch 'origin/AddedTestBranch' into AddedTestBranch" />
+    <MESSAGE value="added pytest.ini" />
+    <MESSAGE value="Fixed max's shitty code." />
+    <MESSAGE value="Fixed some bugs with linking and unlinking. Need to update some of the tests" />
+    <MESSAGE value="95% coverage" />
+    <MESSAGE value="Created Spotify API Branch that easily desplays the data we are pulling from Spotify API on a stats page. This is just for an easy way to error handle pulling from spotify api's. Includes new apotify api file and some error handling in methods already" />
+    <MESSAGE value="Combined laurens and my code, adding the correct spotify api data pulls into each slide of the carousel. I have since editted multiple parts of the code to try and make it better and i messed it up. However, i am close to getting a version up and running that is good" />
+    <MESSAGE value="I think i fixed it. Now I need to move the carousel button from the home page to the linked spotify dashboard page" />
+    <MESSAGE value="Carousel buttons didn't work so i had to back track the carousel. I'm making the spotify wrapped more dynamic with the user making and saving spotify wrapped objects. The objects are saved to their account, and then they can view them through the carousel" />
+    <MESSAGE value="User can now make WrappedApp objects with 8 fields pulled from the spotify api. These objects can be displayed in carousel." />
+    <MESSAGE value="Cleaned up project by getting rid of methods and urls that are no longer in use. I also moved some methods into the Spotify API file. Made sure landing and home page hav ethe contact the deveoplers button" />
+    <MESSAGE value="Finally got the LLM working" />
+    <MESSAGE value="Put pulls from spotify instead of hard coding for carousel" />
+    <MESSAGE value="Added top songs slide" />
+    <MESSAGE value="Reverting to pre-playback functionality" />
+    <MESSAGE value="Added Tests" />
+    <MESSAGE value="Trying to add Heroku Implementation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Trying to add Heroku Implementation" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/SpotifyWrapped$settings.coverage" NAME="settings Coverage Results" MODIFIED="1731530858803" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/SpotifyWrapped" />
+    <SUITE FILE_PATH="coverage/SpotifyWrapped$openai_functions.coverage" NAME="openai_functions Coverage Results" MODIFIED="1732669776713" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Wrappedapp" />
+    <SUITE FILE_PATH="coverage/SpotifyWrapped$openai_test.coverage" NAME="openai_test Coverage Results" MODIFIED="1732582746708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Wrappedapp" />
+  </component>
+</project>

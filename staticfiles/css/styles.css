@@ -1,0 +1,195 @@
+/* Basic styles for Spotify look */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #191414; /* Spotify black */
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  color: #1DB954; /* Spotify green */
+  font-size: 2.5em;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;  /* Smaller padding for a more compact navbar */
+  background-color: #333333;  /* Dark gray for navbar */
+  height: 50px;  /* Set a smaller height */
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 5;
+}
+
+.navbar h1 {
+  font-size: 1.5em;  /* Smaller font size for the title */
+  margin: 0;
+  color: #1DB954;  /* Spotify green */
+}
+
+/* Ensure horizontal alignment of the dashboard and logout buttons */
+.auth-links {
+  display: flex;           /* Align items horizontally */
+  gap: 10px;               /* Add space between the buttons */
+  align-items: center;     /* Vertically center the items */
+}
+
+.auth-links a {
+  text-decoration: none;   /* Optional: remove underline from links */
+  color: white;            /* Ensure the link color matches the design */
+}
+
+.auth-links form {
+  margin: 0;               /* Remove any default margin from the form */
+}
+
+.auth-links form button {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-decoration: underline;  /* Make the button look like a link */
+  cursor: pointer;
+}
+
+
+.btn {
+  color: white;
+  text-decoration: none;
+  background-color: #1DB954;  /* Spotify green */
+  padding: 0.4rem 1rem;
+  border-radius: 25px;
+}
+
+.btn:hover {
+  background-color: #1ed760;  /* Lighter green on hover */
+}
+
+
+.main-content {
+  padding-top: 5rem; /* Adjust for fixed navbar */
+  overflow-y: auto;
+  background-color: #191414;  /* Keep Spotify black as the background */
+}
+
+.features {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  background-color: #282828;  /* Gray sections to match Spotify's sectioned-off look */
+  padding: 1.5rem;
+  border-radius: 10px;  /* Rounded corners for a modern look */
+  margin-bottom: 2rem;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add subtle shadow for modern depth */
+}
+
+.feature img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  margin-right: 1.5rem;
+  border-radius: 10px;  /* Rounded image for a cleaner, modern look */
+}
+
+.feature-text h3 {
+  color: #1DB954;
+  margin-bottom: 0.5rem;
+}
+
+.feature-text p {
+  color: #fff;
+  line-height: 1.6;
+}
+
+/* Input and Form Styling for Registration Page */
+input[type="text"], input[type="email"], input[type="password"] {
+  width: 100%;
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  display: inline-block;
+  border-radius: 5px;
+  background-color: #333333; /* Gray input fields to match Spotify's design */
+  border: none;
+  color: white;
+}
+
+input[type="submit"], button {
+  background-color: #1DB954;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+input[type="submit"]:hover, button:hover {
+  background-color: #1ed760;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .feature {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .feature img {
+    margin-bottom: 1rem;
+  }
+
+  .logout-container {
+  text-align: center;
+  padding: 2rem;
+  background-color: #282828; /* Gray background for consistency */
+  border-radius: 10px;
+  max-width: 600px;
+  margin: 5rem auto;  /* Center the container */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add a shadow for depth */
+}
+
+.logout-container h2 {
+  color: #1DB954; /* Spotify green */
+  margin-bottom: 1rem;
+}
+
+.logout-container a.btn {
+  background-color: #1DB954;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.logout-container a.btn:hover {
+  background-color: #1ed760; /* Lighter green on hover */
+}
+
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-container:hover {
+            box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
+        }
+
+
+}
