@@ -231,6 +231,7 @@
             <p>Connected as: {{ user_name }}</p>
             <a href="{% url 'unlink' %}" class="btn btn-danger">Unlink Spotify Account</a>
             <a href="{% url 'create_wrapped' %}" class="btn btn-primary">Create Spotify Wrapped</a>
+            <a href="{% url 'public_wraps' %}" class="btn btn-primary">Public Wraps</a>
         {% else %}
             <!-- Unlinked State -->
             <p>No Spotify Account Linked</p>
