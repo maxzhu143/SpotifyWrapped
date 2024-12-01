@@ -27,7 +27,7 @@ DEBUG = True
 SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-IS_HEROKU = "DYNO" in os.environ
+IS_HEROKU = "PORT" in os.environ
 
 # Choose the appropriate URI
 if IS_HEROKU:
