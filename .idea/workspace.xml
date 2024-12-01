@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3cf79401-01b7-4dde-9881-e91487b1db8b" name="Changes" comment="Trying to add Heroku Implementation">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-    </list>
+    <list default="true" id="3cf79401-01b7-4dde-9881-e91487b1db8b" name="Changes" comment="Trying to add Heroku Implementation" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -37,12 +35,12 @@
     &quot;assignee&quot;: &quot;TerryMooreV&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;git@github.com:/maxzhu143/SpotifyWrapped.git&quot;,
-    &quot;accountId&quot;: &quot;3fae9ddf-89f5-47de-b644-63f013995ffb&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/maxzhu143/SpotifyWrapped.git",
+    "accountId": "3fae9ddf-89f5-47de-b644-63f013995ffb"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -451,7 +449,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733042553242</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="Trying to add Heroku Implementation">
+      <option name="closed" value="true" />
+      <created>1733044423758</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1733044423758</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
