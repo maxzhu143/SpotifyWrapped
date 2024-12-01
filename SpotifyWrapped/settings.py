@@ -78,10 +78,21 @@ WSGI_APPLICATION = "SpotifyWrapped.wsgi.application"
 LOGIN_REDIRECT_URL = "/dashboard/"  # Redirects to the dashboard after login
 
 # Database
-DATABASES = {
-    "default": dj_database_url.config(default="sqlite:///db.sqlite3")
-}
+DATABASE_URL = os.getenv('DATABASE_URL')  # Fetch the DATABASE_URL from environment variables
 
+if DATABASE_URL:
+    # If DATABASE_URL exists, use it (for Heroku or production)
+    DATABASES = {
+        'default': dj_database_url.config(default=DATABASE_URL)
+    }
+else:
+    # Fallback to local SQLite database
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
