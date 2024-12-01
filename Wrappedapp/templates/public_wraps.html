@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h1>Public Spotify Wraps</h1>
+
+    <h2>Your Public Wraps</h2>
+    {% if user_wraps %}
+        <ul>
+            {% for wrap in user_wraps %}
+                <li>
+                    <a href="{% url 'wrapped_carousel' wrap.id %}">{{ wrap.title }}</a>
+                    (Created on {{ wrap.created_at|date:"M d, Y" }})
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You don't have any public wraps yet.</p>
+    {% endif %}
+
+    <h2>All Public Wraps</h2>
+    {% if wraps %}
+        <ul>
+            {% for wrap in wraps %}
+                <li>
+                    <a href="{% url 'wrapped_carousel' wrap.id %}">{{ wrap.title }}</a>
+                    by {{ wrap.user.username }}
+                    (Created on {{ wrap.created_at|date:"M d, Y" }})
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No public wraps available yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

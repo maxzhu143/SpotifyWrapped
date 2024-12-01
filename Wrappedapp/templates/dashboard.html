@@ -249,6 +249,9 @@
                             <a href="{% url 'wrapped_carousel' wrapped.id %}">{{ wrapped.title }}</a>
                             (Created on {{ wrapped.created_at|date:"M d, Y" }})
                             <a href="{% url 'delete_wrapped' wrapped.id %}" class="delete-btn" title="Delete this item">&times;</a>
+                            <a href="{% url 'toggle_visibility' wrapped.id %}" class="btn">
+                                {% if wrapped.is_public %}Make Private{% else %}Make Public{% endif %}
+                            </a>
                         </li>
                     {% endfor %}
                 </ul>

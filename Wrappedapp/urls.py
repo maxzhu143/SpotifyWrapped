@@ -20,5 +20,6 @@ urlpatterns = [
     path('wrapped/delete/<int:wrapped_id>/', views.delete_wrapped, name='delete_wrapped'),
     path('save_wrapped/<int:wrapped_id>/', views.save_wrapped, name='save_wrapped'),
     path('discard_wrapped/<int:wrapped_id>/', views.discard_wrapped, name='discard_wrapped'),
-
+    path('public-wraps/', views.public_wraps, name='public_wraps'),
+    path('toggle-visibility/<int:wrapped_id>/', views.toggle_visibility, name='toggle_visibility'),
 ]
