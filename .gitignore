@@ -68,8 +68,9 @@ celerybeat-schedule
 celerybeat.pid
 
 # Migrations
-**/migrations/*
-!**/migrations/__init__.py
+# Ignore migration cache but include migration files
+**/migrations/__pycache__/
+!**/migrations/*.py
 
 # Unit test / coverage reports
 .coverage
