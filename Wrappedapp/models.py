@@ -14,22 +14,22 @@ class SpotifyAccount(models.Model):
         related_name="spotify_account"
     )
     access_token = models.CharField(
-        max_length=255,
+        max_length=512,
         help_text="The access token for Spotify API requests."
     )
     refresh_token = models.CharField(
-        max_length=255,
+        max_length=512,
         help_text="The refresh token for renewing the access token."
     )
     expires_at = models.DateTimeField(null=True, blank=True)
     display_name = models.CharField(
-        max_length=255,
+        max_length=512,
         null=True,
         blank=True,
         help_text="Spotify display name of the linked account."
     )
     spotify_id = models.CharField(
-        max_length=255,
+        max_length=512,
         null=True,
         blank=True,
         help_text="The unique Spotify ID for the account."
@@ -62,9 +62,9 @@ class ListeningHistory(models.Model):
         on_delete=models.CASCADE,
         related_name="listening_history"
     )
-    track_name = models.CharField(max_length=255)
-    artist_name = models.CharField(max_length=255)
-    album_name = models.CharField(max_length=255, null=True, blank=True)
+    track_name = models.CharField(max_length=512)
+    artist_name = models.CharField(max_length=512)
+    album_name = models.CharField(max_length=512, null=True, blank=True)
     played_at = models.DateTimeField()
     duration_ms = models.IntegerField(
         help_text="Duration of the track in milliseconds."
@@ -106,17 +106,17 @@ from django.conf import settings
 
 class SpotifyWrapped(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="wrapped_objects")
-    title = models.CharField(max_length=255, default="My Spotify Wrapped")  # Optional title
+    title = models.CharField(max_length=512, default="My Spotify Wrapped")  # Optional title
     top_songs = models.JSONField(default=list)  # Example: List of songs
     top_artists = models.JSONField(default=dict)  # Example: List of artists
     top_genres = models.JSONField(default=dict)  # Example: List of genres
-    personality = models.CharField(max_length=255, null=True, blank=True)  # Optional string field
+    personality = models.CharField(max_length=512, null=True, blank=True)  # Optional string field
     total_minutes_listened = models.IntegerField(default=0)  # Example: Total listening time
-    sound_town = models.CharField(max_length=255, null=True, blank=True)
-    artist_thank_you = models.CharField(max_length=255, null=True, blank=True)
+    sound_town = models.CharField(max_length=512, null=True, blank=True)
+    artist_thank_you = models.CharField(max_length=512, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     top_podcasts = models.JSONField(default=dict)
-    personality_word = models.CharField(max_length=255, null=True, blank=True)
+    personality_word = models.CharField(max_length=512, null=True, blank=True)
 
     def __str__(self):
         return f"Wrapped {self.title} for {self.user.username}"
