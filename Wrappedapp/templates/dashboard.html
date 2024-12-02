@@ -75,7 +75,7 @@
 
         /* Adjust Button Styles for Make Public/Private */
         .visibility-btn {
-            background-color: var(--button-bg-color);
+            background-color: var(--button-bg-color-hover);
             color: var(--button-text-color);
             padding: 0.4rem 1rem;
             border-radius: 15px;
@@ -86,6 +86,7 @@
             text-align: center;
             cursor: pointer;
             transition: background-color 0.3s ease, color 0.3s ease;
+            opacity: 1;
         }
 
         .visibility-btn:hover {
@@ -245,7 +246,7 @@
                             <a href="{% url 'wrapped_carousel' wrapped.id %}">{{ wrapped.title }}</a>
                             (Created on {{ wrapped.created_at|date:"M d, Y" }})
                             <a href="{% url 'delete_wrapped' wrapped.id %}" class="delete-btn" title="Delete this item">&times;</a>
-                            <a href="{% url 'toggle_visibility' wrapped.id %}" class="btn">
+                            <a href="{% url 'toggle_visibility' wrapped.id %}" class="visibility-btn">
                                 {% if wrapped.is_public %}Make Private{% else %}Make Public{% endif %}
                             </a>
                         </li>
