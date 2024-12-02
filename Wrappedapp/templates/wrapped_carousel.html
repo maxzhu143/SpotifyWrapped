@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container-fluid p-0" style="height: 100vh; width: 100vw;">
     <!-- Carousel -->
-    <div id="spotifyWrappedCarousel" class="carousel slide" data-bs-ride="carousel" style="height: 100%; width: 100%;">
+<div id="spotifyWrappedCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000" data-bs-pause="false" style="height: 100%; width: 100%;">
         <div class="carousel-inner" style="height: 100%; width: 100%;">
 
             <!-- Slide 1: Welcome -->
@@ -28,6 +28,16 @@
                     <p class="welcome-subtext text-animate-zoom">Dive into your personalized music stats!</p>
                 </div>
             </div>
+
+        <div class="carousel-item animated-background">
+    <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
+        <div class="circle-text-container">
+            <p class="circle-text">Now let's look into your fabulous music ...</p>
+        </div>
+    </div>
+</div>
+
+
 
             <!-- Slide 2: Total Listening Time -->
             <div class="carousel-item animated-background">
@@ -135,6 +145,8 @@
                 </div>
             </div>
 
+
+
             <!-- Slide: Your Top Songs -->
             <div class="carousel-item animated-background">
                 <div class="dynamic-shapes">
@@ -165,23 +177,39 @@
                     </div>
                 </div>
             </div>
-        <!-- Slide: Save or Discard -->
-            <div class="carousel-item">
-                <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
-                    <h1 class="save-discard-title">What would you like to do?</h1>
-                    <p class="save-discard-text">Would you like to save this Spotify Wrapped or discard it?</p>
-                    <div class="save-discard-buttons">
-                        <form action="{% url 'save_wrapped' wrapped.id %}" method="post" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success">Save</button>
-                        </form>
-                        <form action="{% url 'discard_wrapped' wrapped.id %}" method="post" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger">Discard</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+
+        <div class="carousel-item animated-background closing-slide">
+    <div class="dynamic-shapes">
+        <div class="circle large"></div>
+        <div class="circle medium"></div>
+        <div class="circle small"></div>
+        <div class="circle tiny"></div>
+        <div class="flower"></div>
+        <div class="flower small"></div>
+        <div class="star floating"></div>
+        <div class="star shooting"></div>
+        <div class="star shooting alternate"></div>
+    </div>
+    <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%; text-align: center; z-index: 1; color: white;">
+        <h1 class="thank-you-title text-animate-fade" style="font-family: 'Arial Black', sans-serif; font-size: 4rem; margin-bottom: 1rem;">
+            🎵 Thank You for Viewing 🎶
+        </h1>
+        <h2 class="thank-you-subtitle text-animate-zoom" style="font-family: 'Arial', sans-serif; font-size: 2rem; color: #FFC312;">
+            Your Spotify Wrapped 😊
+        </h2>
+        <p class="thank-you-message text-animate-slide" style="font-family: 'Arial', sans-serif; font-size: 1.25rem; margin-top: 20px; max-width: 60%;">
+            See you next year for another amazing musical adventure!
+        </p>
+        <div style="font-size: 4rem; margin-top: 2rem;">
+            😊
+        </div>
+    </div>
+</div>
+
+
+
+
+
 
 
         <!-- Carousel Controls -->
@@ -199,14 +227,20 @@
 
 
 
+
 <style>
     /* Text Animations */
     .text-animate-fade {
         animation: fadeIn 2s ease-in-out;
     }
-    @keyframes fadeIn {
-        0% { opacity: 0; }
-        100% { opacity: 1; }
+    @keyframes fadeInOut {
+        0%, 100% {
+            opacity: 0;
+        }
+        /* Start and end with opacity 0 */
+        50% {
+            opacity: 1;
+        }
     }
 
     .text-animate-slide {
@@ -229,19 +263,23 @@
         transform: scale(1.1);
         transition: transform 0.3s ease-in-out;
     }
+
     @keyframes colorShift {
-        0% { background: linear-gradient(45deg, #1DB954, #191414); }
-        25% { background: linear-gradient(45deg, #FF007F, #590FB7); }
-        50% { background: linear-gradient(45deg, #FFC312, #EE5A24); }
-        75% { background: linear-gradient(45deg, #16A085, #27AE60); }
-        100% { background: linear-gradient(45deg, #1DB954, #191414); }
-    }
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+
 
     .animated-background {
-        animation: colorShift 12s infinite;
-        background-size: 300% 300%;
-        height: 100%;
-    }
+    animation: colorShift 12s infinite;
+    background: linear-gradient(45deg, #1DB954, #FF007F, #FFC312, #16A085, #1DB954);
+    background-size: 400% 400%; /* Makes the background larger for smooth movement */
+    height: 100%;
+    width: 100%;
+}
+
 
     /* Dynamic Shapes */
     .dynamic-shapes {
@@ -298,9 +336,9 @@
     }
 
     .star.shooting.alternate {
-        animation: shootDiagonalAlternate 10s infinite linear;
-        top: 30%;
-        left: -30%;
+        animation: shootDiagonalRightToLeft 8s infinite linear;
+    top: 10%; /* Adjust this as needed */
+    left: 120%;
     }
 
     @keyframes shootDiagonal {
@@ -308,10 +346,10 @@
         100% { transform: translate(120vw, 100vh); }
     }
 
-    @keyframes shootDiagonalAlternate {
-        0% { transform: translate(0, 0); }
-        100% { transform: translate(120vw, -100vh); }
-    }
+    @keyframes shootDiagonalRightToLeft {
+    0% { transform: translate(120vw, 0); } /* Start off-screen to the right */
+    100% { transform: translate(-120vw, 100vh); } /* End off-screen to the left */
+}
 
     @keyframes float {
         0%, 100% { transform: translateY(0); }
@@ -554,7 +592,71 @@
         text-decoration: underline;
     }
 
+    .circle-text-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* Makes the container a perfect circle */
+    background: radial-gradient(circle, #1DB954, #FF007F);
+    animation: colorShift 12s infinite; /* Background color transition */
+}
 
+.circle-text {
+    font-family: 'Arial Black', sans-serif;
+    font-size: 1.5rem;
+    text-align: center;
+    color: white;
+    padding: 20px;
+    transform: rotate(-20deg); /* Slight tilt for visual effect */
+    animation: textFade 3s ease-in-out forwards;
+}
+
+@keyframes textFade {
+    0% { opacity: 0; transform: scale(0.5) rotate(-20deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+/* Thank You Title Animation */
+/* Enhanced Icon Animation */
+.icon-container img {
+    animation: iconBounce 2s infinite ease-in-out;
+}
+
+@keyframes iconBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Text Animation */
+.text-animate-fade {
+    animation: fadeIn 2s ease-in-out;
+}
+
+.text-animate-zoom {
+    animation: zoomIn 2s ease-in-out;
+}
+
+.text-animate-slide {
+    animation: slideInFromBottom 2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes zoomIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideInFromBottom {
+    0% { transform: translateY(100px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
 
 </style>
 {% endblock %}
