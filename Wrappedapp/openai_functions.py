@@ -61,5 +61,4 @@ def generate_psychoanalysis(top_songs, top_artists, top_genres, total_minutes):
     )
     content = completion.choices[0].message.content
     my_one_word = "" + content.split(" ")[0] + " " + content.split(" ")[1]
-    remaining_text = " ".join(content.split(" ")[2:])
-    return remaining_text, my_one_word
+    return content, my_one_word
