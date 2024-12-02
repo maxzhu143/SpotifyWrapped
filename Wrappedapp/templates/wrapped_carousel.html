@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container-fluid p-0" style="height: 100vh; width: 100vw;">
     <!-- Carousel -->
-<div id="spotifyWrappedCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000" data-bs-pause="false" style="height: 100%; width: 100%;">
+<div id="spotifyWrappedCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="10000" data-bs-pause="false" style="height: 100%; width: 100%;">
         <div class="carousel-inner" style="height: 100%; width: 100%;">
 
             <!-- Slide 1: Welcome -->
@@ -55,7 +55,7 @@
                 <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
                     <h1 class="listening-title text-animate-fade">Total Listening Time</h1>
                     <p class="listening-subtext text-animate-hover">
-                        You spent <span class="highlight">{{ wrapped.total_minutes_listened }}</span> minutes listening this year!
+                        You spent <span class="highlight">{{ wrapped.total_minutes_listened }}</span> minutes listening in the past 6 months!
                     </p>
                 </div>
             </div>
@@ -112,7 +112,7 @@
                 </div>
                 <div class="d-flex flex-column align-items-center justify-content-center text-container" style="height: 100%;">
                     <h1 class="trends-title text-animate-slide">Music Trends</h1>
-                    <p class="trends-subtext text-animate-fade">You listened to <span class="highlight">more Pop</span> and <span class="highlight">Hip-Hop</span> than ever before!</p>
+                    <p class="trends-subtext text-animate-fade">You listened to <span class="highlight">{{ wrapped.top_genres.0 }}</span> and <span class="highlight">{{ wrapped.top_genres.1 }}</span>!</p>
                 </div>
             </div>
 
@@ -137,7 +137,7 @@
                         You are <span class="highlight">{{ wrapped.personality_word }}</span> listener!
                     </h2>
                     <p class="personality-description text-animate-fade">
-                        This {{ wrapped.personality }}
+                        {{ wrapped.personality }}
                     </p>
                     <p class="personality-subtext text-animate-hover">
                         Discover how your music habits define your unique listening traits.

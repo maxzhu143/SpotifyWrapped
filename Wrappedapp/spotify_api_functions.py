@@ -89,7 +89,6 @@ def get_top_songs(access_token, limit=10):
 
     if response.status_code == 200:
         items = response.json().get('items', [])
-        print(json.dumps(items, indent=2))  # Debug the response structure
         # Extract detailed song information for the template
         songs = []
         for track in items:
@@ -136,25 +135,34 @@ def get_top_artists(access_token, limit=5):
 
 
 # Top Genres (Medium Term)
-def get_top_genres(access_token):
-    top_artists = get_top_artists(access_token, limit=20)
-    if isinstance(top_artists, list) and "Looks like you have never listened to any artists." in top_artists:
-        return ["Looks like you have never listened to any genres."]
+def get_top_genres(access_token, limit=5):
+    url = "https://api.spotify.com/v1/me/top/artists"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    params = {"time_range": "medium_term", "limit": 50}  # Fetch a larger sample of top artists
+    response = requests.get(url, headers=headers, params=params)
 
-    genres = []
-    for artist in top_artists:
-        genres.extend(artist.get('genres', []))
-    if not genres:
-        return ["Looks like you have never listened to any genres."]
+    if response.status_code == 200:
+        items = response.json().get('items', [])
+        if items:
+            # Collect genres from the top artists
+            genre_count = {}
+            for artist in items:
+                for genre in artist.get('genres', []):
+                    genre_count[genre] = genre_count.get(genre, 0) + 1
 
-    # Count occurrences of each genre
-    genre_counts = {genre: genres.count(genre) for genre in set(genres)}
+            # Sort genres by frequency
+            sorted_genres = sorted(genre_count.items(), key=lambda x: x[1], reverse=True)
 
-    # Sort genres by count (descending) and take the top 5
-    top_5_genres = sorted(genre_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+            # Limit to top genres and extract only genre names
+            top_genres = [genre for genre, count in sorted_genres[:limit]]
+            return top_genres
+        else:
+            return ["No genres found."]
+    else:
+        print(f"Error fetching top genres: {response.status_code}")
+        return ["Error fetching data from Spotify."]
 
-    # Return only the genre names
-    return [genre for genre, count in top_5_genres]
+
 
 
 

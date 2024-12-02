@@ -93,11 +93,11 @@ def dashboard(request):
     wrapped_objects = SpotifyWrapped.objects.filter(user=request.user).order_by('-created_at')
 
 
-    access_token = request.session.get('access_token')
+    access_token = get_valid_spotify_token(user=request.user)
 
     profile_response = requests.get('https://api.spotify.com/v1/me', headers={'Authorization': f'Bearer {access_token}'})
     user_name = profile_response.json().get('display_name', 'Spotify User')
-
+    print(profile_response.json())
 
     context = {
         "spotify_account": spotify_account,
@@ -190,6 +190,7 @@ def create_wrapped(request):
         total_minutes = get_total_minutes_listened(spotify_token)
         sound_town = get_sound_town(top_genres)
         artist_thank_you = get_artist_thank_you(spotify_token)
+        hours = total_minutes / 60
 
         # Generate psychoanalysis using OpenAI
         logger.info("Generating psychoanalysis...")
