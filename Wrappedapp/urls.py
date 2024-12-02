@@ -21,5 +21,7 @@ urlpatterns = [
 
     path('translate', views.translate_text, name='translate_text'),
     path('translate-batch', views.translate_batch, name='translate_batch'),
+    path('public-wraps/', views.public_wraps, name='public_wraps'),
+    path('toggle-visibility/<int:wrapped_id>/', views.toggle_visibility, name='toggle_visibility'),
 
 ]

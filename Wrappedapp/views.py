@@ -208,6 +208,24 @@ def custom_logout_view(request):
 def delete_wrapped(request, wrapped_id):
     wrapped = get_object_or_404(SpotifyWrapped, id=wrapped_id, user=request.user)
     wrapped.delete()
+    return redirect('dashboard')
+
+@login_required
+def public_wraps(request):
+    # Fetch all public wraps, including the user's public wraps
+    wraps = SpotifyWrapped.objects.filter(is_public=True).order_by('-created_at')
+    user_wraps = SpotifyWrapped.objects.filter(user=request.user, is_public=True)
+    context = {
+        'wraps': wraps,
+         'user_wraps': user_wraps,
+    }
+    return render(request, 'public_wraps.html', context)
+
+@login_required
+def toggle_visibility(request, wrapped_id):
+    wrap = get_object_or_404(SpotifyWrapped, id=wrapped_id, user=request.user)
+    wrap.is_public = not wrap.is_public
+    wrap.save()
     return redirect('dashboard')  # Replace 'home' with the name of your main page or Wrapped list page.
 
 from deep_translator import GoogleTranslator

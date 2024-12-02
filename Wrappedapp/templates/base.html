@@ -91,6 +91,7 @@
     <div class="auth-links">
         {% if user.is_authenticated %}
             <a href="{% url 'dashboard' %}" class="btn translatable" data-original-text="Dashboard">Dashboard</a>
+            <a href="{% url 'public_wraps' %}" class="btn translatable" data-original-text="Public Wraps">Public Wraps</a>
             <form method="POST" action="{% url 'logout' %}">
                 {% csrf_token %}
                 <button type="submit" class="btn translatable" data-original-text="Log Out">Log Out</button>
@@ -99,7 +100,6 @@
             <a href="{% url 'register' %}" class="btn translatable" data-original-text="Sign Up">Sign Up</a>
             <a href="{% url 'login' %}" class="btn translatable" data-original-text="Log In">Log In</a>
         {% endif %}
-        <a href="{% url 'contact_developers' %}" class="btn btn-primary translatable" data-original-text="Contact the Developers">Contact the Developers</a>
     </div>
 </nav>
 

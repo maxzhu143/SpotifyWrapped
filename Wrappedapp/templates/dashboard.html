@@ -117,8 +117,8 @@
         }
 
         button, .btn {
-            background-color: var(--button-bg-color);
-            color: var(--button-text-color);
+            background-color: #1db954;
+            color: white;
             padding: 0.6rem 1.2rem;
             border: none;
             border-radius: 25px;
@@ -266,6 +266,7 @@
         <p class="translatable" data-original-text="Connected as: {{ user_name }}">Connected as: {{ user_name }}</p>
         <a href="{% url 'unlink' %}" class="btn btn-danger translatable" data-original-text="Unlink Spotify Account">Unlink Spotify Account</a>
         <a href="{% url 'create_wrapped' %}" class="btn btn-primary translatable" data-original-text="Create Spotify Wrapped">Create Spotify Wrapped</a>
+        <a href="{% url 'public_wraps' %}" class="btn btn-primary translatable" data-original-text="Public Wraps">Public Wraps</a>
     {% else %}
         <!-- Unlinked State -->
         <p class="translatable" data-original-text="No Spotify Account Linked">No Spotify Account Linked</p>
@@ -282,6 +283,10 @@
                         <a href="{% url 'wrapped_carousel' wrapped.id %}" class="translatable" data-original-text="{{ wrapped.title }}">{{ wrapped.title }}</a>
                         <span class="translatable" data-original-text="(Created on {{ wrapped.created_at|date:'M d, Y' }})">(Created on {{ wrapped.created_at|date:"M d, Y" }})</span>
                         <a href="{% url 'delete_wrapped' wrapped.id %}" class="delete-btn translatable" data-original-text="&times;" title="Delete this item">&times;</a>
+                        <a href="{% url 'toggle_visibility' wrapped.id %}" class="btn translatable" data-original-text="{% if wrapped.is_public %}Make Private{% else %}Make Public{% endif %}">
+                        {% if wrapped.is_public %}Make Private{% else %}Make Public{% endif %}
+                    </a>
+
                     </li>
                 {% endfor %}
             </ul>
