@@ -3,45 +3,220 @@
 {% block title %}Contact the Developers{% endblock %}
 
 {% block content %}
-<div class="contact-container">
-    <h1>Contact the Developers</h1>
-    <p>For inquiries, please reach out via email at
-        <a href="mailto:developers@example.com">developers@example.com</a>
-    </p>
-</div>
-{% endblock %}
+<head>
+    <style>
+        /* General Body Styling */
+        body {
+    font-family: 'Arial', sans-serif;
+    background-color: #191414;
+    margin: 0;
+    padding: 0; /* Remove padding here */
+}
 
-{% block extra_styles %}
-<style>
+
+    /* Contact Wrapper and Container */
     .contact-container {
-        background-color: #282828; /* Dark gray for a card-like effect */
-        color: white;
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow */
-        max-width: 600px;
-        width: 80%;
-        margin: 5rem auto; /* Center content with space from top */
-    }
+    margin-top: 80px; /* Ensure content starts below the navbar */
+    background-color: #282828;
+    color: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    margin: 0 auto; /* Center content */
+    text-align: center;
+}
 
-    .contact-container h1 {
-        color: #1DB954; /* Spotify green */
-        font-size: 2em;
-        margin-bottom: 1rem;
+    .contact-container h2 {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #1DB954;
+        margin-bottom: 20px;
     }
 
     .contact-container p {
-        font-size: 1.2em;
-        margin: 0.5rem 0;
+        font-size: 1rem;
+        color: #ccc;
+        margin-bottom: 15px;
     }
 
-    .contact-container a {
-        color: #1DB954; /* Spotify green */
-        text-decoration: none;
+
+        h2 {
+            color: #1DB954;
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        p {
+            font-size: 1rem;
+            color: #cccccc;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        a {
+            color: #1DB954;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #1ed760;
+            text-decoration: underline;
+        }
+
+        /* Button Styling */
+        .contact-btn {
+            padding: 14px;
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-btn:hover {
+            background-color: #1ed760;
+            transform: scale(1.05);
+            box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Translate dropdown and button styling */
+        .translate-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            background-color: white;
+            color: #333;
+        }
+
+        .translate-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .translate-btn:hover {
+            background-color: #1ed760;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+
+<div class="contact-container">
+    <h2 class="translatable" data-original-text="Contact the Developers">Contact the Developers</h2>
+    <p class="translatable" data-original-text="Have any questions or feedback? We'd love to hear from you!">
+        Have any questions or feedback? We'd love to hear from you!
+    </p>
+    <p class="translatable" data-original-text="Email us at:">
+        Email us at:
+        <a href="mailto:developers@example.com" class="email-link">developers@example.com</a>
+    </p>
+
+    <p class="translatable" data-original-text="We will respond to you as soon as possible.">
+        We will respond to you as soon as possible.
+    </p>
+</div>
+
+<!-- Translation Dropdown and Button -->
+<div class="translate-container">
+    <select id="language-select" class="translatable">
+        <option value="en" class="translatable" data-original-text="English">English</option>
+        <option value="es" class="translatable" data-original-text="Spanish">Spanish</option>
+        <option value="fr" class="translatable" data-original-text="French">French</option>
+    </select>
+    <button id="translate-btn" class="translate-btn translatable" data-original-text="Translate">Translate</button>
+</div>
+
+<script>
+    async function applyTranslations(lang) {
+        const elements = document.querySelectorAll('.translatable');
+
+        for (const el of elements) {
+            const originalText = el.getAttribute('data-original-text');
+            if (originalText) {
+                try {
+                    const response = await fetch('/translate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ text: originalText, lang })
+                    });
+
+                    const data = await response.json();
+                    if (data.translated_text) {
+                        // Only translate plain text nodes, not child elements like <a>
+                        el.childNodes.forEach((child) => {
+                            if (child.nodeType === Node.TEXT_NODE) {
+                                const originalText = el.getAttribute('data-original-text');
+                                if (originalText) {
+                                    child.textContent = data.translated_text;
+                                }
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error('Translation error:', error);
+                }
+            }
+        }
     }
 
-    .contact-container a:hover {
-        color: #1ed760; /* Lighter green on hover */
-    }
-</style>
+    // Automatically translate on page load using saved language
+    document.addEventListener('DOMContentLoaded', async () => {
+        const savedLang = localStorage.getItem('selectedLanguage') || 'en'; // Default to English if not set
+        const languageSelect = document.getElementById('language-select');
+
+        // Set dropdown to the saved language
+        if (languageSelect) {
+            languageSelect.value = savedLang;
+        }
+
+        // Automatically apply translations for the saved language
+        await applyTranslations(savedLang);
+    });
+
+    // Handle dropdown changes (manual language switch)
+    document.getElementById('language-select').addEventListener('change', (event) => {
+        const lang = event.target.value;
+
+        // Save the newly selected language to localStorage
+        localStorage.setItem('selectedLanguage', lang);
+    });
+
+    // Apply translations only when Translate button is clicked
+    document.getElementById('translate-btn').addEventListener('click', async () => {
+        const lang = document.getElementById('language-select').value;
+
+        // Apply translations for the selected language
+        await applyTranslations(lang);
+    });
+</script>
 {% endblock %}
+
+
+
