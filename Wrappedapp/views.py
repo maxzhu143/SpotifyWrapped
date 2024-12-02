@@ -92,12 +92,13 @@ def dashboard(request):
     # Get the user's saved SpotifyWrapped objects
     wrapped_objects = SpotifyWrapped.objects.filter(user=request.user).order_by('-created_at')
 
-
-    access_token = get_valid_spotify_token(user=request.user)
-
-    profile_response = requests.get('https://api.spotify.com/v1/me', headers={'Authorization': f'Bearer {access_token}'})
-    user_name = profile_response.json().get('display_name', 'Spotify User')
-    print(profile_response.json())
+    if spotify_account:
+        access_token = get_valid_spotify_token(user=request.user)
+        profile_response = requests.get('https://api.spotify.com/v1/me', headers={'Authorization': f'Bearer {access_token}'})
+        user_name = profile_response.json().get('display_name', 'Spotify User')
+        print(profile_response.json())
+    else:
+        user_name = 'Spotify User'
 
     context = {
         "spotify_account": spotify_account,
