@@ -1,100 +1,35 @@
 {% block content %}
 <head>
     <style>
-        /* Define theme colors using CSS variables */
+        /* Theme Colors: Light, Dark, and Blue */
         :root {
-            --background-color: #ffffff;
-            --text-color: #000000;
-            --button-bg-color: #1DB954;
-            --button-text-color: #ffffff;
+            --background-color: #ffffff; /* Light background */
+            --text-color: #000000; /* Black text */
+            --button-bg-color: #1DB954; /* Spotify green */
+            --button-text-color: #ffffff; /* White text for buttons */
+            --button-bg-color-hover: #148C42; /* Darker green for hover */
+            --button-text-color-hover: #ffffff; /* Ensure white text on hover */
         }
 
-        /* Wrapped objects styling */
-        .wrapped-list {
-            margin-top: 20px;
-        }
-        .wrapped-list h2 {
-            margin-bottom: 15px;
-        }
-        .wrapped-list ul {
-            list-style: none;
-            padding: 0;
-        }
-        .wrapped-list li {
-            margin-bottom: 10px;
-        }
-        .wrapped-list a {
-            text-decoration: none;
-            color: var(--button-bg-color);
-            font-weight: bold;
-        }
-        .wrapped-list a:hover {
-            text-decoration: underline;
-        }
-
-        /* Dark theme */
         .dark-theme {
-            --background-color: #191414;
-            --text-color: #ffffff;
-            --button-bg-color: #1ed760;
-            --button-text-color: #ffffff;
+            --background-color: #191414; /* Spotify black */
+            --text-color: #ffffff; /* White text */
+            --button-bg-color: #1ed760; /* Lighter Spotify green */
+            --button-text-color: #000000; /* Black text for buttons */
+            --button-bg-color-hover: #28a745; /* Darker green for hover */
+            --button-text-color-hover: #000000; /* Ensure black text on hover */
         }
 
-        /* Blue theme */
         .blue-theme {
-            --background-color: #282c34;
-            --text-color: #ffffff;
-            --button-bg-color: #4a90e2;
-            --button-text-color: #ffffff;
-        }
-        /* Basic styles for the toggle switch */
-        /* Toggle switch styles */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
+            --background-color: #282c34; /* Dark blue background */
+            --text-color: #ffffff; /* White text */
+            --button-bg-color: #4a90e2; /* Light blue for buttons */
+            --button-text-color: #ffffff; /* White text for buttons */
+            --button-bg-color-hover: #3a78c2; /* Darker blue for hover */
+            --button-text-color-hover: #ffffff; /* White text on hover */
         }
 
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: 0.4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 4px;
-            bottom: 2px;
-            background-color: white;
-            transition: 0.4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: #2196F3;
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-
-        /* Apply the theme variables */
+        /* General Body Styling */
         body {
             background-color: var(--background-color);
             color: var(--text-color);
@@ -109,6 +44,7 @@
             text-align: center;
         }
 
+        /* Header Styling */
         h1 {
             color: var(--button-bg-color);
             font-size: 2.5em;
@@ -116,9 +52,10 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
+        /* Buttons */
         button, .btn {
-            background-color: #1db954;
-            color: white;
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
             padding: 0.6rem 1.2rem;
             border: none;
             border-radius: 25px;
@@ -127,18 +64,68 @@
             font-size: 1em;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             margin: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        .top-right-button-container {
-            position: absolute;
-            top: 10px; /* Adjust as needed */
-            right: 10px; /* Adjust as needed */
-            z-index: 1000; /* Ensure it stays on top of other elements */
-        }
+
         button:hover, .btn:hover {
+            background-color: var(--button-bg-color-hover);
+            color: var(--button-text-color-hover);
             opacity: 0.9;
         }
 
-        /* Position the theme toggle in the upper left */
+        /* Adjust Button Styles for Make Public/Private */
+        .visibility-btn {
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            padding: 0.4rem 1rem;
+            border-radius: 15px;
+            font-size: 0.9em;
+            white-space: nowrap; /* Prevent text from wrapping */
+            margin-left: 10px; /* Adds spacing to avoid overlap */
+            display: inline-block;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .visibility-btn:hover {
+            background-color: var(--button-bg-color-hover);
+            color: var(--button-text-color-hover);
+        }
+
+        /* Wrapped List */
+        .wrapped-list {
+            margin-top: 20px;
+        }
+
+        .wrapped-list h2 {
+            margin-bottom: 15px;
+        }
+
+        .wrapped-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .wrapped-list li {
+            display: flex; /* Align elements horizontally */
+            align-items: center; /* Center align the text and buttons */
+            justify-content: space-between; /* Space out buttons */
+            gap: 15px; /* Add consistent spacing */
+            margin-bottom: 10px;
+        }
+
+        .wrapped-list a {
+            text-decoration: none;
+            color: var(--button-bg-color);
+            font-weight: bold;
+        }
+
+        .wrapped-list a:hover {
+            text-decoration: underline;
+        }
+
+        /* Theme Toggle Switch */
         .theme-toggle {
             position: absolute;
             top: 10px;
@@ -152,11 +139,11 @@
 
         .theme-toggle span {
             user-select: none; /* Prevent text selection */
-            color: #333;
+            color: var(--text-color);
             font-size: 14px;
         }
 
-        /* Toggle switch styles */
+        /* Toggle Switch Styles */
         .switch {
             position: relative;
             display: inline-block;
@@ -202,6 +189,7 @@
             transform: translateX(26px);
         }
 
+        /* Delete Button */
         .delete-btn {
             color: red;
             text-decoration: none;
@@ -215,86 +203,58 @@
             text-decoration: underline;
         }
 
-        .translate-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
+        /* Top-Right Button Container */
+        .top-right-button-container {
+            position: absolute;
+            top: 10px; /* Adjust as needed */
+            right: 10px; /* Adjust as needed */
+            z-index: 1000; /* Ensure it stays on top of other elements */
         }
 
-        select {
-            padding: 10px;
-            font-size: 1rem;
-            border-radius: 20px;
-            border: 1px solid #ccc;
-            cursor: pointer;
-            background-color: white;
-            color: #333;
-        }
-
-        .translate-btn {
-            padding: 10px 20px;
-            font-size: 1rem;
-            font-weight: bold;
-            background-color: #1DB954;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .translate-btn:hover {
-            background-color: #1ed760;
-            transform: translateY(-3px);
-        }
-
-    </style>
+            </style>
 </head>
 
 <body>
 
-    <a href="{% url 'logout' %}" class="btn top-right-button-container translatable" data-original-text="Logout">Logout</a>
+    <a href="{% url 'logout' %}" class="btn top-right-button-container">Logout</a>
 
     <div class="container">
-    <h1 class="translatable" data-original-text="Welcome, {{ user.first_name }}!">Welcome, {{ user.first_name }}!</h1>
+        <h1>Welcome, {{ user.first_name }}!</h1>
 
-    {% if spotify_linked %}
-        <!-- Linked State -->
-        <p class="translatable" data-original-text="Connected as: {{ user_name }}">Connected as: {{ user_name }}</p>
-        <a href="{% url 'unlink' %}" class="btn btn-danger translatable" data-original-text="Unlink Spotify Account">Unlink Spotify Account</a>
-        <a href="{% url 'create_wrapped' %}" class="btn btn-primary translatable" data-original-text="Create Spotify Wrapped">Create Spotify Wrapped</a>
-        <a href="{% url 'public_wraps' %}" class="btn btn-primary translatable" data-original-text="Public Wraps">Public Wraps</a>
-    {% else %}
-        <!-- Unlinked State -->
-        <p class="translatable" data-original-text="No Spotify Account Linked">No Spotify Account Linked</p>
-        <a href="{% url 'spotify_authorize' %}" class="btn btn-success translatable" data-original-text="Link Spotify Account">Link Spotify Account</a>
-    {% endif %}
-
-    <!-- User's Spotify Wrapped objects -->
-    <div class="wrapped-list">
-        <h2 class="translatable" data-original-text="Your Spotify Wrapped Objects">Your Spotify Wrapped Objects</h2>
-        {% if wrapped_objects %}
-            <ul>
-                {% for wrapped in wrapped_objects %}
-                    <li>
-                        <a href="{% url 'wrapped_carousel' wrapped.id %}" class="translatable" data-original-text="{{ wrapped.title }}">{{ wrapped.title }}</a>
-                        <span class="translatable" data-original-text="(Created on {{ wrapped.created_at|date:'M d, Y' }})">(Created on {{ wrapped.created_at|date:"M d, Y" }})</span>
-                        <a href="{% url 'delete_wrapped' wrapped.id %}" class="delete-btn translatable" data-original-text="&times;" title="Delete this item">&times;</a>
-                        <a href="{% url 'toggle_visibility' wrapped.id %}" class="btn translatable" data-original-text="{% if wrapped.is_public %}Make Private{% else %}Make Public{% endif %}">
-                        {% if wrapped.is_public %}Make Private{% else %}Make Public{% endif %}
-                    </a>
-
-                    </li>
-                {% endfor %}
-            </ul>
+        {% if spotify_linked %}
+            <!-- Linked State -->
+            <p>Connected as: {{ user_name }}</p>
+            <a href="{% url 'unlink' %}" class="btn btn-danger">Unlink Spotify Account</a>
+            <a href="{% url 'create_wrapped' %}" class="btn btn-primary">Create Spotify Wrapped</a>
+            <a href="{% url 'public_wraps' %}" class="btn btn-primary">Public Wraps</a>
         {% else %}
-            <p class="translatable" data-original-text="You haven't created any Spotify Wrapped objects yet.">You haven't created any Spotify Wrapped objects yet.</p>
+            <!-- Unlinked State -->
+            <p>No Spotify Account Linked</p>
+            <a href="{% url 'spotify_authorize' %}" class="btn btn-success">Link Spotify Account</a>
         {% endif %}
-    </div>
 
+        <!-- Have some sort of cool UI, maybe a drop down box or maybe if you scroll down, it shows your past wraps-->
+
+        <!-- User's Spotify Wrapped objects -->
+        <div class="wrapped-list">
+            <h2>Your Spotify Wrapped Objects</h2>
+            {% if wrapped_objects %}
+                <ul>
+                    {% for wrapped in wrapped_objects %}
+                        <li>
+                            <a href="{% url 'wrapped_carousel' wrapped.id %}">{{ wrapped.title }}</a>
+                            (Created on {{ wrapped.created_at|date:"M d, Y" }})
+                            <a href="{% url 'delete_wrapped' wrapped.id %}" class="delete-btn" title="Delete this item">&times;</a>
+                            <a href="{% url 'toggle_visibility' wrapped.id %}" class="btn">
+                                {% if wrapped.is_public %}Make Private{% else %}Make Public{% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>You haven't created any Spotify Wrapped objects yet.</p>
+            {% endif %}
+        </div>
 
 
          <div class="theme-toggle">
@@ -302,75 +262,13 @@
                 <input type="checkbox" id="themeSwitch" onchange="toggleTheme()">
                 <span class="slider"></span>
             </label>
-            <span id="themeLabel" class="translatable" data-original-text="Light Mode">Light Mode</span>
+            <span id="themeLabel" onclick="setTheme('blue')">Light Mode</span>
         </div>
 
 
     </div>
 
-    <!-- Translate Dropdown and Button -->
-    <div class="translate-container">
-        <select id="language-select">
-            <option value="en" class="translatable" data-original-text="English">English</option>
-            <option value="es" class="translatable" data-original-text="Spanish">Spanish</option>
-            <option value="fr" class="translatable" data-original-text="French">French</option>
-        </select>
-        <button id="translate-btn" class="translate-btn translatable" data-original-text="Translate">Translate</button>
-    </div>
-
     <script>
-    async function applyTranslations(lang) {
-            const elements = document.querySelectorAll('.translatable');
-
-            for (const el of elements) {
-                const originalText = el.getAttribute('data-original-text');
-                if (originalText) {
-                    try {
-                        const response = await fetch('/translate', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRFToken': '{{ csrf_token }}'
-                            },
-                            body: JSON.stringify({ text: originalText, lang })
-                        });
-
-                        const data = await response.json();
-                        if (data.translated_text) {
-                            el.innerHTML = data.translated_text.replace(/\|/g, '<br>');
-                        }
-                    } catch (error) {
-                        console.error('Translation error:', error);
-                    }
-                }
-            }
-        }
-
-    // Initialize the theme and translations on page load
-document.addEventListener('DOMContentLoaded', async () => {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    const savedLang = localStorage.getItem('selectedLanguage') || 'en';
-
-    setTheme(savedTheme);
-
-    const languageSelect = document.getElementById('language-select');
-    if (languageSelect) {
-        languageSelect.value = savedLang;
-    }
-
-    await applyTranslations(savedLang);
-});
-
-        document.getElementById('language-select').addEventListener('change', (event) => {
-            const lang = event.target.value;
-            localStorage.setItem('selectedLanguage', lang);
-        });
-
-        document.getElementById('translate-btn').addEventListener('click', async () => {
-            const lang = document.getElementById('language-select').value;
-            await applyTranslations(lang);
-        });
-
     function setTheme(theme) {
         document.body.classList.remove('dark-theme', 'blue-theme');
 
@@ -382,50 +280,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         localStorage.setItem('theme', theme);
 
-        // Update the theme label's original text
+        // Update toggle and label dynamically
+        const themeSwitch = document.getElementById('themeSwitch');
         const themeLabel = document.getElementById('themeLabel');
-        if (themeLabel) {
-            const originalText =
-                theme === 'dark' ? 'Dark Mode' :
-                theme === 'blue' ? 'Blue Theme' :
-                'Light Mode';
-
-            themeLabel.setAttribute('data-original-text', originalText);
-
-            // Apply the translation for the updated theme label
-            const savedLang = localStorage.getItem('selectedLanguage') || 'en';
-            translateElement(themeLabel, savedLang);
-        }
+        themeSwitch.checked = theme === 'dark';
+        themeLabel.textContent = theme === 'dark' ? 'Dark Mode' : theme === 'blue' ? 'Blue Theme' : 'Light Mode';
     }
 
     function toggleTheme() {
         const isDarkMode = document.getElementById('themeSwitch').checked;
         setTheme(isDarkMode ? 'dark' : 'light');
     }
-
-    async function translateElement(element, lang) {
-    const originalText = element.getAttribute('data-original-text');
-    if (originalText) {
-        try {
-            const response = await fetch('/translate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}',
-                },
-                body: JSON.stringify({ text: originalText, lang }),
-            });
-
-            const data = await response.json();
-            if (data.translated_text) {
-                element.textContent = data.translated_text;
-            }
-        } catch (error) {
-            console.error('Translation error:', error);
-        }
-    }
-}
-
 
     window.addEventListener('DOMContentLoaded', () => {
         const savedTheme = localStorage.getItem('theme') || 'light';
