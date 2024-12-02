@@ -68,8 +68,7 @@ celerybeat-schedule
 celerybeat.pid
 
 # Migrations
-**/migrations/*
-!**/migrations/__init__.py
+
 
 # Unit test / coverage reports
 .coverage
