@@ -57,6 +57,42 @@
             transform: scale(1.05);
             box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.2);
         }
+        /* Translate dropdown and button styling */
+        .translate-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            background-color: white;
+            color: #333;
+        }
+        .translate-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .translate-btn:hover {
+            background-color: #1ed760;
+            transform: translateY(-3px);
+        }
     </style>
     <title>Logout</title>
     <meta http-equiv="refresh" content="10;url={% url 'home' %}">
@@ -64,8 +100,61 @@
 </head>
 
 <div class="logout-container">
-    <h1>Successfully Logged Out</h1>
-    <p>You have been logged out. Click below to log in again.</p>
-    <a href="{% url 'login' %}" class="btn">Go to Login Page</a>
+    <h1 class="translatable" data-original-text="Successfully Logged Out">Successfully Logged Out</h1>
+    <p class="translatable" data-original-text="You have been logged out. Click below to log in again.">You have been logged out. Click below to log in again.</p>
+    <a href="{% url 'login' %}" class="btn translatable" data-original-text="Go to Login Page">Go to Login Page</a>
 </div>
+
+<!-- Translate Dropdown and Button -->
+<div class="translate-container">
+    <select id="language-select" class="translatable">
+        <option value="en" class="translatable" data-original-text="English">English</option>
+        <option value="es" class="translatable" data-original-text="Spanish">Spanish</option>
+        <option value="fr" class="translatable" data-original-text="French">French</option>
+    </select>
+    <button id="translate-btn" class="translate-btn translatable" data-original-text="Translate">Translate</button>
+</div>
+<script>
+    async function applyTranslations(lang) {
+        const elements = document.querySelectorAll('.translatable');
+        for (const el of elements) {
+            const originalText = el.getAttribute('data-original-text');
+            if (originalText) {
+                try {
+                    const response = await fetch('/translate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ text: originalText, lang })
+                    });
+
+                    const data = await response.json();
+                    if (data.translated_text) {
+                        el.innerHTML = data.translated_text.replace(/\|/g, '<br>');
+                    }
+                } catch (error) {
+                    console.error('Translation error:', error);
+                }
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+        document.getElementById('language-select').value = savedLang;
+        await applyTranslations(savedLang);
+    });
+
+    document.getElementById('translate-btn').addEventListener('click', async () => {
+        const lang = document.getElementById('language-select').value;
+        await applyTranslations(lang);
+    });
+
+    document.getElementById('language-select').addEventListener('change', (event) => {
+        const lang = event.target.value;
+        localStorage.setItem('selectedLanguage', lang);
+    });
+</script>
 {% endblock %}

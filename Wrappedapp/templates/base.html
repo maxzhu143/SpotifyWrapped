@@ -4,70 +4,70 @@
 
     <style>
                 /* Navbar Styling */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 20px; /* Increase top and bottom padding to make it taller */
-            width: 100%;
-            box-sizing: border-box;
-            background-color: #1db954; /* Spotify green */
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-        }
+        /* Navbar Styling */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #1db954; /* Spotify green */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
 
-        .navbar h1 {
-            color: #ffffff;
-            font-size: 1.5em;
-            font-weight: bold;
-            margin: 0;
-            white-space: nowrap;
-        }
+.navbar h1 {
+    color: #ffffff;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0;
+    white-space: nowrap;
+}
 
-        /* Auth Links Styling */
-        .auth-links {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
+/* Auth Links Styling */
+.auth-links {
+    display: flex;
+    gap: 10px;
+    align-items: center; /* Ensures all buttons are vertically aligned */
+}
 
-        /* Button Styles */
-        .auth-links .btn {
-            background-color: #1db954;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            padding: 5px 10px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            white-space: nowrap;
-            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
-        }
+/* Button Styles */
+.auth-links .btn {
+    background-color: #1db954;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 15px; /* Adjusted padding for consistent button size */
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+}
 
-        /* Hover Effect for Buttons */
-        .auth-links .btn:hover {
-            background-color: #1ed760;
-            transform: scale(1.05);
-            box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.2);
-        }
+/* Hover Effect for Buttons */
+.auth-links .btn:hover {
+    background-color: #1ed760;
+    transform: scale(1.05);
+    box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.2);
+}
 
-        /* Responsive Adjustments for Smaller Screens */
-        @media (max-width: 600px) {
-            .navbar h1 {
-                font-size: 18px;
-            }
-            .auth-links {
-                flex-direction: column;
-                gap: 8px;
-                width: 100%;
-                align-items: flex-start;
-            }
-            .auth-links .btn {
-                width: 100%; /* Full width for smaller screens */
-                text-align: center;
-            }
-        }
+/* Responsive Adjustments for Smaller Screens */
+@media (max-width: 600px) {
+    .navbar h1 {
+        font-size: 18px;
+    }
+    .auth-links {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        align-items: flex-start;
+    }
+    .auth-links .btn {
+        width: 100%; /* Full width for smaller screens */
+        text-align: center;
+    }
+}
+
     </style>
 </head>
 <!DOCTYPE html>
@@ -86,28 +86,66 @@
   <!-- Navigation bar -->
   <nav class="navbar">
     <a href="{% url 'dashboard' %}" class="logo">
-        <h1>Spotify Wrapped</h1>
+        <h1 class="translatable" data-original-text="Spotify Wrapped">Spotify Wrapped</h1>
     </a>
     <div class="auth-links">
         {% if user.is_authenticated %}
-            <a href="{% url 'dashboard' %}" class="btn">Dashboard</a>
-            <a href="{% url 'public_wraps' %}" class="btn">Public Wraps</a>
+            <a href="{% url 'dashboard' %}" class="btn translatable" data-original-text="Dashboard">Dashboard</a>
+            <a href="{% url 'public_wraps' %}" class="btn translatable" data-original-text="Public Wraps">Public Wraps</a>
             <form method="POST" action="{% url 'logout' %}">
                 {% csrf_token %}
-                <button type="submit" class="btn">Log Out</button>
+                <button type="submit" class="btn translatable" data-original-text="Log Out">Log Out</button>
             </form>
         {% else %}
-            <a href="{% url 'register' %}" class="btn">Sign Up</a>
-            <a href="{% url 'login' %}" class="btn">Log In</a>
+            <a href="{% url 'register' %}" class="btn translatable" data-original-text="Sign Up">Sign Up</a>
+            <a href="{% url 'login' %}" class="btn translatable" data-original-text="Log In">Log In</a>
         {% endif %}
+        <a href="{% url 'contact_developers' %}" class="btn btn-primary">Contact the Developers</a>
     </div>
-  </nav>
+</nav>
 
 
   <!-- Main content area for other templates -->
   <main>
       {% block content %}{% endblock %}
   </main>
+<script>
+    async function applyTranslations(lang) {
+        const elements = document.querySelectorAll('.translatable');
+        for (const el of elements) {
+            const originalText = el.getAttribute('data-original-text');
+            if (originalText) {
+                try {
+                    const response = await fetch('/translate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',
+                        },
+                        body: JSON.stringify({ text: originalText, lang }),
+                    });
+                    const data = await response.json();
+                    if (data.translated_text) {
+                        el.innerHTML = data.translated_text;
+                    }
+                } catch (error) {
+                    console.error('Translation error:', error);
+                }
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+        await applyTranslations(savedLang);
+    });
+
+    document.getElementById('language-select').addEventListener('change', async (event) => {
+        const lang = event.target.value;
+        localStorage.setItem('selectedLanguage', lang);
+        await applyTranslations(lang);
+    });
+</script>
 
 </body>
 </html>

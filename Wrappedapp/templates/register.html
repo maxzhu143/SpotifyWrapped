@@ -128,12 +128,46 @@
         .redirect-text a:hover {
             text-decoration: underline;
         }
+
+        /* Translate dropdown and button styles */
+        .translate-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            background-color: white;
+            color: #333;
+        }
+
+        .translate-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        .translate-btn:hover {
+            background-color: #1ed760;
+        }
     </style>
     <title>Registration</title>
 </head>
 
 <div class="register-container">
-    <h1>Register</h1>
+    <h2 class="translatable" data-original-text="Register">Register</h2>
     <form method="POST" action="{% url 'register' %}" autocomplete="off">
         {% csrf_token %}
 
@@ -156,45 +190,116 @@
         {% endif %}
 
         <!-- First Name Field -->
-        <label for="id_first_name">First Name</label>
+        <label for="id_first_name" class="translatable" data-original-text="First Name">First Name</label>
         {{ form.first_name }}
-        <div class="help-text">Enter your first name.</div>
+        <div class="help-text translatable" data-original-text="Enter your first name.">Enter your first name.</div>
 
-        <!-- Last Name Field -->
-        <label for="id_last_name">Last Name</label>
+        <label for="id_last_name" class="translatable" data-original-text="Last Name">Last Name</label>
         {{ form.last_name }}
-        <div class="help-text">Enter your last name.</div>
+        <div class="help-text translatable" data-original-text="Enter your last name.">Enter your last name.</div>
 
-        <!-- Username Field -->
-        <label for="id_username">Username</label>
+        <label for="id_username" class="translatable" data-original-text="Username">Username</label>
         {{ form.username }}
-        <div class="help-text">Enter your username (4-16 characters, letters, numbers, and underscores only).</div>
+        <div class="help-text translatable" data-original-text="Enter your username (4-16 characters, letters, numbers, and underscores only).">Enter your username (4-16 characters, letters, numbers, and underscores only).</div>
 
-        <!-- Email Field -->
-        <label for="id_email">Email</label>
+        <label for="id_email" class="translatable" data-original-text="Email">Email</label>
         {{ form.email }}
-        <div class="help-text">Enter a valid email address.</div>
+        <div class="help-text translatable" data-original-text="Enter a valid email address.">Enter a valid email address.</div>
 
-        <!-- Password Field -->
-        <label for="id_password1">Password</label>
+        <label for="id_password1" class="translatable" data-original-text="Password">Password</label>
         {{ form.password1 }}
-        <div class="help-text">
+        <div
+            class="help-text translatable"
+            data-original-text="• Must be at least 8 characters.|• Cannot be entirely numeric or too similar to personal info.">
             • Must be at least 8 characters.<br>
             • Cannot be entirely numeric or too similar to personal info.
         </div>
 
         <!-- Confirm Password Field -->
-        <label for="id_password2">Confirm Password</label>
+        <label for="id_password2" class="translatable" data-original-text="Confirm Password">Confirm Password</label>
         {{ form.password2 }}
-        <div class="help-text">Please confirm your password.</div>
+        <div class="help-text translatable" data-original-text="Please confirm your password.">Please confirm your password.</div>
 
-        <button type="submit">Register</button>
+
+        <button type="submit" class="translatable" data-original-text="Register">Register</button>
     </form>
 
     <div class="redirect-text">
-        <p>Already have an account? <a href="{% url 'login' %}">Log in here</a></p>
+        <p>
+            <span class="translatable" data-original-text="Already have an account?">Already have an account?</span>
+            <a href="{% url 'login' %}" class="translatable" data-original-text="Log in here">Log in here</a>
+        </p>
     </div>
 </div>
+
+<!-- Translate Dropdown and Button -->
+<div class="translate-container">
+    <select id="language-select" class="translatable">
+        <option value="en" class="translatable" data-original-text="English">English</option>
+        <option value="es" class="translatable" data-original-text="Spanish">Spanish</option>
+        <option value="fr" class="translatable" data-original-text="French">French</option>
+    </select>
+    <button id="translate-btn" class="translate-btn translatable" data-original-text="Translate">Translate</button>
+</div>
+<script>
+    async function applyTranslations(lang) {
+        const elements = document.querySelectorAll('.translatable');
+
+        for (const el of elements) {
+            const originalText = el.getAttribute('data-original-text');
+            if (originalText) {
+                try {
+                    const response = await fetch('/translate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ text: originalText, lang })
+                    });
+
+                    const data = await response.json();
+                    if (data.translated_text) {
+                        // Apply translated text
+                        el.innerHTML = data.translated_text.replace(/\|/g, '<br>');
+                    }
+                } catch (error) {
+                    console.error('Translation error:', error);
+                }
+            }
+        }
+    }
+// Automatically translate on page load using saved language
+    document.addEventListener('DOMContentLoaded', async () => {
+        const savedLang = localStorage.getItem('selectedLanguage') || 'en'; // Default to English if not set
+        const languageSelect = document.getElementById('language-select');
+
+        // Set dropdown to the saved language
+        if (languageSelect) {
+            languageSelect.value = savedLang;
+        }
+
+        // Automatically apply translations for the saved language
+        await applyTranslations(savedLang);
+    });
+
+    // Handle dropdown changes (manual language switch)
+    document.getElementById('language-select').addEventListener('change', (event) => {
+        const lang = event.target.value;
+
+        // Save the newly selected language to localStorage
+        localStorage.setItem('selectedLanguage', lang);
+    });
+
+    // Apply translations only when Translate button is clicked
+    document.getElementById('translate-btn').addEventListener('click', async () => {
+        const lang = document.getElementById('language-select').value;
+
+        // Apply translations for the selected language
+        await applyTranslations(lang);
+    });
+
+</script>
 {% endblock %}
 
 
