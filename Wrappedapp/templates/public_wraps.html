@@ -1,35 +1,124 @@
+
 {% extends 'base.html' %}
 {% block content %}
+<style>
+    /* Spotify Wrapped Styles */
+    body {
+        background-color: #121212; /* Spotify dark background */
+        color: #ffffff; /* White text for contrast */
+        font-family: 'Poppins', sans-serif; /* Modern, clean font */
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        margin-top: 80px; /* Adds space below the navigation bar */
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 2.5rem;
+        color: #1DB954; /* Spotify green */
+        margin-bottom: 30px;
+    }
+
+    .section-wraps {
+        margin-bottom: 40px;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        color: #1DB954;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #1DB954;
+        padding-bottom: 5px;
+    }
+
+    .wraps-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .wrap-item {
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+    }
+
+    .wrap-link {
+        color: #1DB954;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .wrap-link:hover {
+        text-decoration: underline;
+    }
+
+    .wrap-date,
+    .wrap-author {
+        display: block;
+        font-size: 0.9rem;
+        color: #cccccc;
+    }
+
+    .empty-message {
+        font-size: 1rem;
+        color: #aaaaaa;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    a {
+        color: #1DB954;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+</style>
+
 <div class="container">
-    <h1>Public Spotify Wraps</h1>
+    <h1 class="page-title">Public Spotify Wraps</h1>
 
-    <h2>Your Public Wraps</h2>
-    {% if user_wraps %}
-        <ul>
-            {% for wrap in user_wraps %}
-                <li>
-                    <a href="{% url 'wrapped_carousel' wrap.id %}">{{ wrap.title }}</a>
-                    (Created on {{ wrap.created_at|date:"M d, Y" }})
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>You don't have any public wraps yet.</p>
-    {% endif %}
+    <section class="section-wraps">
+        <h2 class="section-title">Your Public Wraps</h2>
+        {% if user_wraps %}
+            <ul class="wraps-list">
+                {% for wrap in user_wraps %}
+                    <li class="wrap-item">
+                        <a href="{% url 'wrapped_carousel' wrap.id %}" class="wrap-link">
+                            {{ wrap.title }}
+                        </a>
+                        <span class="wrap-date">(Created on {{ wrap.created_at|date:"M d, Y" }})</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty-message">You don't have any public wraps yet.</p>
+        {% endif %}
+    </section>
 
-    <h2>All Public Wraps</h2>
-    {% if wraps %}
-        <ul>
-            {% for wrap in wraps %}
-                <li>
-                    <a href="{% url 'wrapped_carousel' wrap.id %}">{{ wrap.title }}</a>
-                    by {{ wrap.user.username }}
-                    (Created on {{ wrap.created_at|date:"M d, Y" }})
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No public wraps available yet.</p>
-    {% endif %}
+    <section class="section-wraps">
+        <h2 class="section-title">All Public Wraps</h2>
+        {% if wraps %}
+            <ul class="wraps-list">
+                {% for wrap in wraps %}
+                    <li class="wrap-item">
+                        <a href="{% url 'wrapped_carousel' wrap.id %}" class="wrap-link">
+                            {{ wrap.title }}
+                        </a>
+                        <span class="wrap-author">by {{ wrap.user.username }}</span>
+                        <span class="wrap-date">(Created on {{ wrap.created_at|date:"M d, Y" }})</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty-message">No public wraps available yet.</p>
+        {% endif %}
+    </section>
 </div>
 {% endblock %}
